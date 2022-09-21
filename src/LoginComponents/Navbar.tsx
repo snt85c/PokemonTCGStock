@@ -1,10 +1,7 @@
 import { useEffect } from "react";
-import useStore from "../UsersStore";
+import useStore from "../store/UsersStore";
 import { useUserAuth } from "./userAuth";
-import {
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "./Firebase";
 import { User } from "firebase/auth";
 export default function Navbar() {
@@ -28,6 +25,7 @@ export default function Navbar() {
                 photoURL: loggedUser.photoURL,
                 uid: loggedUser.uid,
               },
+              userDeck: [],
             },
             { merge: true }
           );
