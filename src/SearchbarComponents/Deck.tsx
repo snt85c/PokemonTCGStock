@@ -1,24 +1,11 @@
-import { motion } from "framer-motion";
 export default function Deck(props: { resultJSXArray: JSX.Element[] }) {
-  const container = {
-    hidden: { opacity: 1, scale: 0 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
   const result = props.resultJSXArray.map((card, index) => {
-    return <div key={index}>{card}</div>;
+    return <div key={index}>{card}</div>;//wrapped in the key
   });
 
   return (
     <>
-      <div className="flex flex-col  ">
+      <div className="flex flex-col overflow-scroll h-[73vh] ">
         {result.length ? (
           result
         ) : (

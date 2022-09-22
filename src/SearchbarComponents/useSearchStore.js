@@ -5,7 +5,7 @@ const useDeckStore = create(
   devtools(
     persist((set) => ({
       searchRequest: "",
-      resultJSXArray: [<></>],
+      resultJSXArray: [],
       isLoading: false,
       searchTrigger: false,
       setSearchRequest: (request) => set(() => ({ searchRequest: request })),

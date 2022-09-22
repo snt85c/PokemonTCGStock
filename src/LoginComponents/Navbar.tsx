@@ -1,31 +1,32 @@
 import { useEffect } from "react";
-import useStore from "../store/UsersStore";
+import useStore from "./UsersStore";
 import { useUserAuth } from "./userAuth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, DocumentData, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./Firebase";
 import { User } from "firebase/auth";
+import useCollectionStore from "../CollectionComponent/useCollectionStore";
+import { iCollection, iCard } from "../Interfaces";
 export default function Navbar() {
   const { user, googleSignIn, logout } = useUserAuth();
 
   const setUserOnStore = useStore((state) => state.setUser);
-  const loggedUser: User | null = useStore((state) => state.user);
 
   useEffect(() => {
     setUserOnStore(user);
     async function set() {
-      if (loggedUser) {
+      if (user) {
+        console.log("logged as: ", user.displayName)
         try {
           await setDoc(
-            doc(db, "users", loggedUser.uid),
+            doc(db, "users", user.uid),
             {
               user: {
                 displayName:
-                  loggedUser.displayName &&
-                  loggedUser.displayName.split(" ")[0],
-                photoURL: loggedUser.photoURL,
-                uid: loggedUser.uid,
+                  user.displayName &&
+                  user.displayName.split(" ")[0],
+                photoURL: user.photoURL,
+                uid: user.uid,
               },
-              userDeck: [],
             },
             { merge: true }
           );
@@ -64,10 +65,10 @@ export default function Navbar() {
 
   return (
     <div className=" flex flex-col justify-center items-center m-5">
-      {loggedUser && <div>uid:{loggedUser.uid}</div>}
-      {loggedUser && <div>name:{loggedUser.displayName}</div>}
-      {!loggedUser && <Login />}
-      {loggedUser && <Logout />}
+      {user && <div>uid:{user.uid}</div>}
+      {user && <div>name:{user.displayName}</div>}
+      {!user && <Login />}
+      {user && <Logout />}
     </div>
   );
 }

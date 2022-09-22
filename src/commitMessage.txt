@@ -1,7 +1,8 @@
-add router-dom, useDeckStore, useCollectionStore, save cards on Cloud Firebase
+app is now CRUD, calculates value of userDeck, increase number of cards in deck, delete and add
 
-add react-router and different routes. added Menu with routes selection. Cards visualization is improved by having minimal information on screen. the card has a button that when pressed will save the card on the collection screen as well as firebase. modifies the data from the API to add "quantity:number" so that i can keep track of how many cards are in my possession
+the useCollectionStore has been changed to contain the value of the entire deck by calculating with an useEffect the value of each card and then setting it on the store.
+it's now possible to increase/decrease the number of the user cards. strangely it seems that firebase wont allow to modify a nested array directly, so the nested item needs to be deleted first, then added with new values, then the store needs to be updated (otherwise if i update the store immediately, firebase wont be able to find the correct item, but it can be fixed in a further implementation ). it eliminates debouncing issues by having a state that will stop the user from updating while  the function is not finished. this as well needs a better implementation in the future, possibly by moving the store update somewhere else, then updating firebase
 
-Search implements zustand store now, all but one state are refactored (searchTrigger is left as State, since its a local state and i dont need it.)
+search button is now disabled when empty, to avoid unnecessary calls. this is done by passing searchRequest string to the component and check if it's empty 
 
-collection is now implemented, gets all the cards from firebase, otherwise shows what we got.
+collection now won't make a second call to firebase to check everytime i go there, as the store is working nominally and there is no need to get data from it unless it's the first time the user checks in
