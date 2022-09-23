@@ -1,7 +1,6 @@
 
 export default function DecreaseInCollection(props: {
-  id: number;
-  updateQuantity: (type: string) => Promise<void>;
+  updateQuantity: (type: "add" | "decrease" | "bulk") => Promise<void>;
 }) {
   return (
     <button

@@ -1,3 +1,7 @@
-export default function Home(){
-    return(<h1 className="flex justify-center items-center overflow-scroll h-[83vh]">Home</h1>)
+export default function Home() {
+  return (
+    <section className="flex justify-center  overflow-scroll h-screen bg-slate-500">
+      <h1 className="m-5">Home</h1>
+    </section>
+  );
 }

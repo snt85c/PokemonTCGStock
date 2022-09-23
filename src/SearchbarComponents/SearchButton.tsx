@@ -1,6 +1,3 @@
-import { iSearch } from "../Interfaces";
-import useDeckStore from "./useSearchStore";
-
 export default function SearchButton(props: {
   setSearchTrigger: (value: React.SetStateAction<boolean>) => void;
   searchTrigger: boolean;
@@ -8,8 +5,8 @@ export default function SearchButton(props: {
 }) {
   return (
     <button
-      disabled={props.searchRequest?false:true}
-      className="px-2 rounded border-black border-2"
+      disabled={props.searchRequest ? false : true}
+      className="px-2 rounded border-black border-2 bg-white"
       onClick={() => props.setSearchTrigger(true)}
     >
       {!props.searchTrigger ? "Search" : " LOADING"}

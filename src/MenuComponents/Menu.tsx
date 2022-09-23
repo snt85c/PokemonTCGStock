@@ -7,7 +7,7 @@ import MenuProfile from "./MenuProfile";
 export default function Menu() {
   const navigate = useNavigate();
   return (
-    <div className="fixed flex justify-evenly items-center bottom-0 h-1/6 bg-slate-800 w-full text-white">
+    <div className="fixed flex justify-evenly items-center bottom-0 h-[13%] bg-slate-800 w-full text-white">
       <MenuHome />
       <MenuSearch />
       <MenuCollection />

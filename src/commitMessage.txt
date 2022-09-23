@@ -1,8 +1,22 @@
-app is now CRUD, calculates value of userDeck, increase number of cards in deck, delete and add
+major refactor for useCollectionStore and Deck Component
 
-the useCollectionStore has been changed to contain the value of the entire deck by calculating with an useEffect the value of each card and then setting it on the store.
-it's now possible to increase/decrease the number of the user cards. strangely it seems that firebase wont allow to modify a nested array directly, so the nested item needs to be deleted first, then added with new values, then the store needs to be updated (otherwise if i update the store immediately, firebase wont be able to find the correct item, but it can be fixed in a further implementation ). it eliminates debouncing issues by having a state that will stop the user from updating while  the function is not finished. this as well needs a better implementation in the future, possibly by moving the store update somewhere else, then updating firebase
+fetch userinfo on first render, as well as collection
 
-search button is now disabled when empty, to avoid unnecessary calls. this is done by passing searchRequest string to the component and check if it's empty 
+fix difference in margins between cards  in search and collection, the difference is that the search wasnt wrapped in a div, while collection was
 
-collection now won't make a second call to firebase to check everytime i go there, as the store is working nominally and there is no need to get data from it unless it's the first time the user checks in
+card image now has onload to avoid showing the picture slowly rendering on screen. this is done by having a local boolean state set to true when onLoad is triggered, then conditionally set the css display rule of the card  
+
+setBulkQuantity is created on useCollectionStore and first implementation is set. when the user click on the number, it will conditionally render an input that only accepts numbers, this way we can set up whatever amount is needed instead of having to click our way up/down 
+
+the new implementation in useCollectionStore makes sure NOT to add a card that is already set on the store as well. this is done with add findInCollection in useCollectionStore to determine if a card is already in the collection. if so, it prevents the add button to be showed so that the user can't add the same card twice or more. this is implemented both on addUserToDeck and to the card component
+
+
+setUserDeckFromFirebase now includes all the firebase functions inside of it, allowing for the store to call this function whenever it's needed (as long as an user:User object is passed). this now allows for the collection to be fetched as soon as the website is open
+
+increaseCardQuantity and decreaseCardQuantity in useCollectionStore are now Promises in order not increase effectiveness and speed of debouncing. both the state setter and the firebase update are tucked inside the promise and when fullfilled it will allow the function who called it to set the local isUpdating state to false
+
+Card is now mapped and uses uuid to generate an unique id, otherwise just using the index could compromise the update of cards when shuffling between search and collection
+
+refactor searcinput and searchbutton inside component searchFuntion, in order to avoid re-render when settign input. searchRequest and setSearchRequest have been modified from a global state to a local state, since i dont need to have it globally once i'm done with the search
+
+Deck now contains a basic implementation of a filter UI (which doesn't filter for now, as i took time in figuring how to get the information first) and is now the elected method for rendering a deck of cards either from collection or search.
