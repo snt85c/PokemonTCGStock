@@ -1,44 +1,52 @@
 import { IoMdAddCircle, IoMdRemoveCircle } from "react-icons/io";
 import { useUserAuth } from "../LoginComponents/userAuth";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
-import { iCard, iCollection } from "../Interfaces";
+import { iCard, iCardStore, iCollectionStore } from "../Interfaces";
 import DecreaseInCollection from "./DecreaseInCollection";
 import IncreaseInCollection from "./IncreaseInCollection";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import ShowQuantity from "./ShowQuantity";
+import useCardStore from "./useCardStore";
 
 export default function Card(props: { data: iCard; type: string }) {
   const { user } = useUserAuth();
+
+  const setCard = useCardStore((state: any) => state.setCard);
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const addToUserDeck = useCollectionStore(
-    (state: iCollection) => state.addToUserDeck
+    (state: iCollectionStore) => state.addToUserDeck
   );
   const removeFromUserDeck = useCollectionStore(
-    (state: iCollection) => state.removeFromUserDeck
+    (state: iCollectionStore) => state.removeFromUserDeck
   );
 
   const findInCollection = useCollectionStore(
-    (state: iCollection) => state.findInCollection
+    (state: iCollectionStore) => state.findInCollection
   );
 
   const [isInCollection, setIsInCollection] = useState<boolean>(
-    findInCollection(props.data) 
+    findInCollection(props.data)
   );
 
-  const increaseQuantity = useCollectionStore(
-    (state: iCollection) => state.increaseCardQuantity
+  const increaseQuantity = useCardStore(
+    (state: iCardStore) => state.increaseCardQuantity
   );
 
-  const decreaseQuantity = useCollectionStore(
-    (state: iCollection) => state.decreaseCardQuantity
+  const decreaseQuantity = useCardStore(
+    (state: iCardStore) => state.decreaseCardQuantity
   );
 
-  const setBulkQuantity = useCollectionStore(
-    (state: iCollection) => state.setBulkQuantity
+  const setBulkQuantity = useCardStore(
+    (state: iCardStore) => state.setBulkQuantity
   );
+
+  if (props.type === "collection") {
+    setCard(props.data);
+  }
 
   const addOnCollection = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -73,22 +81,12 @@ export default function Card(props: { data: iCard; type: string }) {
         },
       };
       if (type === "add" && props.data.userDeckInfo.quantity >= 1) {
-        await increaseQuantity(
-          props.data.id,
-          user.uid,
-          currentData,
-          newData
-        ).then(() => {
+        await increaseQuantity(user.uid, currentData, newData).then(() => {
           setIsUpdating(false);
         });
       }
       if (type === "decrease" && props.data.userDeckInfo.quantity > 1) {
-        await decreaseQuantity(
-          props.data.id,
-          user.uid,
-          currentData,
-          newData
-        ).then(() => {
+        await decreaseQuantity(user.uid, currentData, newData).then(() => {
           setIsUpdating(false);
         });
       }
@@ -96,15 +94,12 @@ export default function Card(props: { data: iCard; type: string }) {
         const quantity = newQuantity
           ? newQuantity
           : props.data.userDeckInfo.quantity;
-        setBulkQuantity(
-          props.data.id,
-          user.uid,
-          quantity,
-          currentData,
-          newData
+        await setBulkQuantity(user.uid, quantity, currentData, newData).then(
+          () => {
+            setIsUpdating(false);
+          }
         );
       }
-      setIsUpdating(false);
     }
   };
 

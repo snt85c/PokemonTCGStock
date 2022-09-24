@@ -9,19 +9,23 @@ import Menu from "./MenuComponents/Menu";
 import Home from "./HomeComponents/Home";
 import Collection from "./CollectionComponent/Collection";
 import { setDoc, doc } from "firebase/firestore";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { db } from "./LoginComponents/Firebase";
 import useCollectionStore from "./CollectionComponent/useCollectionStore";
-import { iCollection } from "./Interfaces";
+import { iCollectionStore } from "./Interfaces";
+import Loading from "./Loading";
 
 function App() {
   const { user } = useUserAuth();
 
   const setUserDeckFromFirebase = useCollectionStore(
-    (state: iCollection) => state.setUserDeckFromFirebase
+    (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
 
+  const isLoading = useRef(true);
+
   useEffect(() => {
+    isLoading.current = true
     async function set() {
       if (user) {
         console.log("logged as: ", user.displayName);
@@ -43,11 +47,14 @@ function App() {
         }
       }
     }
-    set();
+    set().then(() => {
+      isLoading.current = false
+    });
   }, [user]);
 
   return (
     <>
+      <Loading isLoading={isLoading} />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -55,7 +62,7 @@ function App() {
           <Route path="/user" element={<Navbar />} />
           <Route path="/collection" element={<Collection />} />
         </Routes>
-        <Menu />
+      <Menu />
       </BrowserRouter>
     </>
   );

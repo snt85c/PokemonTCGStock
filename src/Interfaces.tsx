@@ -1,6 +1,27 @@
 import { User } from "firebase/auth";
 
-export interface iCollection {
+export interface iCardStore{
+
+  increaseCardQuantity: (
+    userUid: string,
+    currentData: any,
+    newData: any
+  ) => Promise<boolean>;
+  decreaseCardQuantity: (
+    userUid: string,
+    currentData: any,
+    newData: any
+  ) => Promise<boolean>;
+  setBulkQuantity: (
+    userUid: string,
+    newQuantity: number,
+    currentData: any,
+    newData: any
+  ) => Promise<boolean>;
+
+}
+
+export interface iCollectionStore {
   userDeck: iCard[];
   collectionValue: number;
   setUserDeckFromFirebase: (user: User) => void;
@@ -11,25 +32,7 @@ export interface iCollection {
   ) => void;
   removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
   findInCollection: (request: iCard) => boolean;
-  increaseCardQuantity: (
-    id: number,
-    userUid: string,
-    currentData: any,
-    newData: any
-  ) => Promise<boolean>;
-  decreaseCardQuantity: (
-    id: number,
-    userUid: string,
-    currentData: any,
-    newData: any
-  ) => Promise<boolean>;
-  setBulkQuantity: (
-    id: number,
-    userUid: string,
-    newQuantity: number,
-    currentData: any,
-    newData: any
-  ) => void;
+
   calculateCollectionValue: () => void;
 }
 
@@ -43,16 +46,26 @@ export interface iCard {
   };
   images: { small: string };
   set: { name:string, series: string; releaseDate:string };
-  subtypes: string[]
+  subtypes?: string[]
   rarity: string;
   userDeckInfo: {
     quantity: number;
     dateAdded: Date;
   };
+  types?:string[]
   quantity: number;
 }
 
-export interface iSearch {
+export interface iFilter {
+  rarity: string[],
+  set: string[],
+  series: string[],
+  subtypes: string[],
+  releaseDate: string[],
+  types:string[]
+};
+
+export interface iSearchStore {
   searchRequest: string;
   resultJSXArray: iCard[];
   isLoading: boolean;

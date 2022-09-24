@@ -1,24 +1,21 @@
 import { useEffect } from "react";
 import Card from "../CardComponents/Card";
-import { iCollection, iCard } from "../Interfaces";
+import { iCollectionStore, iCard } from "../Interfaces";
 import { useUserAuth } from "../LoginComponents/userAuth";
-import Deck from "../SearchbarComponents/Deck";
+import Deck from "../DeckComponents/Deck";
 import useCollectionStore from "./useCollectionStore";
 
 export default function Collection() {
   const { user } = useUserAuth();
 
-  const userDeck = useCollectionStore((state: iCollection) => state.userDeck);
+  const userDeck = useCollectionStore((state: iCollectionStore) => state.userDeck);
   const value = useCollectionStore(
-    (state: iCollection) => state.collectionValue
+    (state: iCollectionStore) => state.collectionValue
   );
   const calculateValue = useCollectionStore(
-    (state: iCollection) => state.calculateCollectionValue
+    (state: iCollectionStore) => state.calculateCollectionValue
   );
 
-  const result = userDeck.map((card: iCard, i: number) => {
-    return <Card type={"collection"} data={card} key={i} />;
-  });
   useEffect(() => {
     calculateValue();
   }, [userDeck]);

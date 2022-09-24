@@ -81,7 +81,7 @@ const useCollectionStore = create(
             0
           ),
         })),
-
+/*
       setBulkQuantity: (id, userUid, newQuantity, currentData, newData) => {
         updateDoc(doc(db, "users", userUid), {
           userDeck: arrayRemove(currentData),
@@ -161,6 +161,7 @@ const useCollectionStore = create(
           res(true);
         });
       },
+      */
     })),
     { name: "collection-storage" }
   )

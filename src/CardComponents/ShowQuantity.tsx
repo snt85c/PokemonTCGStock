@@ -1,4 +1,3 @@
-import { prependListener } from "process";
 import { useState } from "react";
 
 export default function ShowQuantity(props: {

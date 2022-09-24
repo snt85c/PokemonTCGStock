@@ -1,6 +1,5 @@
 export default function SearchInput(props: {
   searchRequest: string;
-  // setSearchRequest: React.Dispatch<React.SetStateAction<string>>;
   setSearchRequest:(request: string) => void
 }) {
   return (
