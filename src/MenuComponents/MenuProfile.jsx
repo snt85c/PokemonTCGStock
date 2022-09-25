@@ -9,6 +9,7 @@ export default function MenuProfile() {
     <>
       <div className="flex flex-col justify-center items-center  gap-1 group">
         <button
+        aria-label="menu-button-profile"
           onClick={() => {
             navigate("/user");
           }}

@@ -14,6 +14,7 @@ import { db } from "./LoginComponents/Firebase";
 import useCollectionStore from "./CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "./Interfaces";
 import Loading from "./Loading";
+import NoPage from "./NoPage";
 
 function App() {
   const { user } = useUserAuth();
@@ -25,11 +26,11 @@ function App() {
   const isLoading = useRef(true);
 
   useEffect(() => {
-    isLoading.current = true
+    isLoading.current = true;
     async function set() {
-      if (user) {
-        console.log("logged as: ", user.displayName);
-        try {
+      try {
+        if (user) {
+          console.log("logged as: ", user.displayName);
           await setDoc(
             doc(db, "users", user.uid),
             {
@@ -41,14 +42,14 @@ function App() {
             },
             { merge: true }
           );
-          setUserDeckFromFirebase(user);
-        } catch (err) {
-          console.log(err);
         }
+      } catch (err) {
+        console.log(err);
       }
     }
     set().then(() => {
-      isLoading.current = false
+      setUserDeckFromFirebase(user);
+      isLoading.current = false;
     });
   }, [user]);
 
@@ -61,8 +62,9 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/user" element={<Navbar />} />
           <Route path="/collection" element={<Collection />} />
+          <Route path="*" element={<NoPage />} />
         </Routes>
-      <Menu />
+        <Menu />
       </BrowserRouter>
     </>
   );

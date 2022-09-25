@@ -1,24 +1,28 @@
 import { User } from "firebase/auth";
 
-export interface iCardStore{
-
+export interface iCardStore {
+  card:iCard,
+  cardValue:number,
+  setCardValue: (card:any) => void,
   increaseCardQuantity: (
     userUid: string,
     currentData: any,
-    newData: any
+    newData: any,
+    cardType:string
   ) => Promise<boolean>;
   decreaseCardQuantity: (
     userUid: string,
     currentData: any,
-    newData: any
+    newData: any,
+    cardType:string
   ) => Promise<boolean>;
   setBulkQuantity: (
     userUid: string,
     newQuantity: number,
     currentData: any,
-    newData: any
+    newData: any,
+    cardType:string,
   ) => Promise<boolean>;
-
 }
 
 export interface iCollectionStore {
@@ -44,26 +48,31 @@ export interface iCard {
       avg1: number;
     };
   };
+  tcgplayer: {
+    prices:any
+  };
   images: { small: string };
-  set: { name:string, series: string; releaseDate:string };
-  subtypes?: string[]
+  set: { name: string; series: string; releaseDate: string };
+  subtypes?: string[];
   rarity: string;
   userDeckInfo: {
-    quantity: number;
+    value:number
+    quantity: {
+      [key:string]:number
+    };
     dateAdded: Date;
   };
-  types?:string[]
-  quantity: number;
+  types?: string[];
 }
 
 export interface iFilter {
-  rarity: string[],
-  set: string[],
-  series: string[],
-  subtypes: string[],
-  releaseDate: string[],
-  types:string[]
-};
+  rarity: string[];
+  set: string[];
+  series: string[];
+  subtypes: string[];
+  releaseDate: string[];
+  types: string[];
+}
 
 export interface iSearchStore {
   searchRequest: string;

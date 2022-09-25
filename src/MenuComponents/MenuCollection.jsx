@@ -9,6 +9,7 @@ export default function MenuCollection() {
     <>
       <div className="flex flex-col justify-center items-center  gap-1 group">
         <button
+        aria-label="menu-button-collection"
           onClick={() => {
             navigate("/collection");
           }}

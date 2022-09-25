@@ -16,24 +16,24 @@ const useCollectionStore = create(
       collectionValue: 0,
 
       setUserDeckFromFirebase: async (user) => {
-        let tempTodoArray = [];
-        async function fetch() {
-          console.log("fetching userDeck from Firestore");
-          const ref = doc(db, "users", user.uid);
-          const docSnap = await getDoc(ref);
-          const result = docSnap.data();
-          result.userDeck.forEach((card) => {
-            console.log(card);
-            tempTodoArray.push(card);
-          });
-          return tempTodoArray;
-        }
-        fetch().then((res) => {
-          set(() => ({ userDeck: res }));
-        });
+        if (user)
+          try {
+            let tempTodoArray = [];
+            async function fetch() {
+              console.log("fetching userDeck from Firestore");
+              const ref = doc(db, "users", user.uid);
+              const docSnap = await getDoc(ref);
+              const result = docSnap.data();
+              result.userDeck.forEach((card) => {
+                tempTodoArray.push(card);
+              });
+              set(() => ({ userDeck: tempTodoArray }));
+            }
+            fetch();
+          } catch (e) {
+            console.log(e);
+          }
       },
-
-      // setUserDeckFromFirebase: (request) => set(() => ({ userDeck: request })),
 
       findInCollection: (request) => {
         return get().userDeck.find((card) => card.id === request.id);
@@ -72,96 +72,17 @@ const useCollectionStore = create(
         }));
       },
 
-      calculateCollectionValue: () =>
+      calculateCollectionValue: () => {
+        let arr = get()
+          .userDeck.map((card) => card.userDeckInfo.quantity)
+          .map((item) => Object.values(item))
+          .reduce((prev, current) => prev + parseInt(current), 0);
+        // console.log(arr);
+
         set((state) => ({
-          collectionValue: state.userDeck.reduce(
-            (prev, current) =>
-              prev +
-              current.cardmarket.prices.avg1 * current.userDeckInfo.quantity,
-            0
-          ),
-        })),
-/*
-      setBulkQuantity: (id, userUid, newQuantity, currentData, newData) => {
-        updateDoc(doc(db, "users", userUid), {
-          userDeck: arrayRemove(currentData),
-        }).then(async () => {
-          await updateDoc(doc(db, "users", userUid), {
-            userDeck: arrayUnion(newData),
-          });
-        });
-        set((state) => ({
-          userDeck: state.userDeck.map((card) => {
-            if (card.id === id) {
-              console.log("bulk set quantity: ", newQuantity);
-              return {
-                ...card,
-                userDeckInfo: {
-                  ...card.userDeckInfo,
-                  quantity: newQuantity,
-                },
-              };
-            }
-            return card;
-          }),
+          collectionValue: arr,
         }));
       },
-
-      increaseCardQuantity: async (id, userUid, currentData, newData) => {
-        await new Promise((res) => {
-          set((state) => ({
-            userDeck: state.userDeck.map((card) => {
-              if (card.id === id) {
-                console.log("increase");
-                return {
-                  ...card,
-                  userDeckInfo: {
-                    ...card.userDeckInfo,
-                    quantity: card.userDeckInfo.quantity + 1,
-                  },
-                };
-              }
-              return card;
-            }),
-          }));
-
-          updateDoc(doc(db, "users", userUid), {
-            userDeck: arrayRemove(currentData),
-          });
-          updateDoc(doc(db, "users", userUid), {
-            userDeck: arrayUnion(newData),
-          });
-          res(true);
-        });
-      },
-
-      decreaseCardQuantity: async (id, userUid, currentData, newData) => {
-        await new Promise((res) => {
-          set((state) => ({
-            userDeck: state.userDeck.map((card) => {
-              if (card.id === id) {
-                console.log("increase");
-                return {
-                  ...card,
-                  userDeckInfo: {
-                    ...card.userDeckInfo,
-                    quantity: card.userDeckInfo.quantity - 1,
-                  },
-                };
-              }
-              return card;
-            }),
-          }));
-          updateDoc(doc(db, "users", userUid), {
-            userDeck: arrayRemove(currentData),
-          });
-          updateDoc(doc(db, "users", userUid), {
-            userDeck: arrayUnion(newData),
-          });
-          res(true);
-        });
-      },
-      */
     })),
     { name: "collection-storage" }
   )

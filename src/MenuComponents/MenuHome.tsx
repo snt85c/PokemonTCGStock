@@ -8,6 +8,7 @@ export default function MenuHome() {
     <>
       <div className="flex flex-col justify-center items-center  gap-1 group">
         <button
+        aria-label="menu-button-home"
           onClick={() => {
             navigate("/");
           }}

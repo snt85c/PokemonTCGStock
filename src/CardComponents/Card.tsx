@@ -1,21 +1,40 @@
 import { IoMdAddCircle, IoMdRemoveCircle } from "react-icons/io";
 import { useUserAuth } from "../LoginComponents/userAuth";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
-import { iCard, iCardStore, iCollectionStore } from "../Interfaces";
-import DecreaseInCollection from "./DecreaseInCollection";
-import IncreaseInCollection from "./IncreaseInCollection";
+import { iCard, iCollectionStore } from "../Interfaces";
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import ShowQuantity from "./ShowQuantity";
-import useCardStore from "./useCardStore";
+import CardModifyAmount from "./CardModifyAmount";
+import { useEffect } from "react";
+import { updateDoc, doc, arrayRemove, arrayUnion } from "firebase/firestore";
+import { db } from "../LoginComponents/Firebase";
 
 export default function Card(props: { data: iCard; type: string }) {
   const { user } = useUserAuth();
 
-  const setCard = useCardStore((state: any) => state.setCard);
+  const [card, setCard] = useState<iCard>(props.data);
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const deck = useCollectionStore((state: iCollectionStore) => state.userDeck);
+  const cardValue = () => {
+    if (props.type === "collection") {
+      let result = Object.keys(card.userDeckInfo.quantity).reduce(
+        (prev, current) =>
+          prev +
+          card.userDeckInfo.quantity[current] *
+            card.tcgplayer.prices[current].market,
+        0
+      );
+
+      let temp = (card.userDeckInfo.value = result);
+      let temp2 = { ...card, temp };
+      setCard(temp2);
+      return result;
+    }
+    return -1;
+  };
+
 
   const addToUserDeck = useCollectionStore(
     (state: iCollectionStore) => state.addToUserDeck
@@ -32,74 +51,91 @@ export default function Card(props: { data: iCard; type: string }) {
     findInCollection(props.data)
   );
 
-  const increaseQuantity = useCardStore(
-    (state: iCardStore) => state.increaseCardQuantity
-  );
-
-  const decreaseQuantity = useCardStore(
-    (state: iCardStore) => state.decreaseCardQuantity
-  );
-
-  const setBulkQuantity = useCardStore(
-    (state: iCardStore) => state.setBulkQuantity
-  );
-
-  if (props.type === "collection") {
-    setCard(props.data);
-  }
-
   const addOnCollection = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
+    let newObject: any = {};
+    for (let type in props.data.tcgplayer.prices) {
+      newObject[type] = 0;
+    }
     const newData = {
       ...props.data,
-      userDeckInfo: { quantity: 1, dateAdded: new Date() },
+      userDeckInfo: { quantity: newObject, dateAdded: new Date(), value: 0 },
     };
     if (user) {
+      console.log("add to collection");
       addToUserDeck(newData, user.uid, newData);
     }
   };
 
+  async function updateFirestore(currentData: any, newData: any) {
+    await updateDoc(doc(db, "users", user.uid), {
+      userDeck: arrayRemove(currentData),
+    }).then(async () => {
+      await updateDoc(doc(db, "users", user.uid), {
+        userDeck: arrayUnion(newData),
+      });
+    });
+  }
+
   const updateQuantity = async (
     type: "add" | "decrease" | "bulk",
-    newQuantity?: number
+    cardType: string,
+    newQuantity: any
   ) => {
-    if (user && !isUpdating) {
-      setIsUpdating(true);
-      const currentData = { ...props.data };
-      const newData = {
-        ...props.data,
-        userDeckInfo: {
-          ...props.data.userDeckInfo,
-          quantity:
-            type === "add"
-              ? props.data.userDeckInfo.quantity + 1
-              : type === "decrease"
-              ? props.data.userDeckInfo.quantity - 1
-              : newQuantity,
-        },
-      };
-      if (type === "add" && props.data.userDeckInfo.quantity >= 1) {
-        await increaseQuantity(user.uid, currentData, newData).then(() => {
+    console.log(newQuantity);
+
+    try {
+      if (user && !isUpdating) {
+        setIsUpdating(true);
+        const currentData = { ...card };
+        const newData = {
+          ...card,
+          userDeckInfo: {
+            ...card.userDeckInfo,
+            value: cardValue(),
+            quantity:
+              type === "add"
+                ? {
+                    ...card.userDeckInfo.quantity,
+                    [cardType]: card.userDeckInfo.quantity[cardType] + 1,
+                  }
+                : type === "decrease"
+                ? {
+                    ...card.userDeckInfo.quantity,
+                    [cardType]: card.userDeckInfo.quantity[cardType] - 1,
+                  }
+                : {
+                    ...card.userDeckInfo.quantity,
+                    [cardType]: newQuantity,
+                  },
+          },
+        };
+        if (type === "add" && card.userDeckInfo.quantity[cardType] > -1) {
+          updateFirestore(currentData, newData)
+            .then(() => {
+              setCard(newData);
+            })
+            .then(() => {});
           setIsUpdating(false);
-        });
-      }
-      if (type === "decrease" && props.data.userDeckInfo.quantity > 1) {
-        await decreaseQuantity(user.uid, currentData, newData).then(() => {
+        }
+        if (type === "decrease" && card.userDeckInfo.quantity[cardType] > 0) {
+          updateFirestore(currentData, newData).then(() => {
+            setCard(newData);
+          });
           setIsUpdating(false);
-        });
+        }
+        if (type === "bulk") {
+          updateFirestore(currentData, newData).then(() => {
+            setCard(newData);
+          });
+          setIsUpdating(false);
+        }
       }
-      if (type === "bulk") {
-        const quantity = newQuantity
-          ? newQuantity
-          : props.data.userDeckInfo.quantity;
-        await setBulkQuantity(user.uid, quantity, currentData, newData).then(
-          () => {
-            setIsUpdating(false);
-          }
-        );
-      }
+      setIsUpdating(false);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -128,28 +164,25 @@ export default function Card(props: { data: iCard; type: string }) {
               }}
               src={props.data.images && props.data.images.small}
               height={100}
-              width={60}
+              width={100}
             />
-            <div className="flex flex-col">
-              <div className="flex  gap-2">
-                <b>{props.data.name}</b>
-                <div>
-                  Value:
-                  {props.data.cardmarket && props.data.cardmarket.prices.avg1}
-                </div>
-              </div>
+            <div className="flex flex-col w-full">
+              <b className="text-2xl flex justify-between">
+                <span>{props.data.name}</span>
+                <span>
+                  {props.type === "collection" &&
+                    card.userDeckInfo.value.toFixed(2)}
+                </span>
+              </b>
               <div>series: {props.data.set && props.data.set.series}</div>
               <div>rarity: {props.data.rarity ? props.data.rarity : "n/a"}</div>
+              <div>set:{props.data.set && props.data.set.name}</div>
+
               {props.type === "collection" && (
-                <div className="flex gap-2">
-                  quantity:
-                  <DecreaseInCollection updateQuantity={updateQuantity} />
-                  <ShowQuantity
-                    quantity={props.data.userDeckInfo.quantity}
-                    updateQuantity={updateQuantity}
-                  />
-                  <IncreaseInCollection updateQuantity={updateQuantity} />
-                </div>
+                <CardModifyAmount
+                  quantity={card.userDeckInfo.quantity}
+                  updateQuantity={updateQuantity}
+                />
               )}
             </div>
           </div>

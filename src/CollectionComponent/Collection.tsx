@@ -16,10 +16,6 @@ export default function Collection() {
     (state: iCollectionStore) => state.calculateCollectionValue
   );
 
-  useEffect(() => {
-    calculateValue();
-  }, [userDeck]);
-
   useCollectionStore.persist.clearStorage(); //CLEAR STORAGE
 
   return (

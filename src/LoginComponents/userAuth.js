@@ -1,5 +1,6 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { act} from "@testing-library/react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -51,7 +52,11 @@ export function UserAuthContextProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      act(() => {
+        /* fire events that update state */
+        setUser(currentUser);
+      });
+  
     });
     return () => unsubscribe();
   }, []);

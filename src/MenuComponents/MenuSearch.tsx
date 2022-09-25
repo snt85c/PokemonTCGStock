@@ -8,6 +8,7 @@ export default function MenuSearch() {
     <>
       <div className="flex flex-col justify-center items-center  gap-1 group">
         <button
+        aria-label="menu-button-search"
           onClick={() => {
             navigate("/search");
           }}

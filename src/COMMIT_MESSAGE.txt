@@ -1,0 +1,11 @@
+start setting up testing library, add noPage route, bug fixes for increseQuantity, refactor quantity and prices
+
+now that the basic structure of the page is set, is time to start the testing since from now on i need to know if im' inserting breaking changes. filtering and the price structure for the page is still missing
+
+fix a bug where the quantity update would get stuck when decreasing to one (this is because the boolean setter wasn't triggered at the end of the execution)
+
+update quantity for card type: it was brought to my attention that the card object pricing shows different prices depending on the type (holofoil? reverse-holofoil? 1stEdition?) which means that each object can be different cards, hence just updating quantity ++ won't do. this was fixed by updating the way the card object set the userDeckInfo by adding an object "quantity" which dinamically has the possible values for the card by scraping those information from the tcgplayer.prices (since this is not listed anywhere else) 
+
+useCardStore removed
+
+add cardValue function on Card

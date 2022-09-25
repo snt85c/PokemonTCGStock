@@ -1,11 +1,16 @@
 
 export default function DecreaseInCollection(props: {
-  updateQuantity: (type: "add" | "decrease" | "bulk") => Promise<void>;
+  updateQuantity: (
+    type: "add" | "decrease" | "bulk",
+    cardType: string,
+    newQuantity?: number
+  ) => Promise<void>;
+  cardType: string;
 }) {
   return (
     <button
       onClick={() => {
-        props.updateQuantity("decrease");
+        props.updateQuantity("decrease", props.cardType);
       }}
     >
       [-]
