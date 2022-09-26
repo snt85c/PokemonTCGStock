@@ -1,4 +1,5 @@
 import create from "zustand";
+import shallow from 'zustand/shallow'
 import { devtools, persist } from "zustand/middleware";
 import {
   doc,
@@ -28,6 +29,7 @@ const useCollectionStore = create(
                 tempTodoArray.push(card);
               });
               set(() => ({ userDeck: tempTodoArray }));
+              // get().calculateCollectionValue(tempTodoArray);
             }
             fetch();
           } catch (e) {
@@ -54,6 +56,19 @@ const useCollectionStore = create(
             console.error("Error adding document: ", e);
           }
         }
+        // get().calculateCollectionValue();
+      },
+
+      updateCardOnUserDeck: (request) => {
+        const find = get().userDeck.findIndex((card) => request.id == card.id);
+        if (find >= 0) {
+          const updatedArray = get().userDeck;
+          updatedArray[find] = request;
+          set(() => ({
+            userDeck: updatedArray,
+          }));
+        get().calculateCollectionValue();
+        }
       },
 
       removeFromUserDeck: (request, userUid) => {
@@ -70,18 +85,20 @@ const useCollectionStore = create(
             return item.id !== request.id;
           }),
         }));
+        // get().calculateCollectionValue();
       },
 
-      calculateCollectionValue: () => {
-        let arr = get()
-          .userDeck.map((card) => card.userDeckInfo.quantity)
-          .map((item) => Object.values(item))
-          .reduce((prev, current) => prev + parseInt(current), 0);
-        // console.log(arr);
+      calculateCollectionValue: (fetch) => {
+        let arr = 
 
-        set((state) => ({
-          collectionValue: arr,
+           get()
+              .userDeck.map((card) => card.userDeckInfo.value)
+              .reduce((prev, curr) => prev + curr, 0);
+        console.log(arr);
+        set(() => ({
+          collectionValue: arr
         }));
+        return arr
       },
     })),
     { name: "collection-storage" }

@@ -6,9 +6,11 @@ import { useState } from "react";
 import CardModifyAmount from "./CardModifyAmount";
 import { updateDoc, doc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { db } from "../LoginComponents/Firebase";
-import { doesNotThrow } from "assert";
 
-export default function Card(props: { data: iCard; type: string }) {
+export default function Card(props: {
+  data: iCard;
+  type: string;
+}) {
   const { user } = useUserAuth();
 
   const [card, setCard] = useState<iCard>(props.data);
@@ -37,12 +39,20 @@ export default function Card(props: { data: iCard; type: string }) {
     (state: iCollectionStore) => state.removeFromUserDeck
   );
 
+  const updateCardOnUserDeck = useCollectionStore(
+    (state: iCollectionStore) => state.updateCardOnUserDeck
+  );
+
   const findInCollection = useCollectionStore(
     (state: iCollectionStore) => state.findInCollection
   );
 
   const [isInCollection, setIsInCollection] = useState<boolean>(
     findInCollection(props.data)
+  );
+
+  const calculateValue = useCollectionStore(
+    (state: iCollectionStore) => state.calculateCollectionValue
   );
 
   const addOnCollection = async (
@@ -54,7 +64,7 @@ export default function Card(props: { data: iCard; type: string }) {
       newObject[type] = 0;
     }
     const newData = {
-      ...props.data,
+      ...card,
       userDeckInfo: { quantity: newObject, dateAdded: new Date(), value: 0 },
     };
     if (user) {
@@ -70,7 +80,9 @@ export default function Card(props: { data: iCard; type: string }) {
     updateDoc(doc(db, "users", user.uid), {
       userDeck: arrayUnion(newData),
     });
+    updateCardOnUserDeck(newData);
     setCard(newData);
+    // calculateValue()
   }
 
   const updateQuantity = async (
@@ -122,7 +134,7 @@ export default function Card(props: { data: iCard; type: string }) {
         }
       }
     } catch (e) {
-      throw new Error("in updateQuantity function")
+      throw new Error("in updateQuantity function");
     }
   };
 

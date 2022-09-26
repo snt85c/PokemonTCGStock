@@ -34,10 +34,11 @@ export interface iCollectionStore {
     userUid: string,
     newData: any
   ) => void;
+  updateCardOnUserDeck:(request:iCard) => void, 
   removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
   findInCollection: (request: iCard) => boolean;
 
-  calculateCollectionValue: () => void;
+  calculateCollectionValue: () => number;
 }
 
 export interface iCard {

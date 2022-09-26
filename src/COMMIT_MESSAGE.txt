@@ -1,3 +1,7 @@
 fix setting value on screen and firebase /no lag
 
 fix value: the trick was to transform the cardValue function to accept an argument which is the object we want to caluclate the value from , then set the newData object again immediately after with the current value, then passing this new data (newDataWithAdjustedValues) instead of newData. this new value is then sent inside updateCardQuantity which now handle the the removing of the old  array, adding the new array as well as set the state. this way there is no lag when setting. also yes, firebase doesn't have a way to update a nested array, it has to bedeleted then set again
+
+add updateCardOnUserDeck in useCollectionStore: it was noticed that the card is actually added to the colelction store when is added the first time, then the only update is done if the user reloads the page since the collection store is not updated when there is a change in number. this has been fixed by prviding  a new function that looks for the index in the array for  that card, then set a copy of the array where that index is modified, then set the array back to the store.
+
+add calculateCollectionValue: this function from useCollectionStore simply map all the cards in the collection for the userDeckInfo.value then do a reduce to sum all of it. ends by setting the result in state.value. this function is called everytime there is a change (fetch, add, update  and  remove) at the bottom of each function. to avoid re-render, the part that shows the value has been put in his own component 
