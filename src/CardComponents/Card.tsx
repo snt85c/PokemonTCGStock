@@ -6,6 +6,7 @@ import { useState } from "react";
 import CardModifyAmount from "./CardModifyAmount";
 import { updateDoc, doc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { db } from "../LoginComponents/Firebase";
+import useProfileStore, { iState } from "../LoginComponents/useProfileStore";
 
 export default function Card(props: {
   data: iCard;
@@ -148,6 +149,9 @@ export default function Card(props: {
     }
   };
 
+  const rate = useProfileStore((state:iState)=> state.conversionRate)
+  const sym = useProfileStore((state:iState)=> state.conversionSym)
+
   return (
     <>
       {
@@ -170,7 +174,7 @@ export default function Card(props: {
                 <span>{props.data.name}</span>
                 <span>
                   {props.type === "collection" &&
-                    card.userDeckInfo.value.toFixed(2)}
+                    (card.userDeckInfo.value * rate ).toFixed(2) + " " + sym.toLocaleUpperCase()}
                 </span>
               </b>
               <div>series: {props.data.set && props.data.set.series}</div>
@@ -190,21 +194,21 @@ export default function Card(props: {
               style={{
                 display: isInCollection ? "none" : "flex",
               }}
-              className="flex justify-center items-center"
+              className="flex justify-center items-center text-slate-500 hover:text-white duration-300"
               onClick={(e) => {
                 addOnCollection(e);
                 setIsInCollection(true);
               }}
             >
-              <IoMdAddCircle size={40} color={"gray"} />
+              <IoMdAddCircle size={40} />
             </button>
           )}
           {props.type === "collection" && (
             <button
-              className="flex justify-center items-center"
+              className="flex justify-center items-center  text-slate-500 hover:text-white duration-300"
               onClick={(e) => removeFromCollection(e, props.data)}
             >
-              <IoMdRemoveCircle size={40} color={"gray"} />
+              <IoMdRemoveCircle size={40}/>
             </button>
           )}
         </div>
