@@ -4,20 +4,19 @@ import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
 import { useState } from "react";
 import CardModifyAmount from "./CardModifyAmount";
-import { useEffect } from "react";
 import { updateDoc, doc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { db } from "../LoginComponents/Firebase";
+import { doesNotThrow } from "assert";
 
 export default function Card(props: { data: iCard; type: string }) {
   const { user } = useUserAuth();
 
   const [card, setCard] = useState<iCard>(props.data);
-
   const [isLoaded, setIsLoaded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const deck = useCollectionStore((state: iCollectionStore) => state.userDeck);
-  const cardValue = () => {
+  const cardValue = (card: iCard) => {
     if (props.type === "collection") {
       let result = Object.keys(card.userDeckInfo.quantity).reduce(
         (prev, current) =>
@@ -26,15 +25,10 @@ export default function Card(props: { data: iCard; type: string }) {
             card.tcgplayer.prices[current].market,
         0
       );
-
-      let temp = (card.userDeckInfo.value = result);
-      let temp2 = { ...card, temp };
-      setCard(temp2);
       return result;
     }
-    return -1;
+    throw new Error("cardvalue function didn't return a right value");
   };
-
 
   const addToUserDeck = useCollectionStore(
     (state: iCollectionStore) => state.addToUserDeck
@@ -69,14 +63,14 @@ export default function Card(props: { data: iCard; type: string }) {
     }
   };
 
-  async function updateFirestore(currentData: any, newData: any) {
-    await updateDoc(doc(db, "users", user.uid), {
+  async function updateCardQuantity(currentData: any, newData: any) {
+    updateDoc(doc(db, "users", user.uid), {
       userDeck: arrayRemove(currentData),
-    }).then(async () => {
-      await updateDoc(doc(db, "users", user.uid), {
-        userDeck: arrayUnion(newData),
-      });
     });
+    updateDoc(doc(db, "users", user.uid), {
+      userDeck: arrayUnion(newData),
+    });
+    setCard(newData);
   }
 
   const updateQuantity = async (
@@ -84,8 +78,6 @@ export default function Card(props: { data: iCard; type: string }) {
     cardType: string,
     newQuantity: any
   ) => {
-    console.log(newQuantity);
-
     try {
       if (user && !isUpdating) {
         setIsUpdating(true);
@@ -94,7 +86,6 @@ export default function Card(props: { data: iCard; type: string }) {
           ...card,
           userDeckInfo: {
             ...card.userDeckInfo,
-            value: cardValue(),
             quantity:
               type === "add"
                 ? {
@@ -112,30 +103,26 @@ export default function Card(props: { data: iCard; type: string }) {
                   },
           },
         };
+        let adjustedValue = (newData.userDeckInfo.value = cardValue(newData));
+        let newDataWithAdjustedValue = { ...newData, adjustedValue };
         if (type === "add" && card.userDeckInfo.quantity[cardType] > -1) {
-          updateFirestore(currentData, newData)
-            .then(() => {
-              setCard(newData);
-            })
-            .then(() => {});
-          setIsUpdating(false);
+          updateCardQuantity(currentData, newDataWithAdjustedValue).then(() => {
+            setIsUpdating(false);
+          });
         }
         if (type === "decrease" && card.userDeckInfo.quantity[cardType] > 0) {
-          updateFirestore(currentData, newData).then(() => {
-            setCard(newData);
+          updateCardQuantity(currentData, newDataWithAdjustedValue).then(() => {
+            setIsUpdating(false);
           });
-          setIsUpdating(false);
         }
         if (type === "bulk") {
-          updateFirestore(currentData, newData).then(() => {
-            setCard(newData);
+          updateCardQuantity(currentData, newDataWithAdjustedValue).then(() => {
+            setIsUpdating(false);
           });
-          setIsUpdating(false);
         }
       }
-      setIsUpdating(false);
     } catch (e) {
-      console.log(e);
+      throw new Error("in updateQuantity function")
     }
   };
 
