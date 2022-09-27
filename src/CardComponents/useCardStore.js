@@ -1,7 +1,7 @@
 import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { doc, arrayUnion, updateDoc, arrayRemove } from "firebase/firestore";
-import { db } from "../LoginComponents/Firebase";
+import { db } from "../ProfileComponents/Firebase";
 
 const useCardStore = create(
   devtools((set, get) => ({

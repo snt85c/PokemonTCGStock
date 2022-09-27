@@ -4,6 +4,7 @@ import SearchButton from "./SearchButton";
 import SearchInput from "./SearchInput";
 import useDeckStore from "./useSearchStore";
 
+
 export default function SearchFunction() {
   const [searchRequest, setSearchRequest] = useState("");
   const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
@@ -11,8 +12,8 @@ export default function SearchFunction() {
     (state: iSearchStore) => state.setResultJSXArray
   );
   useEffect(() => {
+    if (searchTrigger && searchRequest !== "") {
     try {
-      if (searchTrigger && searchRequest !== "") {
         const url = `https://api.pokemontcg.io/v2/cards?q=name:"${searchRequest}"`;
         fetch(url, {
           method: "GET",
@@ -22,18 +23,16 @@ export default function SearchFunction() {
         })
           .then((resp) => resp.json())
           .then((data) => {
-            console.log(data);
             const result = data.data.map((card: iCard) => {
               return card;
-              // return <Card type="search" key={uuidv4()} data={card} />;
             });
             setResultJSXArray(result);
             setSearchTrigger(false);
           });
+        } catch (e) {
+          console.log(e);
+        }
       }
-    } catch (e) {
-      console.log(e);
-    }
   }, [searchTrigger]);
 
   return (

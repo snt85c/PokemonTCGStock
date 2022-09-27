@@ -1,6 +1,6 @@
 
 import { iCollectionStore } from "../Interfaces";
-import useStore, { iState } from "../LoginComponents/useProfileStore";
+import useStore, { iState } from "../ProfileComponents/useProfileStore";
 import useCollectionStore from "./useCollectionStore";
 
 export default function CollectionValue() {

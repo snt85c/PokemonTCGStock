@@ -1,5 +1,5 @@
-add conversion value
+handle filter, sort and order
 
-the profile page now gets the conversion value from a free-api nad generates a dropdown list from only certain values (for now just usd, eur, aud, it can be expanded by adding more values to the array otherwise there are too many)
+the Deck component now can be sorted by name, series, and release date, as well as set ascendin/descending order. this is done by having a chained map in the chain of fucntions that return the output  with a switch case that will return the operation that we need in the sort().
 
-the value and symbol is then saved into the useProfileStore (new name fro UserStore, to keep the similarity in names with other stores), which are then passed down to the cards and the total value
+filter is now working by having an if inside a filter chained to the main return function

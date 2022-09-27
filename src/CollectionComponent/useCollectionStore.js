@@ -1,5 +1,5 @@
 import create from "zustand";
-import shallow from 'zustand/shallow'
+import shallow from "zustand/shallow";
 import { devtools, persist } from "zustand/middleware";
 import {
   doc,
@@ -8,7 +8,7 @@ import {
   arrayRemove,
   getDoc,
 } from "firebase/firestore";
-import { db } from "../LoginComponents/Firebase";
+import { db } from "../ProfileComponents/Firebase";
 
 const useCollectionStore = create(
   devtools(
@@ -29,7 +29,7 @@ const useCollectionStore = create(
                 tempTodoArray.push(card);
               });
               set(() => ({ userDeck: tempTodoArray }));
-              // get().calculateCollectionValue(tempTodoArray);
+              get().calculateCollectionValue();
             }
             fetch();
           } catch (e) {
@@ -56,7 +56,6 @@ const useCollectionStore = create(
             console.error("Error adding document: ", e);
           }
         }
-        // get().calculateCollectionValue();
       },
 
       updateCardOnUserDeck: (request) => {
@@ -67,7 +66,7 @@ const useCollectionStore = create(
           set(() => ({
             userDeck: updatedArray,
           }));
-        get().calculateCollectionValue();
+          get().calculateCollectionValue();
         }
       },
 
@@ -85,20 +84,14 @@ const useCollectionStore = create(
             return item.id !== request.id;
           }),
         }));
-        // get().calculateCollectionValue();
       },
 
-      calculateCollectionValue: (fetch) => {
-        let arr = 
-
-           get()
-              .userDeck.map((card) => card.userDeckInfo.value)
-              .reduce((prev, curr) => prev + curr, 0);
-        console.log(arr);
+      calculateCollectionValue: () => {
         set(() => ({
-          collectionValue: arr
+          collectionValue: get()
+            .userDeck.map((card) => card.userDeckInfo.value)
+            .reduce((prev, curr) => prev + curr, 0),
         }));
-        return arr
       },
     })),
     { name: "collection-storage" }

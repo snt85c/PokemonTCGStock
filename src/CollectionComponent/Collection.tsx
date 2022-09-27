@@ -1,5 +1,5 @@
 import { iCollectionStore, iCard } from "../Interfaces";
-import { useUserAuth } from "../LoginComponents/userAuth";
+import { useUserAuth } from "../ProfileComponents/userAuth";
 import Deck from "../DeckComponents/Deck";
 import useCollectionStore from "./useCollectionStore";
 import CollectionValue from "./CollectionValue";
@@ -16,11 +16,13 @@ export default function Collection() {
     <>
       {user && (
         <div className="flex flex-col bg-slate-500 text-white">
-          <h1 className="flex justify-center items-center m-5 mb-0">
-            {user.displayName.split(" ")[0]}'s Cards
-          </h1>
-          <CollectionValue />
-          <div className="overflow-scroll h-[77vh]">
+          <div className="m-5">
+            <h1 className="flex justify-center items-center">
+              {user.displayName.split(" ")[0]}'s Cards
+            </h1>
+            <CollectionValue />
+          </div>
+          <div className="overflow-scroll">
             <Deck deck={userDeck} type="collection" />
           </div>
         </div>

@@ -1,8 +1,8 @@
 import {
   UserAuthContextProvider,
   useUserAuth,
-} from "./LoginComponents/userAuth";
-import Navbar from "./LoginComponents/Profile";
+} from "./ProfileComponents/userAuth";
+import Navbar from "./ProfileComponents/Profile";
 import Search from "./SearchbarComponents/Search";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Menu from "./MenuComponents/Menu";
@@ -10,7 +10,7 @@ import Home from "./HomeComponents/Home";
 import Collection from "./CollectionComponent/Collection";
 import { setDoc, doc } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { db } from "./LoginComponents/Firebase";
+import { db } from "./ProfileComponents/Firebase";
 import useCollectionStore from "./CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "./Interfaces";
 import Loading from "./Loading";

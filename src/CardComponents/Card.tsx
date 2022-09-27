@@ -1,24 +1,20 @@
 import { IoMdAddCircle, IoMdRemoveCircle } from "react-icons/io";
-import { useUserAuth } from "../LoginComponents/userAuth";
+import { useUserAuth } from "../ProfileComponents/userAuth";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
 import { useState } from "react";
 import CardModifyAmount from "./CardModifyAmount";
 import { updateDoc, doc, arrayRemove, arrayUnion } from "firebase/firestore";
-import { db } from "../LoginComponents/Firebase";
-import useProfileStore, { iState } from "../LoginComponents/useProfileStore";
+import { db } from "../ProfileComponents/Firebase";
+import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 
-export default function Card(props: {
-  data: iCard;
-  type: string;
-}) {
+export default function Card(props: { data: iCard; type: string }) {
   const { user } = useUserAuth();
 
   const [card, setCard] = useState<iCard>(props.data);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const deck = useCollectionStore((state: iCollectionStore) => state.userDeck);
   const cardValue = (card: iCard) => {
     if (props.type === "collection") {
       let result = Object.keys(card.userDeckInfo.quantity).reduce(
@@ -52,10 +48,6 @@ export default function Card(props: {
     findInCollection(props.data)
   );
 
-  const calculateValue = useCollectionStore(
-    (state: iCollectionStore) => state.calculateCollectionValue
-  );
-
   const addOnCollection = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -83,7 +75,6 @@ export default function Card(props: {
     });
     updateCardOnUserDeck(newData);
     setCard(newData);
-    // calculateValue()
   }
 
   const updateQuantity = async (
@@ -149,33 +140,48 @@ export default function Card(props: {
     }
   };
 
-  const rate = useProfileStore((state:iState)=> state.conversionRate)
-  const sym = useProfileStore((state:iState)=> state.conversionSym)
+  const rate = useProfileStore((state: iState) => state.conversionRate);
+  const sym = useProfileStore((state: iState) => state.conversionSym);
 
   return (
     <>
       {
         <div
-          className="m-2 p-2  flex flex-row justify-between text-white  rounded-xl gap-2 bg-gradient-to-l from-slate-900 to-slate-700"
+          className="m-2 p-2 relative flex flex-row justify-between text-white  rounded-xl gap-2 bg-gradient-to-l from-slate-900 to-slate-700"
           onClick={() => console.log(props.data)}
           style={{ display: isLoaded ? "flex" : "none" }}
         >
-          <div className="flex w-full gap-2 ">
+          <img
+            className="absolute h-8 bottom-2 left-2 z-30"
+            src={props.data.set.images.symbol}
+          />
+          <img
+            className="absolute h-8 bottom-2 right-2 z-30"
+            src={props.data.set.images.logo}
+          />
+
+          <div className="flex gap-2 relative w-full">
             <img
               onLoad={() => {
                 setIsLoaded(true);
               }}
               src={props.data.images && props.data.images.small}
-              height={100}
-              width={100}
+              height={50}
+              width={120}
             />
+
             <div className="flex flex-col w-full">
-              <b className="text-2xl flex justify-between">
-                <span>{props.data.name}</span>
-                <span>
-                  {props.type === "collection" &&
-                    (card.userDeckInfo.value * rate ).toFixed(2) + " " + sym.toLocaleUpperCase()}
-                </span>
+              <b className="text-2xl flex items-center justify-between">
+                <span>{props.data.name}</span>{" "}
+                {props.type === "collection" && (
+                  <>
+                    <span>
+                      {(card.userDeckInfo.value * rate).toFixed(2) +
+                        " " +
+                        sym.toLocaleUpperCase()}
+                    </span>
+                  </>
+                )}
               </b>
               <div>series: {props.data.set && props.data.set.series}</div>
               <div>rarity: {props.data.rarity ? props.data.rarity : "n/a"}</div>
@@ -189,26 +195,28 @@ export default function Card(props: {
               )}
             </div>
           </div>
-          {props.type === "search" && (
+          {props.type === "search" ? (
             <button
+              aria-label="card-add-button"
               style={{
                 display: isInCollection ? "none" : "flex",
               }}
-              className="flex justify-center items-center text-slate-500 hover:text-white duration-300"
+              className=" text-slate-500 hover:text-white duration-300 absolute right-2 top-1/2 -translate-y-1/2
+              "
               onClick={(e) => {
                 addOnCollection(e);
                 setIsInCollection(true);
               }}
             >
-              <IoMdAddCircle size={40} />
+              <IoMdAddCircle size={50} />
             </button>
-          )}
-          {props.type === "collection" && (
+          ) : (
             <button
-              className="flex justify-center items-center  text-slate-500 hover:text-white duration-300"
+              aria-label="remove-button"
+              className=" text-slate-500 hover:text-white duration-300 absolute right-2 top-1/2 -translate-y-1/2"
               onClick={(e) => removeFromCollection(e, props.data)}
             >
-              <IoMdRemoveCircle size={40}/>
+              <IoMdRemoveCircle size={50} />
             </button>
           )}
         </div>

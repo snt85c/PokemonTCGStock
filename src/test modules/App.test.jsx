@@ -1,9 +1,7 @@
-import React from "react";
-import { act, render, screen, waitFor } from "@testing-library/react";
-import App from "./App";
-import { UserAuthContextProvider } from "./LoginComponents/userAuth";
+import { render, screen, waitFor } from "@testing-library/react";
+import App from "../App";
+import { UserAuthContextProvider } from "../ProfileComponents/userAuth";
 import userEvent from "@testing-library/user-event";
-import { MdEventBusy } from "react-icons/md";
 
 test("render", () => {
   render(
@@ -64,25 +62,8 @@ test("on clicking Search, i see an empty input, then i click home, then Search a
   expect(screen.getByText(/no items/i)).toBeInTheDocument();
 });
 
-
-describe("test",()=>{
-  let originalFetch;
-  beforeEach(() => {
-      originalFetch = global.fetch;
-      global.fetch = jest.fn(() => Promise.resolve({
-          json: () => Promise.resolve({
-              value: "add array here"
-              
-        
-          })
-      }));
-  });
-
-  afterEach(() => {
-      global.fetch = originalFetch;
-  });
-
-  it("search and add one card", async () => {
+describe("test", () => {
+  it("search P and get two elements (Unown P and Unown [P]), click add for the first one, expect to find only one add button available as the first one is disabled", async () => {
     render(
       <UserAuthContextProvider>
         <App />
@@ -92,11 +73,14 @@ describe("test",()=>{
     userEvent.type(screen.getByRole("textbox"), "p");
     expect(screen.getByRole("textbox")).toHaveValue("p");
     userEvent.click(screen.getByRole("button", { name: "Search" }));
-    await waitFor(() => screen.findByText("results: 2"))
-    expect(screen.findByText("results: 2")).toBeInTheDocument();
-    screen.debug()
+
+    await waitFor(() => {
+      expect(screen.getByText(/unown p/i)).toBeInTheDocument();
+      expect(screen.getByText(/unown [p]/i)).toBeInTheDocument();
+      expect(screen.getAllByRole("button",{name:"card-add-button", hidden:true})).toHaveLength(2)
+      userEvent.click(screen.getAllByRole("button",{name:"card-add-button", hidden:true})[0])
+      expect(screen.getAllByRole("button",{name:"card-add-button", hidden:true})).toHaveLength(1)
+
+    });
   });
-
-})
-
-
+});

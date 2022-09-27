@@ -1,27 +1,27 @@
 import { User } from "firebase/auth";
 
 export interface iCardStore {
-  card:iCard,
-  cardValue:number,
-  setCardValue: (card:any) => void,
+  card: iCard;
+  cardValue: number;
+  setCardValue: (card: any) => void;
   increaseCardQuantity: (
     userUid: string,
     currentData: any,
     newData: any,
-    cardType:string
+    cardType: string
   ) => Promise<boolean>;
   decreaseCardQuantity: (
     userUid: string,
     currentData: any,
     newData: any,
-    cardType:string
+    cardType: string
   ) => Promise<boolean>;
   setBulkQuantity: (
     userUid: string,
     newQuantity: number,
     currentData: any,
     newData: any,
-    cardType:string,
+    cardType: string
   ) => Promise<boolean>;
 }
 
@@ -34,7 +34,7 @@ export interface iCollectionStore {
     userUid: string,
     newData: any
   ) => void;
-  updateCardOnUserDeck:(request:iCard) => void, 
+  updateCardOnUserDeck: (request: iCard) => void;
   removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
   findInCollection: (request: iCard) => boolean;
 
@@ -50,16 +50,25 @@ export interface iCard {
     };
   };
   tcgplayer: {
-    prices:any
+    prices: any;
   };
   images: { small: string };
-  set: { name: string; series: string; releaseDate: string };
+  set: {
+    name: string;
+    series: string;
+    releaseDate: string;
+    images: {
+      logo: string;
+      symbol: string;
+    };
+  };
+  number:number
   subtypes?: string[];
   rarity: string;
   userDeckInfo: {
-    value:number
+    value: number;
     quantity: {
-      [key:string]:number
+      [key: string]: number;
     };
     dateAdded: Date;
   };
