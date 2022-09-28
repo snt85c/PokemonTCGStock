@@ -6,7 +6,11 @@ import {
   arrayUnion,
   updateDoc,
   arrayRemove,
-  getDoc,
+  deleteDoc,
+  getDocs,
+  setDoc,
+  addDoc,
+  collection,
 } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
 
@@ -22,11 +26,11 @@ const useCollectionStore = create(
             let tempTodoArray = [];
             async function fetch() {
               console.log("fetching userDeck from Firestore");
-              const ref = doc(db, "users", user.uid);
-              const docSnap = await getDoc(ref);
-              const result = docSnap.data();
-              result.userDeck.forEach((card) => {
-                tempTodoArray.push(card);
+              const ref = collection(db, "users", user.uid, "deck1");
+              const docSnap = await getDocs(ref);
+              docSnap.forEach((item) => {
+                console.log(item.data())
+                tempTodoArray.push(item.data());
               });
               set(() => ({ userDeck: tempTodoArray }));
               get().calculateCollectionValue();
@@ -48,10 +52,9 @@ const useCollectionStore = create(
             userDeck: [...state.userDeck, request],
           }));
           try {
-            updateDoc(doc(db, "users", user), {
-              userDeck: arrayUnion(newData),
-            });
-            console.log("Document written with ID: ", newData.id.toString());
+            const docRef = doc(db, "users", user, "deck1",request.id);
+            setDoc(docRef, request );
+            console.log("Document written with ID: ", request.id);
           } catch (e) {
             console.error("Error adding document: ", e);
           }
@@ -72,9 +75,7 @@ const useCollectionStore = create(
 
       removeFromUserDeck: (request, userUid) => {
         try {
-          updateDoc(doc(db, "users", userUid), {
-            userDeck: arrayRemove(request),
-          });
+           deleteDoc(doc(db, "users", userUid, "deck1", request.id));
           console.log("Document removed with ID: ", request.id.toString());
         } catch (e) {
           console.error("Error removing document: ", e);

@@ -6,7 +6,7 @@ import MenuProfile from "./MenuProfile";
 
 export default function Menu() {
   return (
-    <div className="fixed flex justify-evenly items-center bottom-0 h-[13%] bg-slate-800 w-full text-white z-50">
+    <div className="fixed flex justify-evenly items-center bottom-0 h-[10%] bg-slate-800 w-full text-white z-50 pb-2">
       <MenuHome />
       <MenuSearch />
       <MenuCollection />

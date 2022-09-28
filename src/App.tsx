@@ -2,6 +2,7 @@ import {
   UserAuthContextProvider,
   useUserAuth,
 } from "./ProfileComponents/userAuth";
+import "./index.css";
 import Navbar from "./ProfileComponents/Profile";
 import Search from "./SearchbarComponents/Search";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
@@ -58,6 +59,7 @@ function App() {
       <Loading isLoading={isLoading} />
       <BrowserRouter>
         <Routes>
+          <Route path="" element={<Home />} />
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/user" element={<Navbar />} />

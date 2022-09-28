@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { HandleClickOutsideComponent } from "../HandleClickOutsideComponent";
 import Dropdown from "./Dropdown";
@@ -12,17 +12,18 @@ export default function Filter(props: {
   const { ref } = HandleClickOutsideComponent(setIsFilterOpen);
 
   return (
-    <div className="relative">
+    <div className="relative mx-3 px-2">
       <div className="flex flex-row">
         <span
-          onClick={() => setIsFilterOpen((prev) => !prev)}
-          className="flex w-full justify-center items-center bg-white mx-3 rounded"
+          onClick={() => setIsFilterOpen(!isFilterOpen)}
+          className="flex w-2/3 justify-center items-center bg-white hover:bg-gray-300  ml-3 rounded duration-300"
+          style={{backgroundColor:isFilterOpen?"#334155":"", color:isFilterOpen?"white":"black"}}
         >
-          {isFilterOpen ? "close filters" : "open Filter"}
+          {isFilterOpen ? "filters" : "open filter"}
         </span>
         <button
-          className="flex w-1/4 justify-center items-center bg-white mx-3 rounded"
-          onClick={() => props.handleClick("clear", [])}
+          className="flex w-1/4 justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300"
+          onClick={() => {props.handleClick("clear", []);setIsFilterOpen(false)}}
         >
           clear
         </button>
@@ -33,7 +34,7 @@ export default function Filter(props: {
             display: isFilterOpen ? "flex" : "none",
             opacity: isFilterOpen ? 1 : 0,
           }}
-          className="absolute z-40 top-7 left-1/2 -translate-x-1/2 w-2/3 flex flex-col duration-300 p-3   bg-white rounded-bl rounded-br"
+          className="absolute z-40 top-10 left-3  w-2/3 flex flex-col duration-300 p-3   bg-white rounded-bl rounded-br"
         >
           {Object.keys(props.cardFilter).map((key) => {
             if (key !== "releaseDate") {

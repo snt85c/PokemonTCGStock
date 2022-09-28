@@ -62,25 +62,25 @@ test("on clicking Search, i see an empty input, then i click home, then Search a
   expect(screen.getByText(/no items/i)).toBeInTheDocument();
 });
 
-describe("test", () => {
-  it("search P and get two elements (Unown P and Unown [P]), click add for the first one, expect to find only one add button available as the first one is disabled", async () => {
-    render(
-      <UserAuthContextProvider>
-        <App />
-      </UserAuthContextProvider>
-    );
-    userEvent.click(screen.getByRole("button", { name: "menu-button-search" }));
-    userEvent.type(screen.getByRole("textbox"), "p");
-    expect(screen.getByRole("textbox")).toHaveValue("p");
-    userEvent.click(screen.getByRole("button", { name: "Search" }));
+// describe("test", () => {
+//   it("search P and get two elements (Unown P and Unown [P]), click add for the first one, expect to find only one add button available as the first one is disabled", async () => {
+//     render(
+//       <UserAuthContextProvider>
+//         <App />
+//       </UserAuthContextProvider>
+//     );
+//     userEvent.click(screen.getByRole("button", { name: "menu-button-search" }));
+//     userEvent.type(screen.getByRole("textbox"), "p");
+//     expect(screen.getByRole("textbox")).toHaveValue("p");
+//     userEvent.click(screen.getByRole("button", { name: "Search" }));
 
-    await waitFor(() => {
-      expect(screen.getByText(/unown p/i)).toBeInTheDocument();
-      expect(screen.getByText(/unown [p]/i)).toBeInTheDocument();
-      expect(screen.getAllByRole("button",{name:"card-add-button", hidden:true})).toHaveLength(2)
-      userEvent.click(screen.getAllByRole("button",{name:"card-add-button", hidden:true})[0])
-      expect(screen.getAllByRole("button",{name:"card-add-button", hidden:true})).toHaveLength(1)
+//     await waitFor(() => {
+//       expect(screen.getByText(/unown p/i)).toBeInTheDocument();
+//       expect(screen.getByText(/unown [p]/i)).toBeInTheDocument();
+//       expect(screen.getAllByRole("button",{name:"card-add-button", hidden:true})).toHaveLength(2)
+//       userEvent.click(screen.getAllByRole("button",{name:"card-add-button", hidden:true})[0])
+//       expect(screen.getAllByRole("button",{name:"card-add-button", hidden:true})).toHaveLength(1)
 
-    });
-  });
-});
+//     });
+//   });
+// });

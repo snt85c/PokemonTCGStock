@@ -119,6 +119,8 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
       <div className="flex flex-col overflow-scroll bg-slate-500 text-black min-h-screen">
         {props.deck.length ? (
           <>
+          <div className="rounded-xl bg-white mx-2 p-2">
+
             <Sort {...{ sort, setSort, isSortingAscending,setIsSortingAscending }} />
             <Filter cardFilter={cardFilter} handleClick={handleClick} />
             {filter.length > 0 && (
@@ -128,6 +130,7 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
                 </div>
               </>
             )}
+            </div>
             <div className="mb-[9rem]">{result}</div>
           </>
         ) : (

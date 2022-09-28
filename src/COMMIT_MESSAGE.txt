@@ -1,5 +1,3 @@
-handle filter, sort and order
+refactor firebase crud operations
 
-the Deck component now can be sorted by name, series, and release date, as well as set ascendin/descending order. this is done by having a chained map in the chain of fucntions that return the output  with a switch case that will return the operation that we need in the sort().
-
-filter is now working by having an if inside a filter chained to the main return function
+it was noticed that it's possible to create subcollection inside collection and so avoid to nest data inside arrays and have to recur in issues like having to delete and then add a new one which needs to be a precise operation to avoid duplication. by creating a subcollection, it's now possible to add multiple users deck as well as it will facilitate further expansion

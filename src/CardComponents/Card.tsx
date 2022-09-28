@@ -4,7 +4,13 @@ import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
 import { useState } from "react";
 import CardModifyAmount from "./CardModifyAmount";
-import { updateDoc, doc, arrayRemove, arrayUnion } from "firebase/firestore";
+import {
+  updateDoc,
+  setDoc,
+  doc,
+  arrayRemove,
+  arrayUnion,
+} from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 
@@ -13,7 +19,6 @@ export default function Card(props: { data: iCard; type: string }) {
 
   const [card, setCard] = useState<iCard>(props.data);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const cardValue = (card: iCard) => {
     if (props.type === "collection") {
@@ -62,17 +67,15 @@ export default function Card(props: { data: iCard; type: string }) {
     };
     if (user) {
       console.log("add to collection");
-      addToUserDeck(newData, user.uid, newData);
+      addToUserDeck(newData, user.uid, newData.id);
     }
   };
 
-  async function updateCardQuantity(currentData: any, newData: any) {
-    updateDoc(doc(db, "users", user.uid), {
-      userDeck: arrayRemove(currentData),
-    });
-    updateDoc(doc(db, "users", user.uid), {
-      userDeck: arrayUnion(newData),
-    });
+  async function updateCardQuantity( newData: any) {
+    setDoc(
+      doc(db, "users", user.uid, "deck1", newData.id),
+      newData
+    );
     updateCardOnUserDeck(newData);
     setCard(newData);
   }
@@ -83,9 +86,7 @@ export default function Card(props: { data: iCard; type: string }) {
     newQuantity: any
   ) => {
     try {
-      if (user && !isUpdating) {
-        setIsUpdating(true);
-        const currentData = { ...card };
+      if (user) {
         const newData = {
           ...card,
           userDeckInfo: {
@@ -110,18 +111,15 @@ export default function Card(props: { data: iCard; type: string }) {
         let adjustedValue = (newData.userDeckInfo.value = cardValue(newData));
         let newDataWithAdjustedValue = { ...newData, adjustedValue };
         if (type === "add" && card.userDeckInfo.quantity[cardType] > -1) {
-          updateCardQuantity(currentData, newDataWithAdjustedValue).then(() => {
-            setIsUpdating(false);
+          updateCardQuantity(newDataWithAdjustedValue).then(() => {
           });
         }
         if (type === "decrease" && card.userDeckInfo.quantity[cardType] > 0) {
-          updateCardQuantity(currentData, newDataWithAdjustedValue).then(() => {
-            setIsUpdating(false);
+          updateCardQuantity(newDataWithAdjustedValue).then(() => {
           });
         }
         if (type === "bulk") {
-          updateCardQuantity(currentData, newDataWithAdjustedValue).then(() => {
-            setIsUpdating(false);
+          updateCardQuantity( newDataWithAdjustedValue).then(() => {
           });
         }
       }
@@ -156,7 +154,7 @@ export default function Card(props: { data: iCard; type: string }) {
             src={props.data.set.images.symbol}
           />
           <img
-            className="absolute h-8 bottom-2 right-2 z-30"
+            className="absolute h-8 max-w-[10rem] bottom-2 right-2 z-30"
             src={props.data.set.images.logo}
           />
 

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-
+import { HiSortAscending, HiSortDescending } from "react-icons/hi";
 export default function Sort(props: {
   sort: string;
   setSort: React.Dispatch<React.SetStateAction<string>>;
@@ -12,8 +12,11 @@ export default function Sort(props: {
     return item !== "asc" ? (
       <button
         key={uuidv4()}
-        className="flex w-full justify-center items-center bg-white mx-2 rounded duration-300"
-        style={{ backgroundColor: props.sort === item ? "#334155" : "white" }}
+        className="flex w-full justify-center items-center bg-white hover:bg-gray-300 mx-1 px-2 whitespace-nowrap rounded duration-300"
+        style={{
+          backgroundColor: props.sort === item ? "#334155" : "",
+          color: props.sort === item ? "white" : "black",
+        }}
         onClick={() => {
           props.setSort(item);
         }}
@@ -23,16 +26,25 @@ export default function Sort(props: {
     ) : (
       <button
         key={uuidv4()}
-        className="flex w-full justify-center items-center bg-white mx-2 rounded duration-300"
-        style={{ backgroundColor: props.sort === item ? "#334155" : "white" }}
+        className="flex w-full justify-center items-center hover:bg-gray-300 rounded duration-300"
         onClick={() => {
           props.setIsSortingAscending(!props.isSortingAscending);
         }}
       >
-        {item}
+        {props.isSortingAscending ? (
+          <HiSortDescending size={20} />
+        ) : (
+          <HiSortAscending size={20} />
+        )}
       </button>
     );
   });
 
-  return <div className="flex justify-between items-center  p-1">{result}</div>;
+  return (
+    <>
+      <div className=" flex justify-between items-center">
+        <div className="flex w-full mx-2  ">{result}</div>
+      </div>
+    </>
+  );
 }
