@@ -14,7 +14,7 @@ export default function MenuProfile() {
             navigate("/user");
           }}
         >
-          <BiUserCircle size={40} />
+          <BiUserCircle size={30} />
         </button>
         <sub className="group-hover:scale-[1.2] duration-300">Profile</sub>
       </div>

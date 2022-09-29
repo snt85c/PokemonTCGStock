@@ -14,7 +14,7 @@ export default function MenuCollection() {
             navigate("/collection");
           }}
         >
-          <MdOutlineCollectionsBookmark size={40} />
+          <MdOutlineCollectionsBookmark size={30} />
         </button>
         <sub className="group-hover:scale-[1.2] duration-300">Collection</sub>
       </div>

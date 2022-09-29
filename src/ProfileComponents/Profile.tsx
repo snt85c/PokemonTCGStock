@@ -61,7 +61,7 @@ export default function Profile() {
   return (
     <section className="h-screen p-5 bg-slate-500">
       <div className=" flex flex-col justify-center items-center m-5 relative">
-        {/* {user && <div>uid:{user.uid}</div>} */}
+        {user && <div>uid:{user.uid}</div>}
         {user && <img src={user.photoURL} className="w-10 h-10 rounded-full" />}
         {user && <div>{user.displayName}</div>}
         {!user && <Login />}

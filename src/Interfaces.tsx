@@ -26,13 +26,17 @@ export interface iCardStore {
 }
 
 export interface iCollectionStore {
-  userDeck: iCard[];
+  currentDeck: iCard[];
+  decks:[],
   collectionValue: number;
-  setUserDeckFromFirebase: (user: User) => void;
+  currentDeckInfo:{name:string}
+  setCurrentDeckInfo:(user:User) => void
+  createNewCollection:(user:User)=> void,
+  setUserDeckFromFirebase: (user: User, deck?:string) => void;
   addToUserDeck: (
     request: iCard | iCard[],
     userUid: string,
-    newData: any
+    deck?:string
   ) => void;
   updateCardOnUserDeck: (request: iCard) => void;
   removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;

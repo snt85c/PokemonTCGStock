@@ -1,25 +1,19 @@
-import { doc, updateDoc, arrayUnion, arrayRemove, setDoc, collection, addDoc } from "firebase/firestore";
-import { db } from "../ProfileComponents/Firebase";
+import { iCollectionStore } from "../Interfaces";
 import { useUserAuth } from "../ProfileComponents/userAuth";
+import useCollectionStore from "./useCollectionStore";
 export default function CreateNewCollection() {
   const { user } = useUserAuth();
-  async function createNewOnFirebase() {
-    const userDeck = doc(db, "users", user.uid);
-    let id = Date.now().toString();
-    // Atomically add a new region to the "regions" array field.
-    const docRef = doc(db, "users", user.uid,"decks", "collection1");
-    setDoc(docRef, {
-    
-    });
-      
-  }
+
+  const createNewCollection = useCollectionStore((state:iCollectionStore)=> state.createNewCollection)
+
   return (
     <button
+      className="flex px-2 mx-2 justify-center items-center text-black bg-white hover:bg-gray-300  ml-3 rounded duration-300"
       onClick={() => {
-        createNewOnFirebase();
+        createNewCollection(user);
       }}
     >
-      create new collection
+      new
     </button>
   );
 }

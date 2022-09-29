@@ -12,7 +12,7 @@ export default function Filter(props: {
   const { ref } = HandleClickOutsideComponent(setIsFilterOpen);
 
   return (
-    <div className="relative mx-3 px-2">
+    <div className="relative pt-1">
       <div className="flex flex-row">
         <span
           onClick={() => setIsFilterOpen(!isFilterOpen)}

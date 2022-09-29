@@ -13,7 +13,7 @@ export default function MenuHome() {
             navigate("/");
           }}
         >
-          <AiFillHome size={40} />
+          <AiFillHome size={30} />
         </button>
         <sub className="group-hover:scale-[1.2] duration-300">Home</sub>
       </div>

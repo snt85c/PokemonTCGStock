@@ -1,5 +1,4 @@
 import create from "zustand";
-import shallow from "zustand/shallow";
 import { devtools, persist } from "zustand/middleware";
 import {
   doc,
@@ -8,6 +7,7 @@ import {
   arrayRemove,
   deleteDoc,
   getDocs,
+  getDoc,
   setDoc,
   addDoc,
   collection,
@@ -17,22 +17,80 @@ import { db } from "../ProfileComponents/Firebase";
 const useCollectionStore = create(
   devtools(
     persist((set, get) => ({
-      userDeck: [],
+      currentDeck: [],
+      currentDeckInfo: null,
+      decks: [],
       collectionValue: 0,
 
-      setUserDeckFromFirebase: async (user) => {
+      createNewCollection: async (user) => {
+        if (!get().decks) {
+          set(() => ({
+            decks: [],
+          }));
+        }
+        console.log("create new collection", get().decks);
+        if (get().currentDeckInfo && get().decks) {
+          let newDeckId = "";
+          if (get().decks) {
+            newDeckId = "deck" + (get().decks.length + 1);
+          } else {
+            newDeckId = "deck1";
+          }
+          const collectionRef = doc(db, "users", user.uid, newDeckId, "info");
+          setDoc(
+            collectionRef,
+            {
+              name: newDeckId,
+              type: "deck",
+              creationDate: new Date(),
+              note: "",
+            },
+            { merge: true }
+          );
+          const temp = {
+            decks: get().decks ? get().decks.push(newDeckId) : [],
+          };
+          const userRef = doc(db, "users", user.uid);
+          updateDoc(userRef, { decks: [...get().decks] }, { merge: true });
+          const temp2 = [...get().decks];
+          console.log(temp2);
+          set(() => ({
+            decks: temp2,
+          }));
+        }
+      },
+
+      setUserDeckFromFirebase: async (user, deck) => {
         if (user)
           try {
             let tempTodoArray = [];
             async function fetch() {
               console.log("fetching userDeck from Firestore");
-              const ref = collection(db, "users", user.uid, "deck1");
-              const docSnap = await getDocs(ref);
-              docSnap.forEach((item) => {
-                console.log(item.data())
-                tempTodoArray.push(item.data());
+              const collectionRef = collection(
+                db,
+                "users",
+                user.uid,
+                deck ? deck : "deck1"
+              );
+              const colSnap = await getDocs(collectionRef);
+              colSnap.forEach((item) => {
+                let temp = item.data();
+
+                if (temp.type !== "deck") {
+                  tempTodoArray.push(item.data());
+                } else {
+                  console.log(temp);
+                  set(() => ({ currentDeckInfo: temp }));
+                }
               });
-              set(() => ({ userDeck: tempTodoArray }));
+              const docRef = doc(db, "users", user.uid);
+              const docSnap = (await getDoc(docRef)).data();
+              console.log(docSnap);
+              set(() => ({
+                currentDeck: tempTodoArray,
+                decks: docSnap.decks,
+              }));
+
               get().calculateCollectionValue();
             }
             fetch();
@@ -42,18 +100,24 @@ const useCollectionStore = create(
       },
 
       findInCollection: (request) => {
-        return get().userDeck.find((card) => card.id === request.id);
+        return get().currentDeck.find((card) => card.id === request.id);
       },
 
-      addToUserDeck: (request, user, newData) => {
+      addToUserDeck: (request, user, deck) => {
         const found = get().findInCollection(request);
         if (!found) {
           set((state) => ({
-            userDeck: [...state.userDeck, request],
+            currentDeck: [...state.currentDeck, request],
           }));
           try {
-            const docRef = doc(db, "users", user, "deck1",request.id);
-            setDoc(docRef, request );
+            const docRef = doc(
+              db,
+              "users",
+              user,
+              deck ? deck : "deck1",
+              request.id
+            );
+            setDoc(docRef, request);
             console.log("Document written with ID: ", request.id);
           } catch (e) {
             console.error("Error adding document: ", e);
@@ -62,12 +126,14 @@ const useCollectionStore = create(
       },
 
       updateCardOnUserDeck: (request) => {
-        const find = get().userDeck.findIndex((card) => request.id == card.id);
+        const find = get().currentDeck.findIndex(
+          (card) => request.id == card.id
+        );
         if (find >= 0) {
-          const updatedArray = get().userDeck;
+          const updatedArray = get().currentDeck;
           updatedArray[find] = request;
           set(() => ({
-            userDeck: updatedArray,
+            currentDeck: updatedArray,
           }));
           get().calculateCollectionValue();
         }
@@ -75,13 +141,13 @@ const useCollectionStore = create(
 
       removeFromUserDeck: (request, userUid) => {
         try {
-           deleteDoc(doc(db, "users", userUid, "deck1", request.id));
+          deleteDoc(doc(db, "users", userUid, "deck1", request.id));
           console.log("Document removed with ID: ", request.id.toString());
         } catch (e) {
           console.error("Error removing document: ", e);
         }
         set((state) => ({
-          userDeck: state.userDeck.filter((item) => {
+          currentDeck: state.currentDeck.filter((item) => {
             return item.id !== request.id;
           }),
         }));
@@ -90,7 +156,7 @@ const useCollectionStore = create(
       calculateCollectionValue: () => {
         set(() => ({
           collectionValue: get()
-            .userDeck.map((card) => card.userDeckInfo.value)
+            .currentDeck.map((card) => card.userDeckInfo.value)
             .reduce((prev, curr) => prev + curr, 0),
         }));
       },

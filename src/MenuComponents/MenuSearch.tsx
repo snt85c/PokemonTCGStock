@@ -13,7 +13,7 @@ export default function MenuSearch() {
             navigate("/search");
           }}
         >
-          <AiOutlineSearch size={40} />
+          <AiOutlineSearch size={30} />
         </button>
         <sub className="group-hover:scale-[1.2] duration-300">Search</sub>
       </div>

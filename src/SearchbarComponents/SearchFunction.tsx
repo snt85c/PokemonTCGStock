@@ -23,6 +23,7 @@ export default function SearchFunction() {
         })
           .then((resp) => resp.json())
           .then((data) => {
+            console.log(data.data)
             const result = data.data.map((card: iCard) => {
               return card;
             });

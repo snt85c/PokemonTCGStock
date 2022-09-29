@@ -20,6 +20,8 @@ export default function Card(props: { data: iCard; type: string }) {
   const [card, setCard] = useState<iCard>(props.data);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const currentDeckInfo = useCollectionStore((state:iCollectionStore) => state.currentDeckInfo)
+
   const cardValue = (card: iCard) => {
     if (props.type === "collection") {
       let result = Object.keys(card.userDeckInfo.quantity).reduce(
@@ -67,13 +69,13 @@ export default function Card(props: { data: iCard; type: string }) {
     };
     if (user) {
       console.log("add to collection");
-      addToUserDeck(newData, user.uid, newData.id);
+      addToUserDeck(newData, user.uid,currentDeckInfo.name);
     }
   };
 
   async function updateCardQuantity( newData: any) {
     setDoc(
-      doc(db, "users", user.uid, "deck1", newData.id),
+      doc(db, "users", user.uid, currentDeckInfo.name, newData.id),
       newData
     );
     updateCardOnUserDeck(newData);
@@ -154,7 +156,7 @@ export default function Card(props: { data: iCard; type: string }) {
             src={props.data.set.images.symbol}
           />
           <img
-            className="absolute h-8 max-w-[10rem] bottom-2 right-2 z-30"
+            className="absolute  max-w-[5rem] max-h-[3rem] bottom-2 right-2 z-30"
             src={props.data.set.images.logo}
           />
 
