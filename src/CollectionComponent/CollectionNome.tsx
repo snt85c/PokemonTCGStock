@@ -14,12 +14,14 @@ export default function CollectionNome() {
     (state: iCollectionStore) => state.setCurrentDeckInfo
   );
 
-  const [name, setNewName] = useState(currentName);
+//   const [name, setNewName] = useState(currentName);
   const [isEditName, setIsEditName] = useState(false);
+  let change = ""
 
   const handleClick = () => {
     setIsEditName(false);
-    setCurrentDeckInfo(user, name, "name");
+    setCurrentDeckInfo(user, change, "name");
+    change = ""
   };
 
   return (
@@ -31,7 +33,7 @@ export default function CollectionNome() {
             className="bg-gray-500 text-[2.5rem]"
             defaultValue={currentName}
             size={8}
-            onChange={(e) => setNewName(e.target.value)}
+            onChange={(e) => change = e.target.value}
           />
           <button
             className="flex w-1/4 text-black justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300"

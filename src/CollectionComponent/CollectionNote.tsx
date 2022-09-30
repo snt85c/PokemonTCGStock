@@ -13,12 +13,13 @@ export default function CollectionNote() {
   const setCurrentDeckInfo = useCollectionStore(
     (state: iCollectionStore) => state.setCurrentDeckInfo
   );
-  const [note, setNewNote] = useState(currentNote ? currentNote : "no notes");
+//   const [note, setNewNote] = useState(currentNote ? currentNote : "no notes");
   const [isEditNote, setIsEditNote] = useState(false);
-
+    let change = ""
   const handleClick = () => {
     setIsEditNote(false);
-    setCurrentDeckInfo(user, note, "note");
+    setCurrentDeckInfo(user, change, "note");
+    change = ""
   };
 
   return (
@@ -30,7 +31,7 @@ export default function CollectionNote() {
             className="bg-gray-500 "
             defaultValue={currentNote}
             size={16}
-            onChange={(e) => setNewNote(e.target.value)}
+            onChange={(e) => change = e.target.value}
           />
           <button
             className="flex w-1/4 text-black justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300"
