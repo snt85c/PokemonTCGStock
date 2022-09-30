@@ -22,7 +22,7 @@ function App() {
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
 
-  const setUserInfo = useProfileStore((state:iState) => state.setUserInfo)
+  const setUserInfo = useProfileStore((state: iState) => state.setUserInfo);
 
   const isLoading = useRef(true);
 
@@ -47,18 +47,25 @@ function App() {
           const docRef = doc(db, "users", user.uid, "deck1", "info");
           setDoc(
             docRef,
-            { id: "deck1", name:"", type: "deck", creationDate: new Date(), note: "" },
+            {
+              id: "deck1",
+              name: "",
+              type: "deck",
+              creationDate: new Date(),
+              note: "",
+            },
             { merge: true }
           );
           //we also create a new deck collection in firebase, if it doesn't exist
-          setUserDeckFromFirebase(user);
-          setUserInfo(user)
         }
       } catch (err) {
         console.log(err);
       }
     }
-    set();
+    set().then(() => {
+      setUserDeckFromFirebase(user);
+      setUserInfo(user);
+    });
   }, [user]);
 
   return (

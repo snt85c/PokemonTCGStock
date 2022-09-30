@@ -21,7 +21,6 @@ export default function Collection() {
         <div className="flex flex-col bg-slate-500 text-white">
           <div className="m-5flex justify-center items-center">
             <span className="flex justify-center pt-2">{user.displayName.split(" ")[0]}'s Cards</span>
-            {/* <CollectionValue /> */}
           </div>
           <CurrentCollectionInfo />
           <ListCollections />

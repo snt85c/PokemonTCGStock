@@ -18,7 +18,7 @@ export interface iState {
   conversionRate: number;
   conversionSym: string;
   setUserInfo: (logged: any) => void;
-  setConversionRate: (rate: string) => void;
+  setConversionRate: (rate: string, user?: User) => void;
 }
 
 const useProfileStore = create<iState>((set, get) => ({
@@ -28,31 +28,34 @@ const useProfileStore = create<iState>((set, get) => ({
   conversionSym: "",
 
   setUserInfo: async (user: User) => {
-    const result = (await getDoc(doc(db, "users", user.uid))).data();
-    if (result && result.user.currencies) {
-      result.user.currency =  "usd";
+    if (user) {
+      const result = (await getDoc(doc(db, "users", user.uid))).data();
+      set(() => ({
+        userInfo: result,
+      }));
+      get().setConversionRate(result && result.user.currency, user);
     }
-    set(() => ({
-      userInfo: result,
-      conversionSym: result && result.user.currency,
-    }));
-    get().setConversionRate(result && result.user.currency);
   },
 
-  setConversionRate: async (rate) => {
-    console.log(rate, "rate")
+  setConversionRate: async (rate, user) => {
+    console.log(rate, "rate");
     let newConversionRate = 1;
     Axios.get(
       `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/usd.json`
     ).then((res) => {
-      newConversionRate = res.data[rate];
+      newConversionRate = res.data[rate?rate:"usd"];
     });
+    console.log(rate, "rate");
 
-    set(() => ({ conversionRate: newConversionRate, conversionSym: rate }));
-    console.log(get().userInfo)
-    await setDoc(doc(db, "users", get().userInfo.user.uid), {user:{currency:get().conversionSym}}, {
-      merge: true,
-    });
+    set(() => ({ conversionRate: newConversionRate, conversionSym: rate?rate:"usd" }));
+    console.log(get().userInfo);
+    await setDoc(
+      doc(db, "users", get().userInfo.user.uid),
+      { user: { currency: rate?rate:"usd" } },
+      {
+        merge: true,
+      }
+    );
   },
 }));
 

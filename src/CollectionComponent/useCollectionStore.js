@@ -19,13 +19,71 @@ const useCollectionStore = create(
       decks: [],
       collectionValue: 0,
 
-      createNewCollection: async (user) => {
-        if (!get().decks) {
-          set(() => ({
-            decks: [],
-          }));
+      setCurrentDeckInfo: (user, request, type) => {
+        updateDoc(
+          doc(db, "users", user.uid, get().currentDeckInfo.id, "info"),
+          { [type]: request },{merge:true}
+        );
+        console.log({ ...get().currentDeckInfo, name: request })
+        set((state) => ({
+          currentDeckInfo: { ...state.currentDeckInfo, [type]: request },
+        }));
+      },
+
+      setUserDeckFromFirebase: async (user, deck) => {
+        //we get either the first deck at login or the deck that the user is asking for, plus an array of index to keep note of how many decks are available, and the info of the deck
+        async function fetch() {
+          if (user)
+            try {
+              let tempTodoArray = [];
+              // console.log(
+              //   "fetching ==>",
+              //   deck ? deck : "deck1",
+              //   " from Firestore"
+              // );
+              const collectionRef = collection(
+                db,
+                "users",
+                user.uid,
+                deck ? deck : "deck1"
+              );
+              const colSnap = await getDocs(collectionRef);
+              let cdi = null;
+              colSnap.forEach((item) => {
+                let temp = item.data();
+                if (temp.type !== "deck") {
+                  tempTodoArray.push(item.data());
+                } else {
+                  //inside the deck there is a Jolly with the information on the deck (creationDate, name, notes etc..)
+                  cdi = temp;
+                }
+              });
+              const docRef = doc(db, "users", user.uid);
+              const docSnap = (await getDoc(docRef)).data();
+              //we set all the cards in the current deck, also we set an array to keep a note of all the decsk
+              set(() => ({
+                currentDeck: tempTodoArray,
+                decks: docSnap && docSnap.decks ? docSnap.decks : ["deck1"],
+                currentDeckInfo: cdi,
+              }));
+              //then we calculate the value of the deck
+              get().calculateCollectionValue();
+              if (get().decks.length === 0) {
+                get().createNewCollection(user);
+              }
+            } catch (e) {
+              console.log(e);
+            }
         }
-        console.log("create new collection", get().decks);
+        fetch();
+      },
+
+      createNewCollection: async (user) => {
+        // if (!get().decks) {
+        //   set(() => ({
+        //     decks: [],
+        //   }));
+        // }
         if (get().currentDeckInfo && get().decks) {
           let newDeckId = "";
           if (get().decks) {
@@ -34,67 +92,29 @@ const useCollectionStore = create(
             newDeckId = "deck1";
           }
           const collectionRef = doc(db, "users", user.uid, newDeckId, "info");
-          setDoc(
+          await setDoc(
             collectionRef,
             {
               id: newDeckId,
-              name:"",
+              name: "",
               type: "deck",
               creationDate: new Date(),
               note: "",
             },
             { merge: true }
           );
-          const temp = {
-            decks: get().decks ? get().decks.push(newDeckId) : [],
-          };
-          const userRef = doc(db, "users", user.uid);
-          updateDoc(userRef, { decks: [...get().decks] }, { merge: true });
-          const temp2 = [...get().decks];
-          console.log(temp2);
-          set(() => ({
-            decks: temp2,
-          }));
-        }
-      },
 
-      setUserDeckFromFirebase: async (user, deck) => {
-        //we get either the first deck at login or the deck that the user is asking for, plus an array of index to keep note of how many decks are available, and the info of the deck
-        if (user)
-          try {
-            let tempTodoArray = [];
-            async function fetch() {
-              console.log("fetching ==>", deck ? deck : "deck1"," from Firestore");
-              const collectionRef = collection(
-                db,
-                "users",
-                user.uid,
-                deck ? deck : "deck1"
-              );
-              const colSnap = await getDocs(collectionRef);
-              colSnap.forEach((item) => {
-                let temp = item.data();
-                if (temp.type !== "deck") {
-                  tempTodoArray.push(item.data());
-                } else {
-                  //inside the deck there is a Jolly with the information on the deck (creationDate, name, notes etc..)
-                  set(() => ({ currentDeckInfo: temp }));
-                }
-              });
-              const docRef = doc(db, "users", user.uid);
-              const docSnap = (await getDoc(docRef)).data();
-              //we set all the cards in the current deck, also we set an array to keep a note of all the decsk
-              set(() => ({
-                currentDeck: tempTodoArray,
-                decks: docSnap.decks,
-              }));
-              //then we calculate the value of the deck
-              get().calculateCollectionValue();
-            }
-            fetch();
-          } catch (e) {
-            console.log(e);
-          }
+          const newDecksArray = [...get().decks, newDeckId];
+
+          const userRef = doc(db, "users", user.uid);
+          updateDoc(userRef, { decks: newDecksArray }, { merge: true });
+
+          set(() => ({
+            decks: newDecksArray,
+          }));
+        } else {
+          console.log("denied");
+        }
       },
 
       findInCollection: (request) => {
@@ -141,10 +161,12 @@ const useCollectionStore = create(
         }
       },
 
-      removeFromUserDeck: (request, userUid,) => {
+      removeFromUserDeck: (request, userUid) => {
         //remove on firebase, then filter the currentDeck for that card and return a new array without it
         try {
-          deleteDoc(doc(db, "users", userUid, get().currentDeckInfo.id, request.id));
+          deleteDoc(
+            doc(db, "users", userUid, get().currentDeckInfo.id, request.id)
+          );
           console.log("Document removed with ID: ", request.id.toString());
         } catch (e) {
           console.error("Error removing document: ", e);

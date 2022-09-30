@@ -35,7 +35,8 @@ export interface iCollectionStore {
     creationDate: Date;
     note: string;
   };
-  setCurrentDeckInfo: (user: User) => void;
+
+  setCurrentDeckInfo: (user: User, request:string, type:string) => void;
   createNewCollection: (user: User) => void;
   setUserDeckFromFirebase: (user: User, deck?: string) => void;
   addToUserDeck: (
