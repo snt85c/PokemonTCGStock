@@ -10,6 +10,7 @@ import {
   collection,
 } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
+import { isThisTypeNode } from "typescript";
 
 const useCollectionStore = create(
   devtools(
@@ -20,11 +21,15 @@ const useCollectionStore = create(
       collectionValue: 0,
 
       setCurrentDeckInfo: (user, request, type) => {
+        console.log(
+          { ...get().currentDeckInfo, [type]: request },
+          "setCurrentDeckInfo"
+        );
         updateDoc(
           doc(db, "users", user.uid, get().currentDeckInfo.id, "info"),
-          { [type]: request },{merge:true}
+          { [type]: request },
+          { merge: true }
         );
-        console.log({ ...get().currentDeckInfo, name: request })
         set((state) => ({
           currentDeckInfo: { ...state.currentDeckInfo, [type]: request },
         }));
@@ -32,15 +37,13 @@ const useCollectionStore = create(
 
       setUserDeckFromFirebase: async (user, deck) => {
         //we get either the first deck at login or the deck that the user is asking for, plus an array of index to keep note of how many decks are available, and the info of the deck
-        async function fetch() {
-          if (user)
+        if (user) {
+          let tempArray = [];
+          let tempDocSnap = {};
+          let tempCdi = {};
+          async function fetch() {
+            console.log("fetch", deck && deck);
             try {
-              let tempTodoArray = [];
-              // console.log(
-              //   "fetching ==>",
-              //   deck ? deck : "deck1",
-              //   " from Firestore"
-              // );
               const collectionRef = collection(
                 db,
                 "users",
@@ -52,68 +55,74 @@ const useCollectionStore = create(
               colSnap.forEach((item) => {
                 let temp = item.data();
                 if (temp.type !== "deck") {
-                  tempTodoArray.push(item.data());
+                  tempArray.push(item.data());
                 } else {
                   //inside the deck there is a Jolly with the information on the deck (creationDate, name, notes etc..)
                   cdi = temp;
                 }
               });
               const docRef = doc(db, "users", user.uid);
-              const docSnap = (await getDoc(docRef)).data();
+              tempDocSnap = (await getDoc(docRef)).data();
               //we set all the cards in the current deck, also we set an array to keep a note of all the decsk
-              set(() => ({
-                currentDeck: tempTodoArray,
-                decks: docSnap && docSnap.decks ? docSnap.decks : ["deck1"],
-                currentDeckInfo: cdi,
-              }));
-              //then we calculate the value of the deck
-              get().calculateCollectionValue();
-              if (get().decks.length === 0) {
-                get().createNewCollection(user);
-              }
+              tempCdi = cdi
+                ? cdi
+                : {
+                    id: "deck1",
+                    name: "",
+                    type: "deck",
+                    creationDate: new Date(),
+                    note: "",
+                  };
             } catch (e) {
               console.log(e);
             }
+            set(() => ({
+              currentDeck: tempArray,
+              decks: tempDocSnap && tempDocSnap.decks ? tempDocSnap.decks : [],
+              currentDeckInfo: tempCdi,
+            }));
+          }
+          fetch().then(() => {
+            if (get().decks.length === 0) {
+              get().createNewCollection(user);
+            }
+          });
+          //then we calculate the value of the deck
+          get().calculateCollectionValue();
         }
-        fetch();
       },
 
       createNewCollection: async (user) => {
-        // if (!get().decks) {
-        //   set(() => ({
-        //     decks: [],
-        //   }));
-        // }
-        if (get().currentDeckInfo && get().decks) {
-          let newDeckId = "";
-          if (get().decks) {
-            newDeckId = "deck" + (get().decks.length + 1);
+        if (user) {
+          if (/*get().currentDeckInfo && */ get().decks) {
+            let newDeckId = "";
+            if (get().decks.length !== 0) {
+              newDeckId = "deck" + (get().decks.length + 1);
+            } else {
+              newDeckId = "deck1";
+            }
+            const collectionRef = doc(db, "users", user.uid, newDeckId, "info");
+            await setDoc(
+              collectionRef,
+              {
+                id: newDeckId,
+                name: "",
+                type: "deck",
+                creationDate: new Date(),
+                note: "",
+              },
+              { merge: true }
+            );
+            const newDecksArray = [...get().decks, newDeckId];
+            const userRef = doc(db, "users", user.uid);
+            updateDoc(userRef, { decks: newDecksArray }, { merge: true });
+            set(() => ({
+              decks: newDecksArray,
+            }));
+            console.log("createNewCollection", newDecksArray);
           } else {
-            newDeckId = "deck1";
+            console.log("denied", get().currentDeckInfo, get().decks);
           }
-          const collectionRef = doc(db, "users", user.uid, newDeckId, "info");
-          await setDoc(
-            collectionRef,
-            {
-              id: newDeckId,
-              name: "",
-              type: "deck",
-              creationDate: new Date(),
-              note: "",
-            },
-            { merge: true }
-          );
-
-          const newDecksArray = [...get().decks, newDeckId];
-
-          const userRef = doc(db, "users", user.uid);
-          updateDoc(userRef, { decks: newDecksArray }, { merge: true });
-
-          set(() => ({
-            decks: newDecksArray,
-          }));
-        } else {
-          console.log("denied");
         }
       },
 

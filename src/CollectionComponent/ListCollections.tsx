@@ -27,8 +27,8 @@ export default function ListCollections() {
             setUserDeckFromFirebase(user, deck);
           }}
           style={{
-            backgroundColor: currentDeckInfo.id === deck ? "#334155" : "",
-            color: currentDeckInfo.id === deck ? "white" : "",
+            backgroundColor: currentDeckInfo && currentDeckInfo.id === deck ? "#334155" : "",
+            color: currentDeckInfo && currentDeckInfo.id === deck ? "white" : "",
           }}
         >
           {deck}

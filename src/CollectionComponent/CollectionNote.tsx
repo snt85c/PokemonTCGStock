@@ -15,11 +15,11 @@ export default function CollectionNote() {
   );
 //   const [note, setNewNote] = useState(currentNote ? currentNote : "no notes");
   const [isEditNote, setIsEditNote] = useState(false);
-    let change = ""
+    let changeNote = ""
   const handleClick = () => {
     setIsEditNote(false);
-    setCurrentDeckInfo(user, change, "note");
-    change = ""
+    setCurrentDeckInfo(user, changeNote, "note");
+    changeNote = ""
   };
 
   return (
@@ -31,7 +31,7 @@ export default function CollectionNote() {
             className="bg-gray-500 "
             defaultValue={currentNote}
             size={16}
-            onChange={(e) => change = e.target.value}
+            onChange={(e) => changeNote = e.target.value}
           />
           <button
             className="flex w-1/4 text-black justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300"

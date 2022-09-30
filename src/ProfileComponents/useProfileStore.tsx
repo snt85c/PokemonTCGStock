@@ -38,17 +38,14 @@ const useProfileStore = create<iState>((set, get) => ({
   },
 
   setConversionRate: async (rate, user) => {
-    console.log(rate, "rate");
     let newConversionRate = 1;
     Axios.get(
       `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/usd.json`
     ).then((res) => {
       newConversionRate = res.data[rate?rate:"usd"];
     });
-    console.log(rate, "rate");
 
     set(() => ({ conversionRate: newConversionRate, conversionSym: rate?rate:"usd" }));
-    console.log(get().userInfo);
     await setDoc(
       doc(db, "users", get().userInfo.user.uid),
       { user: { currency: rate?rate:"usd" } },

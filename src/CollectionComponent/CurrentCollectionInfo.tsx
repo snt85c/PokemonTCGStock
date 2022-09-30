@@ -1,7 +1,7 @@
 
 import { iCollectionStore } from "../Interfaces";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
-import CollectionNome from "./CollectionNome";
+import CollectionName from "./CollectionName";
 import CollectionNote from "./CollectionNote";
 import useCollectionStore from "./useCollectionStore";
 
@@ -22,7 +22,7 @@ export default function CurrentCollectionInfo() {
     <>
       {currentDeckInfo && (
         <div className="mx-2">
-          <CollectionNome />
+          <CollectionName />
           <CollectionNote />
           {rate && sym && (
             <b className="flex  items-center">

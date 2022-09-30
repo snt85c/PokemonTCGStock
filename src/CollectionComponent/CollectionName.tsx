@@ -3,7 +3,7 @@ import { iCollectionStore } from "../Interfaces";
 import { useUserAuth } from "../ProfileComponents/userAuth";
 import useCollectionStore from "./useCollectionStore";
 
-export default function CollectionNome() {
+export default function CollectionName() {
   const { user } = useUserAuth();
 
   const currentName = useCollectionStore(
@@ -16,12 +16,12 @@ export default function CollectionNome() {
 
 //   const [name, setNewName] = useState(currentName);
   const [isEditName, setIsEditName] = useState(false);
-  let change = ""
+  let changeName = ""
 
   const handleClick = () => {
     setIsEditName(false);
-    setCurrentDeckInfo(user, change, "name");
-    change = ""
+    setCurrentDeckInfo(user, changeName, "name");
+    changeName = ""
   };
 
   return (
@@ -33,7 +33,7 @@ export default function CollectionNome() {
             className="bg-gray-500 text-[2.5rem]"
             defaultValue={currentName}
             size={8}
-            onChange={(e) => change = e.target.value}
+            onChange={(e) => changeName = e.target.value}
           />
           <button
             className="flex w-1/4 text-black justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300"
