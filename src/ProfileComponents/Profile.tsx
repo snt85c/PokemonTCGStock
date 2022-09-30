@@ -12,9 +12,6 @@ export default function Profile() {
   const [options, setOptions] = useState<any>([]);
 
   const setRate = useProfileStore((state: iState) => state.setConversionRate);
-  const setSymbol = useProfileStore(
-    (state: iState) => state.setConversionSymbol
-  );
 
   const currencies = ["usd", "gbp", "aud", "eur"];
 
@@ -76,8 +73,7 @@ export default function Profile() {
           onChange={(e) => {
             console.log(info[e.value]);
             setTo(e.value);
-            setSymbol(e.value);
-            setRate(info[e.value]);
+            setRate(e.value);
           }}
           value={to}
           placeholder="set currency"

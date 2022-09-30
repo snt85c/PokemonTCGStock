@@ -1,3 +1,3 @@
-refactor firebase crud operations
+refactor firebase document/collection
 
-it was noticed that it's possible to create subcollection inside collection and so avoid to nest data inside arrays and have to recur in issues like having to delete and then add a new one which needs to be a precise operation to avoid duplication. by creating a subcollection, it's now possible to add multiple users deck as well as it will facilitate further expansion
+fix removeFromUserDeck in useCollectionStore to allow deletion over current deck

@@ -2,14 +2,11 @@ import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import {
   doc,
-  arrayUnion,
   updateDoc,
-  arrayRemove,
   deleteDoc,
   getDocs,
   getDoc,
   setDoc,
-  addDoc,
   collection,
 } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
@@ -40,7 +37,8 @@ const useCollectionStore = create(
           setDoc(
             collectionRef,
             {
-              name: newDeckId,
+              id: newDeckId,
+              name:"",
               type: "deck",
               creationDate: new Date(),
               note: "",
@@ -61,11 +59,12 @@ const useCollectionStore = create(
       },
 
       setUserDeckFromFirebase: async (user, deck) => {
+        //we get either the first deck at login or the deck that the user is asking for, plus an array of index to keep note of how many decks are available, and the info of the deck
         if (user)
           try {
             let tempTodoArray = [];
             async function fetch() {
-              console.log("fetching userDeck from Firestore");
+              console.log("fetching ==>", deck ? deck : "deck1"," from Firestore");
               const collectionRef = collection(
                 db,
                 "users",
@@ -75,22 +74,21 @@ const useCollectionStore = create(
               const colSnap = await getDocs(collectionRef);
               colSnap.forEach((item) => {
                 let temp = item.data();
-
                 if (temp.type !== "deck") {
                   tempTodoArray.push(item.data());
                 } else {
-                  console.log(temp);
+                  //inside the deck there is a Jolly with the information on the deck (creationDate, name, notes etc..)
                   set(() => ({ currentDeckInfo: temp }));
                 }
               });
               const docRef = doc(db, "users", user.uid);
               const docSnap = (await getDoc(docRef)).data();
-              console.log(docSnap);
+              //we set all the cards in the current deck, also we set an array to keep a note of all the decsk
               set(() => ({
                 currentDeck: tempTodoArray,
                 decks: docSnap.decks,
               }));
-
+              //then we calculate the value of the deck
               get().calculateCollectionValue();
             }
             fetch();
@@ -100,16 +98,19 @@ const useCollectionStore = create(
       },
 
       findInCollection: (request) => {
+        //we check if one card is already in the current deck
         return get().currentDeck.find((card) => card.id === request.id);
       },
 
       addToUserDeck: (request, user, deck) => {
         const found = get().findInCollection(request);
+        //we check if we have that card, if not we set the current deck with the new card
         if (!found) {
           set((state) => ({
             currentDeck: [...state.currentDeck, request],
           }));
           try {
+            //we set it on firebase
             const docRef = doc(
               db,
               "users",
@@ -130,6 +131,7 @@ const useCollectionStore = create(
           (card) => request.id == card.id
         );
         if (find >= 0) {
+          //if the card is found in the current deck, we get the index of that array and we change it, then we set it back
           const updatedArray = get().currentDeck;
           updatedArray[find] = request;
           set(() => ({
@@ -139,9 +141,10 @@ const useCollectionStore = create(
         }
       },
 
-      removeFromUserDeck: (request, userUid) => {
+      removeFromUserDeck: (request, userUid,) => {
+        //remove on firebase, then filter the currentDeck for that card and return a new array without it
         try {
-          deleteDoc(doc(db, "users", userUid, "deck1", request.id));
+          deleteDoc(doc(db, "users", userUid, get().currentDeckInfo.id, request.id));
           console.log("Document removed with ID: ", request.id.toString());
         } catch (e) {
           console.error("Error removing document: ", e);
@@ -154,6 +157,7 @@ const useCollectionStore = create(
       },
 
       calculateCollectionValue: () => {
+        //get the pre-calculated value of all the cards and sum it
         set(() => ({
           collectionValue: get()
             .currentDeck.map((card) => card.userDeckInfo.value)

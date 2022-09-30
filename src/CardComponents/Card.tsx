@@ -69,13 +69,13 @@ export default function Card(props: { data: iCard; type: string }) {
     };
     if (user) {
       console.log("add to collection");
-      addToUserDeck(newData, user.uid,currentDeckInfo.name);
+      addToUserDeck(newData, user.uid,currentDeckInfo.id);
     }
   };
 
   async function updateCardQuantity( newData: any) {
     setDoc(
-      doc(db, "users", user.uid, currentDeckInfo.name, newData.id),
+      doc(db, "users", user.uid, currentDeckInfo.id, newData.id),
       newData
     );
     updateCardOnUserDeck(newData);

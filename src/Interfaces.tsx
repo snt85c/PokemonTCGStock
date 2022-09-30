@@ -27,16 +27,21 @@ export interface iCardStore {
 
 export interface iCollectionStore {
   currentDeck: iCard[];
-  decks:[],
+  decks: [];
   collectionValue: number;
-  currentDeckInfo:{name:string}
-  setCurrentDeckInfo:(user:User) => void
-  createNewCollection:(user:User)=> void,
-  setUserDeckFromFirebase: (user: User, deck?:string) => void;
+  currentDeckInfo: {
+    id: string;
+    name: string;
+    creationDate: Date;
+    note: string;
+  };
+  setCurrentDeckInfo: (user: User) => void;
+  createNewCollection: (user: User) => void;
+  setUserDeckFromFirebase: (user: User, deck?: string) => void;
   addToUserDeck: (
     request: iCard | iCard[],
     userUid: string,
-    deck?:string
+    deck?: string
   ) => void;
   updateCardOnUserDeck: (request: iCard) => void;
   removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
@@ -66,7 +71,7 @@ export interface iCard {
       symbol: string;
     };
   };
-  number:number
+  number: number;
   subtypes?: string[];
   rarity: string;
   userDeckInfo: {

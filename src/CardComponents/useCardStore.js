@@ -1,19 +1,18 @@
 import create from "zustand";
-import { devtools, persist } from "zustand/middleware";
-import { doc, arrayUnion, updateDoc, arrayRemove } from "firebase/firestore";
-import { db } from "../ProfileComponents/Firebase";
+import { devtools } from "zustand/middleware";
 
 const useCardStore = create(
-  devtools((set, get) => ({
+  devtools((set) => ({
     card: {},
     cardValue: 0,
 
     setCard: (request) => {
+      //on render, set an object with all the data to be a Card
       set(() => ({ card: request }));
-      // get().setCardValue()
     },
 
     setCardValue: (card) => {
+      //get all the quantity keys for the card (normal, holo and such, then sum looking for the price of that card multiplied by his quantity)
       let value = Object.keys(card.userDeckInfo.quantity)
         .reduce(
           (prev, current) =>
@@ -24,59 +23,6 @@ const useCardStore = create(
         )
         .toFixed(2);
       set(() => ({ cardValue: value }));
-    },
-    setBulkQuantity: async (
-      userUid,
-      newQuantity,
-      currentData,
-      newData,
-      cardType
-    ) => {
-      await new Promise((res) => {
-        console.log("bulk");
-        updateDoc(doc(db, "users", userUid), {
-          userDeck: arrayRemove(currentData),
-        });
-        updateDoc(doc(db, "users", userUid), {
-          userDeck: arrayUnion(newData),
-        });
-        set((state) => ({
-          quantity: (state.card.userDeckInfo.quantity[cardType] = newQuantity),
-        }));
-        res();
-      });
-    },
-
-    increaseCardQuantity: async (userUid, currentData, newData, cardType) => {
-      await new Promise((res) => {
-        console.log("add");
-        updateDoc(doc(db, "users", userUid), {
-          userDeck: arrayRemove(currentData),
-        });
-        updateDoc(doc(db, "users", userUid), {
-          userDeck: arrayUnion(newData),
-        });
-        set((state) => ({
-          quantity: state.card.userDeckInfo.quantity[cardType]++,
-        }));
-        res();
-      });
-    },
-
-    decreaseCardQuantity: async (userUid, currentData, newData, cardType) => {
-      await new Promise((res) => {
-        console.log("remove");
-        updateDoc(doc(db, "users", userUid), {
-          userDeck: arrayRemove(currentData),
-        });
-        updateDoc(doc(db, "users", userUid), {
-          userDeck: arrayUnion(newData),
-        });
-        set((state) => ({
-          quantity: state.card.userDeckInfo.quantity[cardType]--,
-        }));
-        res();
-      });
     },
   }))
 );

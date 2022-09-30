@@ -1,6 +1,4 @@
-import {
-  useUserAuth,
-} from "./ProfileComponents/userAuth";
+import { useUserAuth } from "./ProfileComponents/userAuth";
 import "./index.css";
 import Navbar from "./ProfileComponents/Profile";
 import Search from "./SearchbarComponents/Search";
@@ -24,8 +22,7 @@ function App() {
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
 
-  const setUserInfo = useProfileStore((state: iState) => state.setUserInfo);
-  const setCurrentDeckInfo = useCollectionStore((state:iCollectionStore)=> state.setCurrentDeckInfo)
+  const setUserInfo = useProfileStore((state:iState) => state.setUserInfo)
 
   const isLoading = useRef(true);
 
@@ -36,34 +33,32 @@ function App() {
         if (user) {
           console.log("logged as: ", user.displayName);
           await setDoc(
-            doc(db, "users", user.uid), 
+            doc(db, "users", user.uid),
             {
               user: {
                 displayName: user.displayName && user.displayName.split(" ")[0],
                 photoURL: user.photoURL,
                 uid: user.uid,
-                // decks:["deck1"]
               },
             },
             { merge: true }
+            //we rewrite the basic info for the user, or we write them anew
           );
           const docRef = doc(db, "users", user.uid, "deck1", "info");
           setDoc(
             docRef,
-            { name: "deck1", type: "deck", creationDate: new Date(), note: "" },
+            { id: "deck1", name:"", type: "deck", creationDate: new Date(), note: "" },
             { merge: true }
-            );
-            // setUserInfo(user.uid)
-            // setCurrentDeckInfo(user)
-            setUserDeckFromFirebase(user);
+          );
+          //we also create a new deck collection in firebase, if it doesn't exist
+          setUserDeckFromFirebase(user);
+          setUserInfo(user)
         }
-        } catch (err) {
-          console.log(err);
-        }
+      } catch (err) {
+        console.log(err);
       }
-      set().then(() => {
-        isLoading.current = false;
-      });
+    }
+    set();
   }, [user]);
 
   return (
