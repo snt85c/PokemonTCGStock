@@ -21,6 +21,7 @@ const useCollectionStore = create(
       currentDeckInfo: null,
       decks: [],
       collectionValue: 0,
+      totalCollectionsValue: 0,
 
       setCurrentDeckInfo: (user, request, type) => {
         console.log(
@@ -222,6 +223,7 @@ const useCollectionStore = create(
         set(() => ({
           collectionValue: value,
         }));
+        get().calculateUserDecksTotalValue();
         setDoc(
           doc(db, "users", user, "decks", get().currentDeckInfo.id),
           {
@@ -232,18 +234,22 @@ const useCollectionStore = create(
       },
       calculateUserDecksTotalValue: async () => {
         let result = 0;
-
-          const queryRef = collection(db, "users", get().userUID, "decks");
-          const q = query(queryRef, where("value", ">", 0));
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((item) => {
-            result += item.data().value;
-          });
-          console.log(result);
-        }
-        return result;
+        const queryRef = collection(db, "users", get().userUID, "decks");
+        const q = query(queryRef, where("value", ">", 0));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((item) => {
+          result += item.data().value;
+        });
+        set(() => ({
+          totalCollectionsValue: result,
+        }));
+        await setDoc(
+          doc(db, "users", get().userUID),
+          { user: { total: result } },
+          { merge: true }
+        );
       },
-    )),
+    })),
 
     { name: "collection-storage" }
   )

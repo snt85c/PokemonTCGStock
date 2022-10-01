@@ -5,11 +5,9 @@ import { iCard, iCollectionStore } from "../Interfaces";
 import { useState } from "react";
 import CardModifyAmount from "./CardModifyAmount";
 import {
-  updateDoc,
   setDoc,
   doc,
-  arrayRemove,
-  arrayUnion,
+ 
 } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
@@ -21,6 +19,9 @@ export default function Card(props: { data: iCard; type: string }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const currentDeckInfo = useCollectionStore((state:iCollectionStore) => state.currentDeckInfo)
+
+  const collectionValue = useCollectionStore((state:iCollectionStore)=> state.collectionValue)
+  const totalCollectionsValue = useCollectionStore((state:iCollectionStore) => state.totalCollectionsValue)
 
   const cardValue = (card: iCard) => {
     if (props.type === "collection") {
@@ -174,13 +175,19 @@ export default function Card(props: { data: iCard; type: string }) {
               <b className="text-2xl flex items-center justify-between">
                 <span>{props.data.name}</span>{" "}
                 {props.type === "collection" && (
-                  <>
-                    <span>
+                  <div className="flex flex-col">
+                    <span className="leading-none">
                       {(card.userDeckInfo.value * rate).toFixed(2) +
                         " " +
                         sym.toLocaleUpperCase()}
                     </span>
-                  </>
+                    <span className="text-[0.7rem] leading-none italic">
+                      {((card.userDeckInfo.value / collectionValue) * 100).toFixed(1)}% of collection
+                    </span>
+                    <span className="text-[0.7rem] leading-none italic">
+                      {((card.userDeckInfo.value / totalCollectionsValue) * 100).toFixed(1)}% of total
+                    </span>
+                  </div>
                 )}
               </b>
               <div>series: {props.data.set && props.data.set.series}</div>

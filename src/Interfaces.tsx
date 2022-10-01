@@ -28,6 +28,7 @@ export interface iCardStore {
 export interface iCollectionStore {
   currentDeck: iCard[];
   decks: [];
+  totalCollectionsValue:number,
   collectionValue: number;
   currentDeckInfo: {
     id: string;
@@ -49,7 +50,7 @@ export interface iCollectionStore {
   removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
   findInCollection: (request: iCard) => boolean;
   calculateCollectionValue: () => number;
-  calculateUserDecksTotalValue: () => number;
+  calculateUserDecksTotalValue: () => Promise<number>;
 }
 
 export interface iCard {
