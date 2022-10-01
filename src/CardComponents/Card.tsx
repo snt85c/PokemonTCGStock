@@ -75,7 +75,7 @@ export default function Card(props: { data: iCard; type: string }) {
 
   async function updateCardQuantity( newData: any) {
     setDoc(
-      doc(db, "users", user.uid, currentDeckInfo.id, newData.id),
+      doc(db, "users", user.uid,"decks", currentDeckInfo.id,"cards", newData.id),
       newData
     );
     updateCardOnUserDeck(newData);

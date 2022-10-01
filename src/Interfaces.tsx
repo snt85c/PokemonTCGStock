@@ -35,8 +35,9 @@ export interface iCollectionStore {
     creationDate: Date;
     note: string;
   };
+  userUID: string;
 
-  setCurrentDeckInfo: (user: User, request:string, type:string) => void;
+  setCurrentDeckInfo: (user: User, request: string, type: string) => void;
   createNewCollection: (user: User) => void;
   setUserDeckFromFirebase: (user: User, deck?: string) => void;
   addToUserDeck: (
@@ -47,8 +48,8 @@ export interface iCollectionStore {
   updateCardOnUserDeck: (request: iCard) => void;
   removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
   findInCollection: (request: iCard) => boolean;
-
   calculateCollectionValue: () => number;
+  calculateUserDecksTotalValue: () => number;
 }
 
 export interface iCard {

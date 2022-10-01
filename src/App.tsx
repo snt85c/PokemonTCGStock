@@ -21,13 +21,8 @@ function App() {
   const setUserDeckFromFirebase = useCollectionStore(
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
-  const decks = useCollectionStore((state: iCollectionStore) => state.decks);
 
   const setUserInfo = useProfileStore((state: iState) => state.setUserInfo);
-
-  const createNewCollection = useCollectionStore(
-    (state: iCollectionStore) => state.createNewCollection
-  );
 
   const isLoading = useRef(true);
 
