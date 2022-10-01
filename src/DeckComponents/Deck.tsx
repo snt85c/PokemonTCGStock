@@ -126,10 +126,10 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
 
   return (
     <>
-      <div className="flex flex-col overflow-scroll bg-slate-500 text-black min-h-screen">
+      <div className="flex flex-col overflow-scroll bg-slate-500 text-black min-h-screen  dark:bg-slate-900 dark:text-white duration-300">
         {props.deck.length ? (
           <>
-          <div className="rounded-xl bg-white mx-2 p-2">
+          <div className="rounded-xl bg-white mx-2 p-2 dark:bg-slate-500">
 
             <Sort {...{ sort, setSort, isSortingAscending,setIsSortingAscending }} />
             <Filter cardFilter={cardFilter} handleClick={handleClickFilter} />

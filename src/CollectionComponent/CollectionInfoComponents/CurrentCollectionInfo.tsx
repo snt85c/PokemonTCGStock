@@ -1,9 +1,11 @@
 
-import { iCollectionStore } from "../Interfaces";
-import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
+import { iCollectionStore } from "../../Interfaces";
+import useProfileStore, { iState } from "../../ProfileComponents/useProfileStore";
+import CollectionValue from "./CollectionValue";
+import useCollectionStore from "../useCollectionStore";
 import CollectionName from "./CollectionName";
 import CollectionNote from "./CollectionNote";
-import useCollectionStore from "./useCollectionStore";
+import CollectionCreationDate from "./CollectionCreationDate";
 
 export default function CurrentCollectionInfo() {
  
@@ -24,13 +26,8 @@ export default function CurrentCollectionInfo() {
         <div className="mx-2">
           <CollectionName />
           <CollectionNote />
-          {rate && sym && (
-            <b className="flex  items-center">
-              total value:{" "}
-              {(value * rate).toFixed(2) + " " + sym.toLocaleUpperCase()}
-            </b>
-          )}
-          <div></div>
+          {/* <CollectionCreationDate /> */}
+          <CollectionValue />
         </div>
       )}
     </>

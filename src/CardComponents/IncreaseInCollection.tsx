@@ -1,3 +1,5 @@
+import { IoMdAddCircle, IoMdRemoveCircle } from "react-icons/io";
+
 export default function IncreaseInCollection(props: {
   updateQuantity: (
     type: "add" | "decrease" | "bulk",
@@ -12,7 +14,7 @@ export default function IncreaseInCollection(props: {
         props.updateQuantity("add", props.cardType);
       }}
     >
-      [+]
+      <IoMdAddCircle />
     </button>
   );
 }

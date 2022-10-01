@@ -12,8 +12,8 @@ export default function Filter(props: {
   const { ref } = HandleClickOutsideComponent(setIsFilterOpen);
 
   return (
-    <div className="relative pt-1">
-      <div className="flex flex-row">
+    <div className="relative pt-1 ">
+      <div className="flex flex-row dark:text-black">
         <span
           onClick={() => setIsFilterOpen(!isFilterOpen)}
           className="flex w-2/3 justify-center items-center bg-white hover:bg-gray-300  ml-3 rounded duration-300"
@@ -22,7 +22,7 @@ export default function Filter(props: {
           {isFilterOpen ? "filters" : "open filter"}
         </span>
         <button
-          className="flex w-1/4 justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300"
+          className="flex w-1/4 justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300 "
           onClick={() => {props.handleClick("clear", []);setIsFilterOpen(false)}}
         >
           clear

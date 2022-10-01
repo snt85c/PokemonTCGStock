@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { iCollectionStore } from "../Interfaces";
-import { useUserAuth } from "../ProfileComponents/userAuth";
-import useCollectionStore from "./useCollectionStore";
+import {  useState } from "react";
+import { iCollectionStore } from "../../Interfaces";
+import { useUserAuth } from "../../ProfileComponents/userAuth";
+import useCollectionStore from "../useCollectionStore";
 
 export default function CollectionName() {
   const { user } = useUserAuth();
@@ -14,7 +14,6 @@ export default function CollectionName() {
     (state: iCollectionStore) => state.setCurrentDeckInfo
   );
 
-//   const [name, setNewName] = useState(currentName);
   const [isEditName, setIsEditName] = useState(false);
   let changeName = ""
 
@@ -44,10 +43,10 @@ export default function CollectionName() {
         </div>
       ) : (
         <div
-          className="text-[2.5rem] leading-none"
+          className="text-[2.5rem] leading-none font-extrabold"
           onClick={() => setIsEditName(true)}
         >
-          {currentName ? currentName : "empty"}
+          {currentName ? currentName : "Collection"}
         </div>
       )}
     </>

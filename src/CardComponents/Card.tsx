@@ -4,13 +4,9 @@ import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
 import { useState } from "react";
 import CardModifyAmount from "./CardModifyAmount";
-import {
-  setDoc,
-  doc,
- 
-} from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
-import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
+import CardValue from "./CardValue";
 
 export default function Card(props: { data: iCard; type: string }) {
   const { user } = useUserAuth();
@@ -18,10 +14,9 @@ export default function Card(props: { data: iCard; type: string }) {
   const [card, setCard] = useState<iCard>(props.data);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const currentDeckInfo = useCollectionStore((state:iCollectionStore) => state.currentDeckInfo)
-
-  const collectionValue = useCollectionStore((state:iCollectionStore)=> state.collectionValue)
-  const totalCollectionsValue = useCollectionStore((state:iCollectionStore) => state.totalCollectionsValue)
+  const currentDeckInfo = useCollectionStore(
+    (state: iCollectionStore) => state.currentDeckInfo
+  );
 
   const cardValue = (card: iCard) => {
     if (props.type === "collection") {
@@ -70,13 +65,21 @@ export default function Card(props: { data: iCard; type: string }) {
     };
     if (user) {
       console.log("add to collection");
-      addToUserDeck(newData, user.uid,currentDeckInfo.id);
+      addToUserDeck(newData, user.uid, currentDeckInfo.id);
     }
   };
 
-  async function updateCardQuantity( newData: any) {
+  async function updateCardQuantity(newData: any) {
     setDoc(
-      doc(db, "users", user.uid,"decks", currentDeckInfo.id,"cards", newData.id),
+      doc(
+        db,
+        "users",
+        user.uid,
+        "decks",
+        currentDeckInfo.id,
+        "cards",
+        newData.id
+      ),
       newData
     );
     updateCardOnUserDeck(newData);
@@ -114,16 +117,13 @@ export default function Card(props: { data: iCard; type: string }) {
         let adjustedValue = (newData.userDeckInfo.value = cardValue(newData));
         let newDataWithAdjustedValue = { ...newData, adjustedValue };
         if (type === "add" && card.userDeckInfo.quantity[cardType] > -1) {
-          updateCardQuantity(newDataWithAdjustedValue).then(() => {
-          });
+          updateCardQuantity(newDataWithAdjustedValue).then(() => {});
         }
         if (type === "decrease" && card.userDeckInfo.quantity[cardType] > 0) {
-          updateCardQuantity(newDataWithAdjustedValue).then(() => {
-          });
+          updateCardQuantity(newDataWithAdjustedValue).then(() => {});
         }
         if (type === "bulk") {
-          updateCardQuantity( newDataWithAdjustedValue).then(() => {
-          });
+          updateCardQuantity(newDataWithAdjustedValue).then(() => {});
         }
       }
     } catch (e) {
@@ -140,9 +140,6 @@ export default function Card(props: { data: iCard; type: string }) {
       removeFromUserDeck(data, user.uid);
     }
   };
-
-  const rate = useProfileStore((state: iState) => state.conversionRate);
-  const sym = useProfileStore((state: iState) => state.conversionSym);
 
   return (
     <>
@@ -171,35 +168,44 @@ export default function Card(props: { data: iCard; type: string }) {
               width={120}
             />
 
-            <div className="flex flex-col w-full">
-              <b className="text-2xl flex items-center justify-between">
-                <span>{props.data.name}</span>{" "}
-                {props.type === "collection" && (
-                  <div className="flex flex-col">
-                    <span className="leading-none">
-                      {(card.userDeckInfo.value * rate).toFixed(2) +
-                        " " +
-                        sym.toLocaleUpperCase()}
-                    </span>
-                    <span className="text-[0.7rem] leading-none italic">
-                      {((card.userDeckInfo.value / collectionValue) * 100).toFixed(1)}% of collection
-                    </span>
-                    <span className="text-[0.7rem] leading-none italic">
-                      {((card.userDeckInfo.value / totalCollectionsValue) * 100).toFixed(1)}% of total
+            <div className="flex flex-row justify-between w-full">
+              <div className="flex flex-col justify-between">
+                <span className="text-2xl font-extrabold flex items-center justify-between">
+                  {props.data.name}
+                </span>
+                <div className="text-[0.7rem]">
+                  <div className="flex gap-2">
+                    series:{" "}
+                    <span className="font-bold">
+                      {props.data.set && props.data.set.series}
                     </span>
                   </div>
+                  <div className="flex gap-2">
+                    rarity:{" "}
+                    <span className="font-bold">
+                      {props.data.rarity ? props.data.rarity : "n/a"}
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    set:{" "}
+                    <span className="font-bold">
+                      {props.data.set && props.data.set.name}
+                    </span>
+                  </div>
+                </div>
+                {props.type === "collection" && (
+                  <CardModifyAmount
+                    quantity={card.userDeckInfo.quantity}
+                    updateQuantity={updateQuantity}
+                  />
                 )}
-              </b>
-              <div>series: {props.data.set && props.data.set.series}</div>
-              <div>rarity: {props.data.rarity ? props.data.rarity : "n/a"}</div>
-              <div>set:{props.data.set && props.data.set.name}</div>
+              </div>
 
-              {props.type === "collection" && (
-                <CardModifyAmount
-                  quantity={card.userDeckInfo.quantity}
-                  updateQuantity={updateQuantity}
-                />
-              )}
+              <div>
+                {props.type === "collection" && (
+                  <CardValue value={card.userDeckInfo.value} />
+                )}
+              </div>
             </div>
           </div>
           {props.type === "search" ? (

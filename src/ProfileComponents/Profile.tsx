@@ -3,6 +3,8 @@ import Axios from "axios";
 import Dropdown from "react-dropdown";
 import { useEffect, useState } from "react";
 import useProfileStore, { iState } from "./useProfileStore";
+import Darkmode from "./Darkmode";
+import CollectionDelete from "../CollectionComponent/CollectionDelete";
 
 export default function Profile() {
   const { user, googleSignIn, logout } = useUserAuth();
@@ -45,7 +47,7 @@ export default function Profile() {
   function Logout() {
     return (
       <button
-        className="px-2 rounded border-black border-2 bg-white m-2"
+        className="px-2 rounded border-black border-2 bg-white m-2 dark:text-black"
         onClick={() => {
           logout();
         }}
@@ -56,9 +58,9 @@ export default function Profile() {
   }
 
   return (
-    <section className="h-screen p-5 bg-slate-500">
-      <div className=" flex flex-col justify-center items-center m-5 relative">
-        {user && <div>uid:{user.uid}</div>}
+    <section className="flex flex-col gap-2 h-screen p-5 bg-slate-500 dark:bg-slate-900 dark:text-white duration-300">
+      <div className=" flex flex-col justify-center items-center m-5 relative ">
+        {/* {user && <div>uid:{user.uid}</div>} */}
         {user && <img src={user.photoURL} className="w-10 h-10 rounded-full" />}
         {user && <div>{user.displayName}</div>}
         {!user && <Login />}
@@ -68,7 +70,7 @@ export default function Profile() {
       <div className="max-h-1/4 overflow-scroll">
         <h3>set conversion</h3>
         <Dropdown
-          className="bg-white"
+          className="bg-white dark:text-black"
           options={options}
           onChange={(e) => {
             console.log(info[e.value]);
@@ -79,6 +81,8 @@ export default function Profile() {
           placeholder="set currency"
         />
       </div>
+      {/* <CollectionDelete /> */}
+      <Darkmode />
     </section>
   );
 }

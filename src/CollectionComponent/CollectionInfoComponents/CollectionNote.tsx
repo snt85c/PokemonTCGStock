@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { iCollectionStore } from "../Interfaces";
-import { useUserAuth } from "../ProfileComponents/userAuth";
-import useCollectionStore from "./useCollectionStore";
+import {  useState } from "react";
+import { iCollectionStore } from "../../Interfaces";
+import { useUserAuth } from "../../ProfileComponents/userAuth";
+import useCollectionStore from "../useCollectionStore";
+
 
 export default function CollectionNote() {
   const { user } = useUserAuth();
@@ -42,7 +43,7 @@ export default function CollectionNote() {
         </div>
       ) : (
         <div className="text-sm" onClick={() => setIsEditNote(true)}>
-          {currentNote ? currentNote : "empty"}
+          note:{currentNote ? currentNote : "empty"}
         </div>
       )}
     </>

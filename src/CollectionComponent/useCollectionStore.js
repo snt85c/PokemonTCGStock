@@ -23,11 +23,7 @@ const useCollectionStore = create(
       collectionValue: 0,
       totalCollectionsValue: 0,
 
-      setCurrentDeckInfo: (user, request, type) => {
-        console.log(
-          { ...get().currentDeckInfo, [type]: request },
-          "setCurrentDeckInfo"
-        );
+      setCurrentDeckInfo: (request, type) => {
         updateDoc(
           doc(db, "users", get().userUID, "decks", get().currentDeckInfo.id),
           { [type]: request }
@@ -45,7 +41,6 @@ const useCollectionStore = create(
           let tempDecks = [];
           let tempCdi = {};
           async function fetch() {
-            console.log("fetch", deck && deck);
             try {
               const collectionRef = collection(
                 db,
@@ -213,6 +208,7 @@ const useCollectionStore = create(
             return item.id !== request.id;
           }),
         }));
+        get().calculateCollectionValue();
       },
 
       calculateCollectionValue: (user) => {
@@ -232,6 +228,7 @@ const useCollectionStore = create(
           { merge: true }
         );
       },
+
       calculateUserDecksTotalValue: async () => {
         let result = 0;
         const queryRef = collection(db, "users", get().userUID, "decks");
@@ -248,6 +245,52 @@ const useCollectionStore = create(
           { user: { total: result } },
           { merge: true }
         );
+      },
+
+      deleteCollection: async (id) => {
+        switch (id) {
+          case "deck1":
+            let temp2 = await getDocs(
+              collection(db, "users", get().userUID, "decks", "deck1", "cards")
+            );
+            temp2.forEach((item) => {
+              deleteDoc(
+                doc(
+                  db,
+                  "users",
+                  get().userUID,
+                  "decks",
+                  "deck1",
+                  "cards",
+                  item.id
+                )
+              );
+            });
+            get().setUserDeckFromFirebase(get().userUID, "deck1");
+            return;
+          default:
+            let temp3 = await getDocs(
+              collection(db, "users", get().userUID, "decks", id, "cards")
+            );
+            temp3.forEach((item) => {
+              deleteDoc(
+                doc(db, "users", get().userUID, "decks", id, "cards", item.id)
+              );
+            });
+            set(() => ({
+              decks: get().decks.filter((deck) => deck === id),
+              currentDeckInfo: {
+                id: "deck1",
+                name: "",
+                type: "deck",
+                creationDate: new Date(),
+                note: "",
+                value: 0,
+              },
+            }));
+            get().setUserDeckFromFirebase(get().userUID);
+            break;
+        }
       },
     })),
 

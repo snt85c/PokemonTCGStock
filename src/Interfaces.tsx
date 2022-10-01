@@ -1,4 +1,5 @@
 import { User } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
 
 export interface iCardStore {
   card: iCard;
@@ -33,7 +34,7 @@ export interface iCollectionStore {
   currentDeckInfo: {
     id: string;
     name: string;
-    creationDate: Date;
+    creationDate: Timestamp;
     note: string;
   };
   userUID: string;
@@ -51,6 +52,7 @@ export interface iCollectionStore {
   findInCollection: (request: iCard) => boolean;
   calculateCollectionValue: () => number;
   calculateUserDecksTotalValue: () => Promise<number>;
+  deleteCollection: (id:string) => void
 }
 
 export interface iCard {

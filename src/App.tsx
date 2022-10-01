@@ -17,14 +17,21 @@ import useProfileStore, { iState } from "./ProfileComponents/useProfileStore";
 
 function App() {
   const { user } = useUserAuth();
-
   const setUserDeckFromFirebase = useCollectionStore(
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
-
   const setUserInfo = useProfileStore((state: iState) => state.setUserInfo);
-
+  const isDarkMode = useProfileStore((state:iState)=>state.darkmode)
   const isLoading = useRef(true);
+
+  if (isDarkMode 
+    // || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) 
+    {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
 
   useEffect(() => {
     isLoading.current = true;

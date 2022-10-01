@@ -1,3 +1,4 @@
+import {  IoMdRemoveCircle } from "react-icons/io";
 
 export default function DecreaseInCollection(props: {
   updateQuantity: (
@@ -13,7 +14,8 @@ export default function DecreaseInCollection(props: {
         props.updateQuantity("decrease", props.cardType);
       }}
     >
-      [-]
+      <IoMdRemoveCircle />
+      {/* [-] */}
     </button>
   );
 }
