@@ -14,12 +14,11 @@ export default function CollectionNote() {
   const setCurrentDeckInfo = useCollectionStore(
     (state: iCollectionStore) => state.setCurrentDeckInfo
   );
-//   const [note, setNewNote] = useState(currentNote ? currentNote : "no notes");
   const [isEditNote, setIsEditNote] = useState(false);
     let changeNote = ""
   const handleClick = () => {
     setIsEditNote(false);
-    setCurrentDeckInfo(user, changeNote, "note");
+    setCurrentDeckInfo(changeNote, "note");
     changeNote = ""
   };
 

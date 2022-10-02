@@ -170,7 +170,7 @@ export default function Card(props: { data: iCard; type: string }) {
 
             <div className="flex flex-row justify-between w-full">
               <div className="flex flex-col justify-between">
-                <span className="text-2xl font-extrabold flex items-center justify-between">
+                <span className="text-md font-extrabold flex items-center justify-between whitespace-nowrap">
                   {props.data.name}
                 </span>
                 <div className="text-[0.7rem]">
@@ -201,7 +201,7 @@ export default function Card(props: { data: iCard; type: string }) {
                 )}
               </div>
 
-              <div>
+              <div className="min-w-[1/2]">
                 {props.type === "collection" && (
                   <CardValue value={card.userDeckInfo.value} />
                 )}

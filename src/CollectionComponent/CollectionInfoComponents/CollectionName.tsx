@@ -19,7 +19,7 @@ export default function CollectionName() {
 
   const handleClick = () => {
     setIsEditName(false);
-    setCurrentDeckInfo(user, changeName, "name");
+    setCurrentDeckInfo( changeName, "name");
     changeName = ""
   };
 
