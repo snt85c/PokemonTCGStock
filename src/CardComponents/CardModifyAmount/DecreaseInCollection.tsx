@@ -10,6 +10,7 @@ export default function DecreaseInCollection(props: {
 }) {
   return (
     <button
+    className="text-gray-500 hover:text-white duration-300"
       onClick={() => {
         props.updateQuantity("decrease", props.cardType);
       }}

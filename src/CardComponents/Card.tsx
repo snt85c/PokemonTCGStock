@@ -3,7 +3,7 @@ import { useUserAuth } from "../ProfileComponents/userAuth";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
 import { useState } from "react";
-import CardModifyAmount from "./CardModifyAmount";
+import CardModifyAmount from "./CardModifyAmount/CardModifyAmount";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
 import CardValue from "./CardValue";
@@ -154,7 +154,7 @@ export default function Card(props: { data: iCard; type: string }) {
             src={props.data.set.images.symbol}
           />
           <img
-            className="absolute  max-w-[5rem] max-h-[3rem] bottom-2 right-2 z-30"
+            className="absolute  max-w-[4rem] max-h-[3rem] bottom-2 right-2 z-30"
             src={props.data.set.images.logo}
           />
 
@@ -170,10 +170,15 @@ export default function Card(props: { data: iCard; type: string }) {
 
             <div className="flex flex-row justify-between w-full">
               <div className="flex flex-col justify-between">
-                <span className="text-md font-extrabold flex items-center justify-between whitespace-nowrap">
+                <span className="text-2xl font-extrabold flex items-center justify-between">
                   {props.data.name}
                 </span>
-                <div className="text-[0.7rem]">
+                <div className="min-w-[1/2]">
+                {props.type === "collection" && (
+                  <CardValue value={card.userDeckInfo.value} />
+                )}
+              </div>
+                <div className="text-[0.7rem] leading-none">
                   <div className="flex gap-2">
                     series:{" "}
                     <span className="font-bold">
@@ -201,11 +206,7 @@ export default function Card(props: { data: iCard; type: string }) {
                 )}
               </div>
 
-              <div className="min-w-[1/2]">
-                {props.type === "collection" && (
-                  <CardValue value={card.userDeckInfo.value} />
-                )}
-              </div>
+              
             </div>
           </div>
           {props.type === "search" ? (

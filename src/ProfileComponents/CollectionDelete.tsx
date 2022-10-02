@@ -1,9 +1,9 @@
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../ProfileComponents/Firebase";
-import { useUserAuth } from "../ProfileComponents/userAuth";
+import { db } from "./Firebase";
+import { useUserAuth } from "./userAuth";
 import Dropdown from "react-dropdown";
-import useCollectionStore from "./useCollectionStore";
+import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "../Interfaces";
 
 export default function CollectionDelete() {
@@ -36,7 +36,7 @@ export default function CollectionDelete() {
         className="bg-white dark:text-black"
         options={options}
         placeholder="collections"
-        onChange={(e) => deleteCollection(e.value)}
+        onChange={(e) => {deleteCollection(e.value); getCollections()}}
       />
     </>
   );

@@ -4,7 +4,7 @@ import Dropdown from "react-dropdown";
 import { useEffect, useState } from "react";
 import useProfileStore, { iState } from "./useProfileStore";
 import Darkmode from "./Darkmode";
-import CollectionDelete from "../CollectionComponent/CollectionDelete";
+import CollectionDelete from "./CollectionDelete";
 
 export default function Profile() {
   const { user, googleSignIn, logout } = useUserAuth();
@@ -81,7 +81,7 @@ export default function Profile() {
           placeholder="set currency"
         />
       </div>
-      {/* <CollectionDelete /> */}
+      <CollectionDelete />
       <Darkmode />
     </section>
   );

@@ -24,6 +24,7 @@ const useCollectionStore = create(
       totalCollectionsValue: 0,
 
       setCurrentDeckInfo: (request, type) => {
+        //change name or note by having type sending "type" | "note", request is a string
         updateDoc(
           doc(db, "users", get().userUID, "decks", get().currentDeckInfo.id),
           { [type]: request }
@@ -33,9 +34,9 @@ const useCollectionStore = create(
         }));
       },
 
-      setUserDeckFromFirebase: async (user, deck) => {
+      setUserDeckFromFirebase: async (userUID, deck) => {
         //we get either the first deck at login or the deck that the user is asking for, plus an array of index to keep note of how many decks are available, and the info of the deck
-        if (user) {
+        if (userUID) {
           let tempArray = [];
           let tempDocSnap = {};
           let tempDecks = [];
@@ -45,7 +46,7 @@ const useCollectionStore = create(
               const collectionRef = collection(
                 db,
                 "users",
-                user.uid,
+                userUID,
                 "decks",
                 deck ? deck : "deck1",
                 "cards"
@@ -57,7 +58,7 @@ const useCollectionStore = create(
               const docRef = doc(
                 db,
                 "users",
-                user.uid,
+                userUID,
                 "decks",
                 deck ? deck : "deck1"
               );
@@ -71,7 +72,7 @@ const useCollectionStore = create(
                     creationDate: new Date(),
                     note: "",
                   };
-              const colRef2 = collection(db, "users", user.uid, "decks");
+              const colRef2 = collection(db, "users", userUID, "decks");
               let list = (await getDocs(colRef2)).size;
               for (let i = 0; i < list; i++) {
                 tempDecks.push("deck" + (i + 1));
@@ -83,21 +84,22 @@ const useCollectionStore = create(
               currentDeck: tempArray,
               decks: tempDecks,
               currentDeckInfo: tempCdi,
-              userUID: user.uid,
+              userUID: userUID,
             }));
           }
           fetch().then(() => {
             if (get().decks.length === 0) {
-              get().createNewCollection(user);
+              console.log("trigger")
+              get().createNewCollection(userUID);
             }
-            get().calculateCollectionValue(user.uid);
+            get().calculateCollectionValue(userUID);
           });
           //then we calculate the value of the deck
         }
       },
 
-      createNewCollection: async (user) => {
-        if (user) {
+      createNewCollection: async (userUID) => {
+        if (userUID) {
           if (/*get().currentDeckInfo && */ get().decks) {
             let newDeckId = "";
             if (get().decks.length !== 0) {
@@ -109,7 +111,7 @@ const useCollectionStore = create(
             const collectionRef = doc(
               db,
               "users",
-              user.uid,
+              userUID,
               "decks",
               newDeckId
             );
@@ -126,7 +128,7 @@ const useCollectionStore = create(
               { merge: true }
             );
             const newDecksArray = [...get().decks, newDeckId];
-            const userRef = doc(db, "users", user.uid);
+            const userRef = doc(db, "users", userUID);
             updateDoc(userRef, { decks: newDecksArray }, { merge: true });
             set(() => ({
               decks: newDecksArray,
@@ -211,7 +213,7 @@ const useCollectionStore = create(
         get().calculateCollectionValue();
       },
 
-      calculateCollectionValue: (user) => {
+      calculateCollectionValue: (userUID) => {
         //get the pre-calculated value of all the cards and sum it
         let value = get()
           .currentDeck.map((card) => card.userDeckInfo.value)
@@ -221,7 +223,7 @@ const useCollectionStore = create(
         }));
         get().calculateUserDecksTotalValue();
         setDoc(
-          doc(db, "users", user, "decks", get().currentDeckInfo.id),
+          doc(db, "users", userUID, "decks", get().currentDeckInfo.id),
           {
             value: value,
           },
@@ -248,12 +250,13 @@ const useCollectionStore = create(
       },
 
       deleteCollection: async (id) => {
+        //we dont want to leave the user without a deck ready to be used, so if he select the first deck, it will jsut wipe it clean without removing it completely, other decks will be removed instead
         switch (id) {
           case "deck1":
-            let temp2 = await getDocs(
+            let deck1temp = await getDocs(
               collection(db, "users", get().userUID, "decks", "deck1", "cards")
             );
-            temp2.forEach((item) => {
+            deck1temp.forEach((item) => {
               deleteDoc(
                 doc(
                   db,
@@ -266,29 +269,23 @@ const useCollectionStore = create(
                 )
               );
             });
+            await updateDoc(doc(db, "users", get().userUID, "decks", "deck1"),{name:"", note:""});
             get().setUserDeckFromFirebase(get().userUID, "deck1");
             return;
           default:
-            let temp3 = await getDocs(
+            let anyOtherDeckTemp = await getDocs(
               collection(db, "users", get().userUID, "decks", id, "cards")
-            );
-            temp3.forEach((item) => {
+            )
+            anyOtherDeckTemp.forEach((item) => {
               deleteDoc(
                 doc(db, "users", get().userUID, "decks", id, "cards", item.id)
               );
             });
+            deleteDoc(doc(db, "users", get().userUID, "decks", id));
             set(() => ({
-              decks: get().decks.filter((deck) => deck === id),
-              currentDeckInfo: {
-                id: "deck1",
-                name: "",
-                type: "deck",
-                creationDate: new Date(),
-                note: "",
-                value: 0,
-              },
+              decks: get().decks.filter((deck) => deck !== id),
             }));
-            get().setUserDeckFromFirebase(get().userUID);
+            get().setUserDeckFromFirebase(get().userUID, "deck1");
             break;
         }
       },

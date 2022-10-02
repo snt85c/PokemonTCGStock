@@ -24,7 +24,7 @@ export default function ListCollections() {
           key={uuidv4()}
           className="flex px-2 mt-1 justify-center items-center text-black bg-white hover:bg-gray-300  ml-1 rounded duration-300"
           onClick={() => {
-            setUserDeckFromFirebase(user, deck);
+            setUserDeckFromFirebase(user.uid, deck);
           }}
           style={{
             backgroundColor: currentDeckInfo && currentDeckInfo.id === deck ? "#334155" : "",

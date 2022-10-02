@@ -21,16 +21,16 @@ function App() {
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
   const setUserInfo = useProfileStore((state: iState) => state.setUserInfo);
-  const isDarkMode = useProfileStore((state:iState)=>state.darkmode)
+  const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const isLoading = useRef(true);
 
-  if (isDarkMode 
+  if (
+    isDarkMode
     // || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) 
-    {
-    document.documentElement.classList.add('dark')
+  ) {
+    document.documentElement.classList.add("dark");
   } else {
-    document.documentElement.classList.remove('dark')
+    document.documentElement.classList.remove("dark");
   }
 
   useEffect(() => {
@@ -56,17 +56,16 @@ function App() {
         console.log(err);
       }
     }
-    set()
-      .then(() => {
-        setUserDeckFromFirebase(user);
-        setUserInfo(user);
-      })
-    
+    set().then(() => {
+      setUserDeckFromFirebase(user.uid);
+      setUserInfo(user);
+      isLoading.current = false;
+    });
   }, [user]);
 
   return (
     <>
-      {/* <Loading isLoading={isLoading} /> */}
+      <Loading isLoading={isLoading} />
       <BrowserRouter>
         <Routes>
           <Route path="" element={<Home />} />

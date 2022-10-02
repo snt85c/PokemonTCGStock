@@ -10,6 +10,7 @@ export default function IncreaseInCollection(props: {
 }) {
   return (
     <button
+    className="text-gray-500 hover:text-white duration-300"
       onClick={() => {
         props.updateQuantity("add", props.cardType);
       }}
