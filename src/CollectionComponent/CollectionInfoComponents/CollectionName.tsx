@@ -1,10 +1,8 @@
 import {  useState } from "react";
 import { iCollectionStore } from "../../Interfaces";
-import { useUserAuth } from "../../ProfileComponents/userAuth";
 import useCollectionStore from "../useCollectionStore";
 
 export default function CollectionName() {
-  const { user } = useUserAuth();
 
   const currentName = useCollectionStore(
     (state: iCollectionStore) => state.currentDeckInfo.name

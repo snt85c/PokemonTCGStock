@@ -30,7 +30,7 @@ export default function CollectionDelete() {
   }, []);
 
   return (
-    <>
+    <div className="leading-1">
       <span>delete collections?</span>
       <Dropdown
         className="bg-white dark:text-black"
@@ -38,6 +38,6 @@ export default function CollectionDelete() {
         placeholder="collections"
         onChange={(e) => {deleteCollection(e.value); getCollections()}}
       />
-    </>
+    </div>
   );
 }
