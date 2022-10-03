@@ -25,7 +25,7 @@ export default function CollectionRecap() {
         setResult(temp)
       }
     })();
-  }, []);
+  }, [user]);
 
   return <>{result}</>;
 }

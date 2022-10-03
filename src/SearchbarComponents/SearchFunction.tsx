@@ -37,9 +37,9 @@ export default function SearchFunction() {
   }, [searchTrigger]);
 
   return (
-    <>
+    <div className="flex gap-2">
       <SearchInput {...{ searchRequest, setSearchRequest }} />
       <SearchButton {...{ setSearchTrigger, searchTrigger, searchRequest }} />
-    </>
+    </div>
   );
 }

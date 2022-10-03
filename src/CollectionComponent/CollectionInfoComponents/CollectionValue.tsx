@@ -13,7 +13,7 @@ export default function CollectionValue() {
 
   return (
     <>
-      <b className="flex justify-start items-center m-1">
+      <b className="flex justify-start items-center m-1 dark:text-amber-500">
         total value: {(value * rate).toFixed(2) +" " + sym.toLocaleUpperCase()} 
       </b>
     </>

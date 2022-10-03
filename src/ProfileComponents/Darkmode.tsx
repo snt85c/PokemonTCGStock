@@ -11,14 +11,18 @@ export default function Darkmode() {
     setDarkMode();
   };
   return (
-    <div className="flex items-center justify-between gap-5">
-      {isDarkMode ? "day mode?" : "night mode?"}
-      <DarkModeSwitch
-        className="m-1"
-        checked={isDarkMode}
-        onChange={toggleDarkMode}
-        size={25}
-      />
+    <div className="absolute right-1 top-1">
+      <div
+        className="tooltip tooltip-left"
+        data-tip={isDarkMode ? "day mode?" : "night mode?"}
+      >
+        <DarkModeSwitch
+          className="m-1"
+          checked={isDarkMode}
+          onChange={toggleDarkMode}
+          size={25}
+        />
+      </div>
     </div>
   );
 }

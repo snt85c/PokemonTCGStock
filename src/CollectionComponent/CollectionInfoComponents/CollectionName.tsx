@@ -41,7 +41,7 @@ export default function CollectionName() {
         </div>
       ) : (
         <div
-          className="text-[2.5rem] leading-none font-extrabold"
+          className="text-[2.5rem] leading-none font-extrabold font-[PlayB]"
           onClick={() => setIsEditName(true)}
         >
           {currentName ? currentName : "Collection"}

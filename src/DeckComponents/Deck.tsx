@@ -132,7 +132,7 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
           <div className="rounded-xl bg-white mx-2 p-2 dark:bg-slate-500">
 
             <Sort {...{ sort, setSort, isSortingAscending,setIsSortingAscending }} />
-            <Filter cardFilter={cardFilter} handleClick={handleClickFilter} />
+            {/* <Filter cardFilter={cardFilter} handleClick={handleClickFilter} /> */}
             {filter.length > 0 && (
               <>
                 <div className="mx-3 my-1 flex gap-2 text-white">

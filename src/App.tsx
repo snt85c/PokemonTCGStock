@@ -63,6 +63,11 @@ function App() {
     });
   }, [user]);
 
+  setTimeout(() => {
+    //makes sure that the loading screen is removed after a certain amount
+    isLoading.current = false;
+  }, 4000);
+
   return (
     <>
       <Loading isLoading={isLoading} />

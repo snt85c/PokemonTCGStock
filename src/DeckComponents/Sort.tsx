@@ -14,8 +14,8 @@ export default function Sort(props: {
         key={uuidv4()}
         className="flex w-full justify-center items-center bg-white hover:bg-gray-300 mx-1 px-2 whitespace-nowrap rounded duration-300"
         style={{
-          backgroundColor: props.sort === item ? "#334155" : "",
-          color: props.sort === item ? "white" : "black",
+          backgroundColor: props.sort === item ? "" : "#334155",
+          color: props.sort === item ? "black" : "white",
         }}
         onClick={() => {
           props.setSort(item);
@@ -43,7 +43,7 @@ export default function Sort(props: {
   return (
     <>
       <div className=" flex justify-between items-center">
-        <div className="flex w-full mx-2 whitespace-nowrap">sort by:{result}</div>
+        <div className="flex w-full mx-2 whitespace-nowrap font-[PlayR]">sort by:{result}</div>
       </div>
     </>
   );

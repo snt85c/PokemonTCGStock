@@ -41,7 +41,7 @@ export default function CollectionNote() {
           </button>
         </div>
       ) : (
-        <div className="text-sm" onClick={() => setIsEditNote(true)}>
+        <div className="text-sm font-[PlayR]" onClick={() => setIsEditNote(true)}>
           note:{currentNote ? currentNote : "empty"}
         </div>
       )}

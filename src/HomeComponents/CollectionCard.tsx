@@ -36,7 +36,7 @@ export default function CollectionCard(props: { card: coll }) {
     className="m-3 p-3  border bg-gray-200 border-white dark:border-gray-500 dark:bg-slate-600 rounded-xl w-4/5 duration-300 ">
       <div className="flex justify-between">
         <div className="leading-none">
-          <div className="text-lg leading-none">
+          <div className="text-lg leading-none font-[PlayB]">
             {props.card.name
               ? props.card.name
               : "collection " +
@@ -46,14 +46,14 @@ export default function CollectionCard(props: { card: coll }) {
             {props.card.note ? props.card.note : "no note"}
           </div>
         </div>
-        <div>
-          <div className="text-lg leading-none">
+        <div className="min-w-[1/2]">
+          <div className="text-lg leading-none whitespace-nowrap">
             <span className="font-bold">
               {props.card.value.toFixed(2)}
               {" " + sym.toUpperCase()}
             </span>
           </div>
-          <div className="italic leading-none">
+          <div className="italic leading-none whitespace-nowrap">
             {((props.card.value / totalCollectionsValue) * 100).toFixed(1)}% of
             total
           </div>

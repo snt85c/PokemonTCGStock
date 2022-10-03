@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import useProfileStore, { iState } from "./useProfileStore";
 import Darkmode from "./Darkmode";
 import CollectionDelete from "./CollectionDelete";
+import ContactUs from "./ContactUs";
 
 export default function Profile() {
   const { user, googleSignIn, logout } = useUserAuth();
@@ -47,7 +48,8 @@ export default function Profile() {
   function Logout() {
     return (
       <button
-        className="px-2 rounded border-black border-2 bg-white m-2 dark:text-black"
+      className="btn btn-outline btn-sm bg-gray-200 text-gray-600 dark:bg-transparent"
+        // className="px-2 rounded border-black border-2 bg-white m-2 dark:text-black"
         onClick={() => {
           logout();
         }}
@@ -58,8 +60,8 @@ export default function Profile() {
   }
 
   return (
-    <section className="flex flex-col gap-2 h-screen p-5 bg-slate-500 dark:bg-slate-900 dark:text-white duration-300">
-      <div className=" flex flex-col justify-center items-center m-5 relative ">
+    <section className="flex flex-col gap-2 p-5 mb-[4rem] bg-white text-black dark:bg-slate-900 dark:text-white duration-300">
+      <div className=" flex flex-col justify-center items-center m-5 mb-0 relative ">
         {/* {user && <div>uid:{user.uid}</div>} */}
         {user && <img src={user.photoURL} className="w-10 h-10 rounded-full" />}
         {user && <div>{user.displayName}</div>}
@@ -68,14 +70,16 @@ export default function Profile() {
       </div>
 
       <div className="max-h-1/4 overflow-scroll">
-        <h3>set conversion</h3>
+        <label className="label">
+          <span className="label-text">Pick the currency</span>
+          <span className="label-text-alt">USD/GBP/EUR/AUD</span>
+        </label>
         <Dropdown
-          className="bg-white dark:text-black"
+          className="dark:bg-white bg-gray-400 text-black px-2"
           options={options}
           onChange={(e) => {
-            console.log(info[e.value]);
             setTo(e.value);
-            setRate(e.value);
+            setRate(info[e.value], e.value);
           }}
           value={to}
           placeholder="set currency"
@@ -83,6 +87,7 @@ export default function Profile() {
       </div>
       <CollectionDelete />
       <Darkmode />
+      <ContactUs />
     </section>
   );
 }

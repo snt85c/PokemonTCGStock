@@ -10,7 +10,8 @@ export default function ListCollections() {
 
   const decks = useCollectionStore((state: iCollectionStore) => state.decks);
   const currentDeckInfo = useCollectionStore(
-    (state: iCollectionStore) => state.currentDeckInfo)
+    (state: iCollectionStore) => state.currentDeckInfo
+  );
 
   const setUserDeckFromFirebase = useCollectionStore(
     (state: iCollectionStore) => state.setUserDeckFromFirebase
@@ -20,19 +21,26 @@ export default function ListCollections() {
     decks &&
     decks.map((deck: any) => {
       return (
-        <button
+        <div
           key={uuidv4()}
-          className="flex px-2 mt-1 justify-center items-center text-black bg-white hover:bg-gray-300  ml-1 rounded duration-300"
-          onClick={() => {
-            setUserDeckFromFirebase(user.uid, deck);
-          }}
-          style={{
-            backgroundColor: currentDeckInfo && currentDeckInfo.id === deck ? "#334155" : "",
-            color: currentDeckInfo && currentDeckInfo.id === deck ? "white" : "",
-          }}
+          className="tooltip tooltip-bottom"
+          data-tip={"switch to " + deck}
         >
-          {deck}
-        </button>
+          <button
+            className="flex px-2 mt-1 justify-center items-center font-[PlayR] text-black bg-white hover:bg-gray-300  ml-1 rounded duration-300"
+            onClick={() => {
+              setUserDeckFromFirebase(user.uid, deck);
+            }}
+            style={{
+              backgroundColor:
+                currentDeckInfo && currentDeckInfo.id === deck ? "" : "#334155",
+              color:
+                currentDeckInfo && currentDeckInfo.id === deck ? "" : "white",
+            }}
+          >
+            {deck}
+          </button>
+        </div>
       );
     });
 

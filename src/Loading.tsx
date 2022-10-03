@@ -6,8 +6,8 @@ export default function Loading(props:{isLoading:React.MutableRefObject<boolean>
       {props.isLoading.current && (
         <img
           src={logo}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
-        />
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 duration-300"
+          />
       )}
     </>
   );

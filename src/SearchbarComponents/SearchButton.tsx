@@ -3,13 +3,14 @@ export default function SearchButton(props: {
   searchTrigger: boolean;
   searchRequest: string;
 }) {
+  // px-2 rounded border-black border-2 bg-white dark:text-black
   return (
     <button
       disabled={props.searchRequest ? false : true}
-      className="px-2 rounded border-black border-2 bg-white dark:text-black"
+      className={`btn btn-outline btn-sm font-[PlayR] px-7 ${props.searchTrigger ? "loading" : ""} `}
       onClick={() => props.setSearchTrigger(true)}
     >
-      {!props.searchTrigger ? "Search" : " LOADING"}
+      {!props.searchTrigger ? "Search" : "Searching"}
     </button>
   );
 }

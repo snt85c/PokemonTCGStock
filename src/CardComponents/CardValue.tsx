@@ -16,12 +16,12 @@ export default function CardValue(props:{value:number}) {
   
   return (
     <>
-      <div className="flex flex-col leading-none">
-        <div className="font-extrabold text-start">
+      <div className="flex flex-col leading-none mb-1">
+        <div className="font-extrabold text-start text-amber-500">
           {(props.value * rate).toFixed(2) +
             " " +
             sym.toLocaleUpperCase()}
-        </div>
+        </div>  
         <div className="text-[0.7rem] leading-none italic text-start">
           <span className="font-bold">{((props.value / collectionValue) * 100).toFixed(1)}%</span> of
           collection

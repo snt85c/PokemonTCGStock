@@ -11,7 +11,7 @@ export interface iState {
   darkmode: boolean;
   setDarkMode: () => void;
   setUserInfo: (logged: any) => void;
-  setConversionRate: (rate: string, user?: User) => void;
+  setConversionRate: (rate: number, sym?: string) => void;
 }
 
 const useProfileStore = create<iState>((set, get) => ({
@@ -27,7 +27,7 @@ const useProfileStore = create<iState>((set, get) => ({
         userInfo: result,
         darkmode: result && result.user.darkmode,
       }));
-      get().setConversionRate(result && result.user.currency, user);
+      get().setConversionRate(result && result.user.currency);
     }
   },
 
@@ -44,16 +44,10 @@ const useProfileStore = create<iState>((set, get) => ({
     );
   },
 
-  setConversionRate: async (rate, user) => {
-    let newConversionRate = 1;
-    Axios.get(
-      `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/usd.json`
-    ).then((res) => {
-      newConversionRate = res.data[rate ? rate : "usd"];
-    });
+  setConversionRate: async (rate, sym) => {
     set(() => ({
-      conversionRate: newConversionRate,
-      conversionSym: rate ? rate : "usd",
+      conversionRate: rate,
+      conversionSym: sym ? sym : "usd",
     }));
     await setDoc(
       doc(db, "users", get().userInfo.user.uid),
