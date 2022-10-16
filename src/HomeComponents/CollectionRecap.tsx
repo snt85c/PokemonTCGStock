@@ -2,7 +2,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../ProfileComponents/Firebase";
 import { useUserAuth } from "../ProfileComponents/userAuth";
-import CollectionCard, { coll } from "./CollectionCard";
+import DeckCard, { coll } from "./DeckCard";
 import { v4 as uuidv4 } from "uuid";
 
 export default function CollectionRecap() {
@@ -18,7 +18,7 @@ export default function CollectionRecap() {
         await getDocs(colRef2).then((list) => {
           list.forEach((collection) => {
             temp.push(
-              <CollectionCard key={uuidv4()} card={collection.data() as coll} />
+              <DeckCard key={uuidv4()} card={collection.data() as coll} />
             );
           });
         });
@@ -27,5 +27,5 @@ export default function CollectionRecap() {
     })();
   }, [user]);
 
-  return <>{result}</>;
+  return <div className="w-full my-5">{result}</div>;
 }

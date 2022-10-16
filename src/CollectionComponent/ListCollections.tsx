@@ -45,7 +45,7 @@ export default function ListCollections() {
     });
 
   return (
-    <div className="flex m-2 mt-0 flex-wrap">
+    <div className="flex  items-center m-2 mt-0 flex-wrap">
       <>{result}</>
       <CreateNewCollection />
     </div>

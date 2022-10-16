@@ -17,7 +17,7 @@ export interface iState {
 const useProfileStore = create<iState>((set, get) => ({
   userInfo: null,
   conversionRate: 1,
-  conversionSym: "",
+  conversionSym: "usd",
   darkmode: false,
 
   setUserInfo: async (user: User) => {
@@ -27,7 +27,7 @@ const useProfileStore = create<iState>((set, get) => ({
         userInfo: result,
         darkmode: result && result.user.darkmode,
       }));
-      get().setConversionRate(result && result.user.currency);
+      get().setConversionRate(result && result.user.conversionRate, result && result.user.currency);
     }
   },
 
@@ -51,7 +51,7 @@ const useProfileStore = create<iState>((set, get) => ({
     }));
     await setDoc(
       doc(db, "users", get().userInfo.user.uid),
-      { user: { currency: rate ? rate : "usd" } },
+      { user: { currency: sym ? sym : "usd" , conversionRate:rate} },
       {
         merge: true,
       }

@@ -12,9 +12,9 @@ export default function Search() {
   useSearchStore.persist.clearStorage(); //CLEAR STORAGE
 
   return (
-    <>
+    <div className="sm:px-[10rem] w-screen bg-slate-500 dark:bg-slate-900 duration-300">
       <Darkmode />
-      <div className="flex justify-center items-center p-5 pt-10 pb-0 bg-slate-500 dark:bg-slate-900 dark:text-white duration-300">
+      <div className="flex  justify-center items-center p-5 pt-10 pb-0 bg-slate-500 dark:bg-slate-900 dark:text-white duration-300">
         <SearchFunction />
       </div>
 
@@ -26,6 +26,6 @@ export default function Search() {
         )}
       </div>
       <Deck deck={resultJSXArray} type="search" />
-    </>
+    </div>
   );
 }

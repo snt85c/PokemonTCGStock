@@ -180,7 +180,7 @@ export default function Card(props: { data: iCard; type: string }) {
                 }`}
               >
                 <span
-                  className={`text-2xl font-extrabold flex items-center font-[PlayB]`}
+                  className={`text-[1.3rem] font-extrabold flex items-center font-[PlayB] leading-none`}
                 >
                   {props.data.name}
                 </span>
@@ -215,7 +215,11 @@ export default function Card(props: { data: iCard; type: string }) {
                     updateQuantity={updateQuantity}
                   />
                 ) : (
-                   <CardShowSearchValue quantity={props.data.tcgplayer && props.data.tcgplayer.prices} />
+                  <CardShowSearchValue
+                    quantity={
+                      props.data.tcgplayer && props.data.tcgplayer.prices
+                    }
+                  />
                 )}
               </div>
             </div>
@@ -240,7 +244,7 @@ export default function Card(props: { data: iCard; type: string }) {
               aria-label="remove-button"
               className=" text-slate-500 hover:text-white duration-300 absolute right-2 top-1/2 -translate-y-1/2"
               onClick={(e) => removeFromCollection(e, props.data)}
-              >
+            >
               <IoMdRemoveCircle size={50} />
             </button>
           )}

@@ -9,9 +9,9 @@ export default function CardShowSearchValue(props: { quantity: any }) {
   let keys:JSX.Element[] = []
   if (props.quantity) {
     keys = Object.keys(props.quantity).map((cardType) => (
-      <div key={uuidv4()} className="flex">
-        <div className="flex items-center gap-1">
-          <span className="text-sm">{cardType}</span>:
+      <div key={uuidv4()} className="flex leading-none">
+        <div className="flex items-center gap-1 leading-none">
+          <span className="text-sm leading-none">{cardType}</span>:
           <span className="font-bold text-sm text-amber-500 leading-none">
             {props.quantity
               ? (props.quantity[cardType].market * rate).toFixed(2)

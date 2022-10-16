@@ -12,7 +12,7 @@ export default function CardModifyAmount(props: {
   quantity: any;
 }) {
   let keys = Object.keys(props.quantity).map((cardType) => (
-    <div key={uuidv4()} className="flex flex-col leading-none mt-1">
+    <div key={uuidv4()} className="flex flex-col leading-none mt-1 text-xs">
       <div>{cardType}:</div>
       <div className="flex gap-2">
         <DecreaseInCollection

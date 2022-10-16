@@ -17,7 +17,7 @@ export default function Collection() {
   return (
     <>
       {user && (
-        <div className="flex flex-col pt-2 bg-slate-500  dark:bg-slate-900 dark:text-white duration-300 text-white">
+        <div className="flex flex-col sm:px-[10rem] pt-2 bg-slate-500  dark:bg-slate-900 dark:text-white duration-300 text-white">
           <Darkmode />
           <CurrentCollectionInfo />
           <ListCollections />

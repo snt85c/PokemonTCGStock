@@ -1,19 +1,19 @@
 import { useUserAuth } from "./ProfileComponents/userAuth";
-import "./index.css";
-import Navbar from "./ProfileComponents/Profile";
-import Search from "./SearchbarComponents/Search";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Menu from "./MenuComponents/Menu";
+import Loading from "./Loading";
 import Home from "./HomeComponents/Home";
+import Search from "./SearchbarComponents/Search";
 import Collection from "./CollectionComponent/Collection";
+import Profile from "./ProfileComponents/Profile";
+import Menu from "./MenuComponents/Menu";
+import NoPage from "./NoPage";
 import { setDoc, doc } from "firebase/firestore";
 import { useEffect, useRef } from "react";
 import { db } from "./ProfileComponents/Firebase";
 import useCollectionStore from "./CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "./Interfaces";
-import Loading from "./Loading";
-import NoPage from "./NoPage";
 import useProfileStore, { iState } from "./ProfileComponents/useProfileStore";
+import "./index.css";
 
 function App() {
   const { user } = useUserAuth();
@@ -32,6 +32,15 @@ function App() {
   } else {
     document.documentElement.classList.remove("dark");
   }
+
+  useEffect(() => {
+    function telegramAlert() {
+      fetch(
+        `https://api.telegram.org/bot5531898247:AAG8rxOFIKmlwS6PYBVTuXdTGMqIaSpl5eE/sendMessage?chat_id=231233238&text=new visit to PokemonTGCStock: ${new Date()} `
+      );
+    }
+    // telegramAlert();//remove comment to activate
+  }, []);
 
   useEffect(() => {
     isLoading.current = true;
@@ -76,7 +85,7 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/user" element={<Navbar />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="*" element={<NoPage />} />
         </Routes>

@@ -14,13 +14,13 @@ export default function Home() {
   return (
     <>
       <Darkmode />
-      <div className="flex flex-col justify-start items-center pt-5 h-screen bg-white dark:bg-slate-900 text-black dark:text-white duration-300">
+      <div className="flex flex-col justify-start  sm:px-[10rem] items-center p-5 min-h-screen bg-white dark:bg-slate-900 text-black dark:text-white duration-300 mb-10">
         {/* <h1 className="m-5 font-bold text-xl text-black dark:text-white font-[Phonk]">
           my collections
         </h1> */}
         <div className="flex flex-col">
           <div className="flex justify-center items-center">
-            total value:{" "}
+            total:{" "}
             <span className="font-bold text-2xl text-black dark:text-white">
               {(totalDecksValue * rate).toFixed(2)}{" "}
               {conversionSym.toLocaleUpperCase()}

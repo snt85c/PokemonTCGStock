@@ -7,7 +7,7 @@ export default function SearchButton(props: {
   return (
     <button
       disabled={props.searchRequest ? false : true}
-      className={`btn btn-outline btn-sm font-[PlayR] px-7 ${props.searchTrigger ? "loading" : ""} `}
+      className={`btn btn-outline btn-sm font-[PlayR] px-2 ${props.searchTrigger ? "loading" : ""} `}
       onClick={() => props.setSearchTrigger(true)}
     >
       {!props.searchTrigger ? "Search" : "Searching"}

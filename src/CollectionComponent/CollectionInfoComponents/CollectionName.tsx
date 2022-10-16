@@ -13,7 +13,7 @@ export default function CollectionName() {
   );
 
   const [isEditName, setIsEditName] = useState(false);
-  let changeName = ""
+  let changeName = currentName
 
   const handleClick = () => {
     setIsEditName(false);
@@ -27,9 +27,8 @@ export default function CollectionName() {
         <div className="flex justify-between">
           <input
           key={1}
-            className="bg-gray-500 text-[2.5rem]"
+            className="bg-gray-500 text-[2.5rem] w-full"
             defaultValue={currentName}
-            size={8}
             onChange={(e) => changeName = e.target.value}
           />
           <button

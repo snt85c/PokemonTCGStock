@@ -1,11 +1,9 @@
 import {  useState } from "react";
 import { iCollectionStore } from "../../Interfaces";
-import { useUserAuth } from "../../ProfileComponents/userAuth";
 import useCollectionStore from "../useCollectionStore";
 
 
 export default function CollectionNote() {
-  const { user } = useUserAuth();
 
   const currentNote = useCollectionStore(
     (state: iCollectionStore) => state.currentDeckInfo.note
@@ -15,7 +13,7 @@ export default function CollectionNote() {
     (state: iCollectionStore) => state.setCurrentDeckInfo
   );
   const [isEditNote, setIsEditNote] = useState(false);
-    let changeNote = ""
+    let changeNote = currentNote
   const handleClick = () => {
     setIsEditNote(false);
     setCurrentDeckInfo(changeNote, "note");
@@ -25,12 +23,11 @@ export default function CollectionNote() {
   return (
     <>
       {isEditNote ? (
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-1">
           <input
             key={2}
-            className="bg-gray-500 "
+            className="bg-gray-500 w-full"
             defaultValue={currentNote}
-            size={16}
             onChange={(e) => changeNote = e.target.value}
           />
           <button

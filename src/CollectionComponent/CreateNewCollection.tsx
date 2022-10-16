@@ -18,12 +18,12 @@ export default function CreateNewCollection() {
       data-tip="create new collection"
     >
       <button
-        className=" ml-3 flex justify-center items-center hover:text-gray-300 duration-300"
+        className=" ml-3 flex -mb-1 justify-center items-center hover:text-gray-300 duration-300"
         onClick={() => {
           createNewCollection(user.uid);
         }}
       >
-        <IoMdAddCircle size={29}/>
+        <IoMdAddCircle size={25}/>
       </button></div>
     )
   );

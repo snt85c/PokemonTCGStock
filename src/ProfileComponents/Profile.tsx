@@ -60,7 +60,7 @@ export default function Profile() {
   }
 
   return (
-    <section className="flex flex-col gap-2 p-5 mb-[4rem] bg-white text-black dark:bg-slate-900 dark:text-white duration-300">
+    <section className="flex flex-col w-screen sm:px-[10rem] gap-2 p-5 mb-[4rem] h-screen bg-white text-black dark:bg-slate-900 dark:text-white duration-300">
       <div className=" flex flex-col justify-center items-center m-5 mb-0 relative ">
         {/* {user && <div>uid:{user.uid}</div>} */}
         {user && <img src={user.photoURL} className="w-10 h-10 rounded-full" />}
@@ -87,7 +87,7 @@ export default function Profile() {
       </div>
       <CollectionDelete />
       <Darkmode />
-      <ContactUs />
+      {/* <ContactUs /> */}
     </section>
   );
 }
