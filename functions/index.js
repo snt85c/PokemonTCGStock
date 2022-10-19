@@ -9,6 +9,8 @@ exports.scheduledFunction = functions.pubsub
 // "*/5 * * * *" every 5 minutes
 // "0 0 * * *" once a day (midnight)
 
+/* eslint-disable max-len */
+
     .onRun((context) => {
       const date = new Date().toString();
       db.collection("users")
@@ -35,6 +37,7 @@ exports.scheduledFunction = functions.pubsub
                           .then((snapshot) => {
                             snapshot.forEach((card) => {
                               const cardID = card.data().id;
+                              const quantity = card.data().userDeckInfo.quantity;
                               // console.log(card.data().id);
                               // get all the cards
                               try {
@@ -52,11 +55,10 @@ exports.scheduledFunction = functions.pubsub
                                       data.data.map((card) => {
                                         // console.log(card.name);
                                         result.push({
-                                          /* eslint-disable max-len */
                                           prices: card.tcgplayer,
                                           id: card.id,
                                           date: new Date(),
-                                          /* eslint-enable max-len */
+                                          quantity,
                                         });
                                       });
                                       db.collection("users")

@@ -1,5 +1,5 @@
 import { collection, getDocs, Timestamp } from "firebase/firestore";
-import React, { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
@@ -20,8 +20,18 @@ export interface coll {
 export default function DeckCard(props: { card: coll }) {
   const { user } = useUserAuth();
 
+  interface iChart {
+    label: string;
+    data: {
+      value: number;
+      time: number;
+    }[];
+  }
+
+
+  const [chart, setChart] = useState([{label:"temp", data:[{value:1, time:1}]}]);
+
   const sym = useProfileStore((state: iState) => state.conversionSym);
-  let keys: string[] = [];
 
   const totalCollectionsValue = useCollectionStore(
     (state: iCollectionStore) => state.totalCollectionsValue
@@ -30,59 +40,59 @@ export default function DeckCard(props: { card: coll }) {
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
   const navigate = useNavigate();
-  /*
+
   useEffect(() => {
-    //currently useless, dont remember what was the idea behind it, i guess it predates the time i could store data everyday on firebase with cloud functions
-    async function  ttt()  {
+    async function ttt() {
       const queryRef = collection(
         db,
         "users",
         user.uid,
         "decks",
         props.card.id,
-        "cards"
+        "cardDB"
       );
       const querySnapshot = await getDocs(queryRef);
-      querySnapshot.forEach((item) => {
-        let temp = item.data();
-        Object.keys(temp.tcgplayer.prices).map((cardType) => {
-          keys.push(cardType);
+      querySnapshot.forEach((day) => {
+        let dayValueOfDeck = 0;
+        let keys: string[] = [];
+        let temp = day.data();
+        let chartdata: iChart = { label: "", data: [] };
+        let counter = 0;
+        chartdata.label = props.card.id;
+        temp.result.forEach((item: any) => {
+          Object.keys(item.prices.prices).map((cardType) => {
+            if (!keys.includes(cardType)) keys.push(cardType);
+          });
+          dayValueOfDeck = 0
+
+          temp.result.forEach((item: any) => {
+            keys.forEach((key) => {
+              if (item.prices.prices[key] && item.prices.prices[key].market)
+                dayValueOfDeck +=
+                  item.prices.prices[key] && item.prices.prices[key].market;
+                  //NEEDS TO BE MULTIPLIED BY QUANTITY, I DONT HAVE THAT HISTORICAL DATA SAVED ANYWHERE
+                  
+            });
+          });
+          counter++;
+          chartdata.data.push({
+            value: Math.floor(dayValueOfDeck),
+            time: counter,
+          });
         });
-        // console.log(keys)
+        setChart([chartdata]);
       });
-    };
-    ttt()
+    }
+    ttt();
   }, [user]);
-  */
 
-  type MyDatum = { value: number; time: number };
-
-  const data = useMemo(
-    () => [
-      {
-        label: "a",
-        data: [
-          {
-            value: 15,
-            time: 1,
-          },
-          {
-            value: 22,
-            time: 2,
-          },
-          {
-            value: 20,
-            time: 3,
-          },
-          {
-            value: 28,
-            time: 4,
-          },
-        ],
-      },
-    ],
-    []
-  );
+  useEffect(() => {
+    console.log(chart);
+  }, []); 
+  
+  const data = chart 
+  // useMemo(() => chart, []); 
+  ///the value used to be memoized, but if i do then i can't update the values when i fetch them 
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
@@ -91,8 +101,7 @@ export default function DeckCard(props: { card: coll }) {
     []
   );
 
-  const secondaryAxes = 
-  useMemo(
+  const secondaryAxes = useMemo(
     (): AxisOptions<MyDatum>[] => [
       {
         getValue: (datum) => datum.value,
@@ -100,6 +109,8 @@ export default function DeckCard(props: { card: coll }) {
     ],
     []
   );
+  type MyDatum = { value: number; time: number };
+  
 
   return (
     <>
@@ -136,13 +147,19 @@ export default function DeckCard(props: { card: coll }) {
           </div>
         </div>
         <div className="h-[7rem] p-2 relative">
-          <Chart
-            options={{
-              data,
-              primaryAxis,
-              secondaryAxes,
-            }}
-          /> 
+          {chart ? (
+            <Chart
+              options={{
+                data,
+                primaryAxis,
+                secondaryAxes,
+              }}
+            />
+          ) : (
+            <div className="flex justify-center items-center h-full">
+              no data
+            </div>
+          )}
         </div>
         <div className="text-xs mt-2">
           created on:{props.card.creationDate.toDate().toDateString()}

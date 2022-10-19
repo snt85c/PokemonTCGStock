@@ -18,10 +18,9 @@ export default function Menu() {
         onClick={() => {
           setActive("home");
           navigate("/");
-          const name = "test " + new Date().getMinutes().toLocaleString()
-          addDoc(collection(db, "cardsDB"), {
-            name: "test " + new Date().getMinutes().toLocaleString(), date: new Date()
-          });
+          // addDoc(collection(db, "cardsDB"), {
+          //   name: "test " + new Date().getMinutes().toLocaleString(), date: new Date()
+          // });
         }}
         className={`${active === "home" ? "active" : ""} `}
       >
