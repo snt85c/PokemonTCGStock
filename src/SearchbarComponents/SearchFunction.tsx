@@ -5,12 +5,14 @@ import SearchInput from "./SearchInput";
 import useDeckStore from "./useSearchStore";
 
 
+
 export default function SearchFunction() {
   const [searchRequest, setSearchRequest] = useState("");
   const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
   const setResultJSXArray = useDeckStore(
     (state: iSearchStore) => state.setResultJSXArray
   );
+
   useEffect(() => {
     if (searchTrigger && searchRequest !== "") {
     try {

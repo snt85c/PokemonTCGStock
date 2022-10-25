@@ -1,8 +1,7 @@
 import Card from "../CardComponents/Card";
 import { iCard, iFilter } from "../Interfaces";
 import { v4 as uuidv4 } from "uuid";
-import Filter from "./Filter";
-import {  useState } from "react";
+import { useState } from "react";
 import Sort from "./Sort";
 
 export default function Deck(props: { deck: iCard[]; type: string }) {
@@ -43,9 +42,7 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
       setFilter([...filter, option]);
     }
   };
-
  
-
   let result: JSX.Element[] = props.deck
     .filter((card) => {
       //first, we filter the array for each path were a filter option might be (if not present we return the card, this way we return less card each time )

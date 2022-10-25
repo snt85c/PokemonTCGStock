@@ -2,9 +2,12 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 const fetch = require("node-fetch");
+const https = require("https");
+
 const db = admin.firestore();
 exports.scheduledFunction = functions.pubsub
-    .schedule("0 0 * * *")
+    .schedule("0 */12 * * *")
+
 // "* * * * *" every minute
 // "*/5 * * * *" every 5 minutes
 // "0 0 * * *" once a day (midnight)
@@ -12,6 +15,9 @@ exports.scheduledFunction = functions.pubsub
 /* eslint-disable max-len */
 
     .onRun((context) => {
+      const agent = new https.Agent({
+        keepAlive: true, // true
+      });
       const date = new Date().toString();
       db.collection("users")
           .get()
@@ -25,6 +31,8 @@ exports.scheduledFunction = functions.pubsub
                   .get()
                   .then((snapshot) => {
                     snapshot.forEach((decks) => {
+                      // const result = [];
+                      let cards = "";
                       const result = [];
                       const deck = decks.data().id;
                       // console.log(decks.data().id); // get all the decks
@@ -35,31 +43,53 @@ exports.scheduledFunction = functions.pubsub
                           .collection("cards")
                           .get()
                           .then((snapshot) => {
-                            snapshot.forEach((card) => {
-                              const cardID = card.data().id;
-                              const quantity = card.data().userDeckInfo.quantity;
-                              // console.log(card.data().id);
-                              // get all the cards
-                              try {
+                            if (snapshot.size !== 0) {
+                              snapshot.forEach((card) => {
+                                const cardID = card.data().id;
+                                // console.log(card.data().id);
+                                // get all the cards
+                                cards += "id:" + cardID + " or ";
+                                result.push({
+                                  id: cardID,
+                                  quantity: card.data().userDeckInfo.quantity,
+                                  date,
+                                });
+                              });
+                            }
+                          })
+                          .then(() => {
+                            try {
+                              if (cards.length > 0) {
+                                cards = cards.slice(0, -4);
                                 const url =
-                          "https://api.pokemontcg.io/v2/cards?q=id:" + cardID;
+                          "https://api.pokemontcg.io/v2/cards?q=" + cards;
                                 fetch(url, {
                                   method: "GET",
                                   headers: {
+                                    "Connection": "keepalive", // keepalive
                                     "X-Auth-Token":
                               "3b7be5e5-54b3-4668-9831-c6f5616d9168",
                                   },
+                                  agent,
                                 })
                                     .then((resp) => resp.json())
                                     .then((data) => {
                                       data.data.map((card) => {
-                                        // console.log(card.name);
-                                        result.push({
-                                          prices: card.tcgplayer,
-                                          id: card.id,
-                                          date: new Date(),
-                                          quantity,
+                                        result.forEach((item) => {
+                                          if (item.id === card.id) {
+                                            item.prices = card.tcgplayer.prices;
+                                          }
                                         });
+                                        db.collection("users")
+                                            .doc(uid)
+                                            .collection("decks")
+                                            .doc(deck)
+                                            .collection("cards")
+                                            .doc(card.id)
+                                            .set(
+                                                {tcgplayer: card.tcgplayer},
+                                                {merge: true}
+                                            );
                                       });
                                       db.collection("users")
                                           .doc(uid)
@@ -69,17 +99,17 @@ exports.scheduledFunction = functions.pubsub
                                           .doc(date)
                                           .set({result});
                                     });
-                              } catch (e) {
-                                console.log(e);
                               }
-                            });
+                            } catch (e) {
+                              console.log(e);
+                            }
                           });
                     });
                   });
             });
-            return true;
+            return null;
           })
-          .catch((reason) => {
-            console.log(reason);
+          .catch((error) => {
+            console.log(error);
           });
     });
