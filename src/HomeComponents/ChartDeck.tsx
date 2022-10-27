@@ -1,23 +1,16 @@
-import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
 import { db } from "../ProfileComponents/Firebase";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 import { useUserAuth } from "../ProfileComponents/userAuth";
 
-export interface coll {
-  id: string;
-  name: string;
-  note: string;
-  value: number;
-  creationDate: Timestamp;
-}
-
 interface iChart {
   label: string;
   data: {
     value: number;
     time: number;
+    date:Date
   }[];
 }
 
@@ -25,6 +18,7 @@ export default function ChartDeck(props: { deckId: string }) {
   const { user } = useUserAuth();
 
   const rate = useProfileStore((state: iState) => state.conversionRate);
+  let sorted:any[] = []
 
   const [chart, setChart] = useState([
     { label: "temp", data: [{ value: 0, time: 0 },{ value: 0, time: 1 }] },
@@ -43,19 +37,20 @@ export default function ChartDeck(props: { deckId: string }) {
       let chartdata: iChart = { label: "", data: [] };
       let counter = 0;
       let dayValueOfDeck = 0;
+      let date:any = 0
       const querySnapshot = await getDocs(queryRef);
       if(querySnapshot.size !== 0){
-        console.log(querySnapshot.size)
         querySnapshot.forEach((day) => {
           let keys: string[] = [];
-          let temp = day.data();
+          let daydata = day.data();
+          sorted.push(daydata)
           chartdata.label = props.deckId;
-          temp.result.forEach((item: any) => {
+          daydata.result.forEach((item: any) => {
           dayValueOfDeck = 0;
           Object.keys(item.prices).map((cardType) => {
             if (!keys.includes(cardType)) keys.push(cardType);
           });
-          temp.result.forEach((item: any) => {
+          daydata.result.forEach((item: any) => {
             keys.forEach((key) => {
               if (
                 item.prices[key] &&
@@ -64,7 +59,7 @@ export default function ChartDeck(props: { deckId: string }) {
                 ) {
                   dayValueOfDeck +=
                   (item.prices[key].market * item.quantity[key]);
-                  // console.log(item.prices[key].market, item.quantity[key])
+                  date = item.date
                 }
               });
             });
@@ -73,18 +68,21 @@ export default function ChartDeck(props: { deckId: string }) {
           chartdata.data.push({
             value: Math.floor(dayValueOfDeck * rate),
             time: counter,
+            date: new Date(date)
           });
         }
         );
+        chartdata.data.sort((a,b)=>{
+          //sort it by Date, as Firebase doesn't ensure that the data will be saved chronologically in the first place, otherwise i might get the wrong amount in the wrong place
+          return Number(a.date) - Number(b.date) 
+        })
+        console.log(chartdata)
         setChart([chartdata]);
       }
     }
     ttt();
   }, [user]);
 
-  useEffect(() => {
-    console.log(chart);
-  }, [chart]);
 
   const data = chart;
   // useMemo(() => chart, []);
