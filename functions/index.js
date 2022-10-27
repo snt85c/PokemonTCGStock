@@ -6,10 +6,11 @@ const https = require("https");
 
 const db = admin.firestore();
 exports.scheduledFunction = functions.pubsub
-    .schedule("0 */12 * * *")
+    .schedule("* */8 * * *")
 
 // "* * * * *" every minute
 // "*/5 * * * *" every 5 minutes
+// "0 */8 * * *" every 8 hours
 // "0 0 * * *" once a day (midnight)
 
 /* eslint-disable max-len */
@@ -18,7 +19,7 @@ exports.scheduledFunction = functions.pubsub
       const agent = new https.Agent({
         keepAlive: true, // true
       });
-      const date = new Date().toString();
+      const date = new Date();
       db.collection("users")
           .get()
           .then((snapshot) => {
@@ -96,7 +97,7 @@ exports.scheduledFunction = functions.pubsub
                                           .collection("decks")
                                           .doc(deck)
                                           .collection("cardDB")
-                                          .doc(date)
+                                          .doc(date.toString())
                                           .set({result});
                                     });
                               }
