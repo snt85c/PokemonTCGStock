@@ -7,25 +7,25 @@ import { useUserAuth } from "../ProfileComponents/userAuth";
 
 interface iChart {
   label: string;
-  data: {
-    value: number;
-    time: number;
-    date: Timestamp;
-  }[];
+  data: iData[];
+}
+
+interface iData {
+  value: number;
+  date: Date;
 }
 
 export default function ChartDeck(props: { deckId: string }) {
   const { user } = useUserAuth();
 
   const rate = useProfileStore((state: iState) => state.conversionRate);
-  let sorted: any[] = [];
 
   const [chart, setChart] = useState([
     {
       label: "temp",
       data: [
-        { value: 0, time: 0 },
-        { value: 0, time: 1 },
+        { value: 0,  date: new Date()},
+        { value: 0, date: new Date()},
       ],
     },
   ]);
@@ -41,15 +41,13 @@ export default function ChartDeck(props: { deckId: string }) {
         "cardDB"
       );
       let chartdata: iChart = { label: "", data: [] };
-      let counter = 0;
       let dayValueOfDeck = 0;
-      let date: any = 0;
+      let date: Date = new Date;
       const querySnapshot = await getDocs(queryRef);
       if (querySnapshot.size !== 0) {
         querySnapshot.forEach((day) => {
           let keys: string[] = [];
           let daydata = day.data();
-          sorted.push(daydata);
           chartdata.label = props.deckId;
           daydata.result.forEach((item: any) => {
             dayValueOfDeck = 0;
@@ -70,10 +68,8 @@ export default function ChartDeck(props: { deckId: string }) {
               });
             });
           });
-          counter++;
           chartdata.data.push({
             value: (dayValueOfDeck * rate),
-            time: counter,
             date: date,
           });
         });
@@ -91,11 +87,7 @@ export default function ChartDeck(props: { deckId: string }) {
         );
         //to make the chart dynamic, i take the current deck as saved on firebase and i append it at the end of chartdata(i dont need to sort in this case)
         const queryCurrentSnapshot = await getDocs(queryRef);
-        let currentDeck: {
-          value: number;
-          time: number;
-          date: Timestamp;
-        } = { value: 0, time: counter + 1, date: new Timestamp(0, 0) };
+        let currentDeck: iData = { value: 0, date: new Date };
         queryCurrentSnapshot.forEach((item) => {
           let temp = item.data();
           currentDeck = {
@@ -116,7 +108,7 @@ export default function ChartDeck(props: { deckId: string }) {
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
-      getValue: (datum) => datum.time,
+      getValue: (datum) => datum.date,
     }),
     []
   );
@@ -129,7 +121,7 @@ export default function ChartDeck(props: { deckId: string }) {
     ],
     []
   );
-  type MyDatum = { value: number; time: number };
+  type MyDatum = { value: number; date: Date };
 
   return (
     <>

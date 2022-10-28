@@ -6,7 +6,7 @@ const https = require("https");
 
 const db = admin.firestore();
 exports.scheduledFunction = functions.pubsub
-    .schedule("* */8 * * *")
+    .schedule("0 */8 * * *")
 
 // "* * * * *" every minute
 // "*/5 * * * *" every 5 minutes
