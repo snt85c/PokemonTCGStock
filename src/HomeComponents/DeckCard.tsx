@@ -16,7 +16,6 @@ export interface coll {
 
 export default function DeckCard(props: { card: coll }) {
   const { user } = useUserAuth();
-
   const sym = useProfileStore((state: iState) => state.conversionSym);
   const rate = useProfileStore((state: iState) => state.conversionRate);
 

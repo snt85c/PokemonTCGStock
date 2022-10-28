@@ -17,7 +17,7 @@ interface iData {
 
 export default function ChartDeck(props: { deckId: string }) {
   const { user } = useUserAuth();
-
+  const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const rate = useProfileStore((state: iState) => state.conversionRate);
 
   const [chart, setChart] = useState([
@@ -108,7 +108,8 @@ export default function ChartDeck(props: { deckId: string }) {
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
-      getValue: (datum) => datum.date,
+      getValue: (datum) => datum.date, 
+        shouldNice:true,
     }),
     []
   );
@@ -116,7 +117,7 @@ export default function ChartDeck(props: { deckId: string }) {
   const secondaryAxes = useMemo(
     (): AxisOptions<MyDatum>[] => [
       {
-        getValue: (datum) => datum.value,
+        getValue: (datum) => datum.value,elementType: 'line', //line, area, bar,bubble 
       },
     ],
     []
@@ -131,6 +132,7 @@ export default function ChartDeck(props: { deckId: string }) {
             data,
             primaryAxis,
             secondaryAxes,
+            dark:isDarkMode
           }}
         />
       ) : (
