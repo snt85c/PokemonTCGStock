@@ -24,8 +24,8 @@ export default function ChartDeck(props: { deckId: string }) {
     {
       label: "temp",
       data: [
-        { value: 0,  date: new Date()},
-        { value: 0, date: new Date()},
+        { value: 0, date: new Date() },
+        { value: 0, date: new Date() },
       ],
     },
   ]);
@@ -42,7 +42,7 @@ export default function ChartDeck(props: { deckId: string }) {
       );
       let chartdata: iChart = { label: "", data: [] };
       let dayValueOfDeck = 0;
-      let date: Date = new Date;
+      let date: Date = new Date();
       const querySnapshot = await getDocs(queryRef);
       if (querySnapshot.size !== 0) {
         querySnapshot.forEach((day) => {
@@ -69,7 +69,7 @@ export default function ChartDeck(props: { deckId: string }) {
             });
           });
           chartdata.data.push({
-            value: (dayValueOfDeck * rate),
+            value: dayValueOfDeck * rate,
             date: date,
           });
         });
@@ -87,7 +87,7 @@ export default function ChartDeck(props: { deckId: string }) {
         );
         //to make the chart dynamic, i take the current deck as saved on firebase and i append it at the end of chartdata(i dont need to sort in this case)
         const queryCurrentSnapshot = await getDocs(queryRef);
-        let currentDeck: iData = { value: 0, date: new Date };
+        let currentDeck: iData = { value: 0, date: new Date() };
         queryCurrentSnapshot.forEach((item) => {
           let temp = item.data();
           currentDeck = {
@@ -108,8 +108,8 @@ export default function ChartDeck(props: { deckId: string }) {
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
-      getValue: (datum) => datum.date, 
-        shouldNice:true,
+      getValue: (datum) => datum.date,
+      shouldNice: true,
     }),
     []
   );
@@ -117,7 +117,8 @@ export default function ChartDeck(props: { deckId: string }) {
   const secondaryAxes = useMemo(
     (): AxisOptions<MyDatum>[] => [
       {
-        getValue: (datum) => datum.value,elementType: 'line', //line, area, bar,bubble 
+        getValue: (datum) => datum.value,
+        elementType: "line", //line, area, bar,bubble
       },
     ],
     []
@@ -132,7 +133,8 @@ export default function ChartDeck(props: { deckId: string }) {
             data,
             primaryAxis,
             secondaryAxes,
-            dark:isDarkMode
+            dark: isDarkMode,
+            tooltip: false,
           }}
         />
       ) : (
