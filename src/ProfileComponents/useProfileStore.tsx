@@ -46,12 +46,12 @@ const useProfileStore = create<iState>((set, get) => ({
 
   setConversionRate: async (rate, sym) => {
     set(() => ({
-      conversionRate: rate,
+      conversionRate: rate? rate:1,
       conversionSym: sym ? sym : "usd",
     }));
     await setDoc(
       doc(db, "users", get().userInfo.user.uid),
-      { user: { currency: sym ? sym : "usd" , conversionRate:rate} },
+      { user: { currency: sym ? sym : "usd" , conversionRate:rate? rate:1} },
       {
         merge: true,
       }

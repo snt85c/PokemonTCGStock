@@ -35,12 +35,12 @@ export default function Profile() {
   function Login() {
     return (
       <button
-        className="px-2 rounded border-black border-2 bg-white m-2"
+        className="btn btn-outline btn-sm bg-gray-200 text-gray-600 dark:bg-transparent w-full"
         onClick={() => {
           googleSignIn();
         }}
       >
-        Login
+          Login
       </button>
     );
   }
@@ -48,7 +48,7 @@ export default function Profile() {
   function Logout() {
     return (
       <button
-      className="btn btn-outline btn-sm bg-gray-200 text-gray-600 dark:bg-transparent"
+        className="btn btn-outline btn-sm bg-gray-200 text-gray-600 dark:bg-transparent w-full"
         // className="px-2 rounded border-black border-2 bg-white m-2 dark:text-black"
         onClick={() => {
           logout();
@@ -60,7 +60,7 @@ export default function Profile() {
   }
 
   return (
-    <section className="flex flex-col w-screen sm:px-[10rem] gap-2 p-5 mb-[4rem] h-screen bg-white text-black dark:bg-slate-900 dark:text-white duration-300">
+    <section className="flex flex-col min-h-screen  sm:px-[10rem] gap-2 p-5 bg-white text-black dark:bg-slate-900 dark:text-white duration-300">
       <div className=" flex flex-col justify-center items-center m-5 mb-0 relative ">
         {/* {user && <div>uid:{user.uid}</div>} */}
         {user && <img src={user.photoURL} className="w-10 h-10 rounded-full" />}

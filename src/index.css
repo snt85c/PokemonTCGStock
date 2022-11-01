@@ -12,8 +12,6 @@
        url('./fonts/PhonkRegular.otf')  format('otf'), /* Safari, Android, iOS */
 }
 
-
-
 @font-face {
   font-family: 'PlayB';
   src: url("./fonts/Play-Bold.ttf") format('ttf');

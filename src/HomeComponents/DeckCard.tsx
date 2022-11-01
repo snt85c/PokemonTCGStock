@@ -45,10 +45,10 @@ export default function DeckCard(props: { card: coll }) {
                   props.card.id.substring(props.card.id.length - 1)}
             </div>
             <div className="text-sm leading-none my-2">
-              {props.card.note ? props.card.note : "no note"}
+              {props.card.note ? props.card.note : ""}
             </div>
           </div>
-          <div className="min-w-[1/2]">
+          {props.card.value > 0 && <div className="min-w-[1/2]">
             <div className="text-lg leading-none whitespace-nowrap">
               <span className="font-[PlayB]">
                 {(props.card.value * rate).toFixed(2) }
@@ -59,9 +59,9 @@ export default function DeckCard(props: { card: coll }) {
               {((props.card.value / totalCollectionsValue) * 100).toFixed(1)}%
               of total
             </div>
-          </div>
+          </div>}
         </div>
-        <div className="h-[5rem] pb-3 relative">
+        <div className="h-[5rem] p-3 relative md:h-[10rem]">
           <ChartDeck deckId={props.card.id} />
         </div>
         <div className="text-xs mt-2">

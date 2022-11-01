@@ -66,9 +66,11 @@ function App() {
       }
     }
     set().then(() => {
-      setUserDeckFromFirebase(user.uid);
-      setUserInfo(user);
-      isLoading.current = false;
+      if(user){
+        setUserDeckFromFirebase(user.uid);
+        setUserInfo(user);
+        isLoading.current = false;
+      }
     });
   }, [user]);
 

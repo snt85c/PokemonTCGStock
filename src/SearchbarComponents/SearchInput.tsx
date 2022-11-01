@@ -6,7 +6,7 @@ export default function SearchInput(props: {
   return (
     <input
     className="input input-sm border-white font-[PlayR]"
-      placeholder="search"
+      placeholder="Search cards"
       defaultValue={props.searchRequest}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
         props.setSearchRequest(e.target.value);

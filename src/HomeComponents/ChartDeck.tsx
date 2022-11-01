@@ -1,8 +1,5 @@
-import {
-  collection,
-  getDocs,
-} from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
 import { iCard } from "../Interfaces";
 import { db } from "../ProfileComponents/Firebase";
@@ -23,7 +20,8 @@ export default function ChartDeck(props: { deckId: string }) {
   const { user } = useUserAuth();
   const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const rate = useProfileStore((state: iState) => state.conversionRate);
-
+  // const [isReady,setIsReady] = useState(false)
+  const isReady = useRef(false);
   const [chart, setChart] = useState([
     {
       label: "temp",
@@ -121,12 +119,16 @@ export default function ChartDeck(props: { deckId: string }) {
       }
     }
     ttt();
-  }, [user]);
-  
+  }, [rate]);
 
-  // const data = chart; DO NOT REMOVE
-  // useMemo(() => chart, []);
-  ///the value used to be memoized, but if i do then i can't update the values when i fetch them
+  // useEffect(() => {
+  //   console.log(chart[0].data, isReady)
+
+  // }, [chart, rate]);
+  
+  if (chart[0].data.length > 2 && rate > 0) {
+    isReady.current = true;
+  }
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
@@ -135,7 +137,6 @@ export default function ChartDeck(props: { deckId: string }) {
     []
   );
 
- 
   const secondaryAxes = useMemo(
     (): AxisOptions<MyDatum>[] => [
       {
@@ -148,21 +149,36 @@ export default function ChartDeck(props: { deckId: string }) {
   );
   type MyDatum = { value: number; date: Date };
 
+  // const data = chart; DO NOT REMOVE
+  // useMemo(() => chart, []);
+  ///the value used to be memoized, but if i do then i can't update the values when i fetch them
+
   return (
     <>
-      {chart[0].label !== "temp" ? (
-        <Chart
-          options={{
-            data: chart,
-            primaryAxis,
-            secondaryAxes,
-            dark: isDarkMode,
-            tooltip: false,
-          }}
-        />
-      ) : (
-        <div className="flex justify-center items-center h-full">no data</div>
-      )}
+      {
+        /*chart[0].label !== "temp" && chart[0].data[0].value > 0 && */ isReady.current ? (
+          <Chart
+            options={{
+              data: chart,
+              primaryAxis,
+              secondaryAxes,
+              dark: isDarkMode,
+              tooltip: false,
+            }}
+          />
+        ) : (
+          <div className="flex flex-col justify-center items-center h-full">
+            <div>
+              <div className="flex justify-center items-center text-amber-500 font-bold  leading-none">
+                no data
+              </div>
+              <div className="flex justify-center items-center text-[0.6rem] leading-none">
+                no historical data available
+              </div>
+            </div>
+          </div>
+        )
+      }
     </>
   );
 }
