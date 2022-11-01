@@ -71,7 +71,7 @@ function App() {
         setUserInfo(user);
         isLoading.current = false;
       }
-    });
+    })
   }, [user]);
 
   setTimeout(() => {
