@@ -27,5 +27,5 @@ export default function CollectionRecap() {
     })();
   }, [user]);
 
-  return <div className="w-full my-5">{result}</div>;
+  return <div className="w-full">{result}</div>;
 }

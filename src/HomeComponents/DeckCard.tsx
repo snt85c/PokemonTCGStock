@@ -61,7 +61,7 @@ export default function DeckCard(props: { card: coll }) {
             </div>
           </div>
         </div>
-        <div className="h-[10rem] p-2 relative">
+        <div className="h-[5rem] pb-3 relative">
           <ChartDeck deckId={props.card.id} />
         </div>
         <div className="text-xs mt-2">

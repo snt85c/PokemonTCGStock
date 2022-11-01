@@ -1,6 +1,7 @@
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 
+
 export interface iCardStore {
   card: iCard;
   cardValue: number;
@@ -26,6 +27,7 @@ export interface iCardStore {
   ) => Promise<boolean>;
 }
 
+
 export interface iCollectionStore {
   currentDeck: iCard[];
   decks: [];
@@ -38,7 +40,7 @@ export interface iCollectionStore {
     note: string;
   };
   userUID: string;
-
+  
   setCurrentDeckInfo: ( request: string, type: string) => void;
   createNewCollection: (user: User) => void;
   setUserDeckFromFirebase: (user: User, deck?: string) => void;
@@ -46,16 +48,17 @@ export interface iCollectionStore {
     request: iCard | iCard[],
     userUid: string,
     deck?: string
-  ) => void;
-  updateCardOnUserDeck: (request: iCard) => void;
-  removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
-  findInCollection: (request: iCard) => boolean;
-  calculateCollectionValue: () => number;
-  calculateUserDecksTotalValue: () => Promise<number>;
-  deleteCollection: (id:string) => void
-}
-
+    ) => void;
+    updateCardOnUserDeck: (request: iCard) => void;
+    removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
+    findInCollection: (request: iCard) => boolean;
+    calculateCollectionValue: (request:string) => number;
+    calculateUserDecksTotalValue: () => Promise<number>;
+    deleteCollection: (id:string) => void
+  }
+  
 export interface iCard {
+  adjustedValue:number
   name: string;
   id: number;
   cardmarket: {

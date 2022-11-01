@@ -1,6 +1,10 @@
-import { collection, getDocs, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
+import { iCard } from "../Interfaces";
 import { db } from "../ProfileComponents/Firebase";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 import { useUserAuth } from "../ProfileComponents/userAuth";
@@ -29,6 +33,23 @@ export default function ChartDeck(props: { deckId: string }) {
       ],
     },
   ]);
+
+  const cardValue = (card: iCard) => {
+    /**
+     * when calculating the chart, i need to append the latest value at the end which might be different from
+     * the one i have historically due to live user interaction. i call this function to calculate the values
+     * currently stored
+     */
+    let result = Object.keys(card.userDeckInfo.quantity).reduce(
+      (prev, current) =>
+        prev +
+        card.userDeckInfo.quantity[current] *
+          card.tcgplayer.prices[current].market,
+      0
+    );
+
+    return result;
+  };
 
   useEffect(() => {
     async function ttt() {
@@ -89,10 +110,10 @@ export default function ChartDeck(props: { deckId: string }) {
         const queryCurrentSnapshot = await getDocs(queryRef);
         let currentDeck: iData = { value: 0, date: new Date() };
         queryCurrentSnapshot.forEach((item) => {
-          let temp = item.data();
+          let temp: iCard = item.data() as iCard;
           currentDeck = {
             ...currentDeck,
-            value: (currentDeck.value + temp.adjustedValue) * rate,
+            value: currentDeck.value + cardValue(temp) * rate,
           };
         });
         chartdata.data.push(currentDeck);
@@ -101,24 +122,26 @@ export default function ChartDeck(props: { deckId: string }) {
     }
     ttt();
   }, [user]);
+  
 
-  const data = chart;
+  // const data = chart; DO NOT REMOVE
   // useMemo(() => chart, []);
   ///the value used to be memoized, but if i do then i can't update the values when i fetch them
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
       getValue: (datum) => datum.date,
-      shouldNice: true,
     }),
     []
   );
 
+ 
   const secondaryAxes = useMemo(
     (): AxisOptions<MyDatum>[] => [
       {
         getValue: (datum) => datum.value,
         elementType: "line", //line, area, bar,bubble
+        shouldNice: true,
       },
     ],
     []
@@ -130,7 +153,7 @@ export default function ChartDeck(props: { deckId: string }) {
       {chart[0].label !== "temp" ? (
         <Chart
           options={{
-            data,
+            data: chart,
             primaryAxis,
             secondaryAxes,
             dark: isDarkMode,

@@ -89,7 +89,7 @@ const useCollectionStore = create(
           }
           fetch().then(() => {
             if (get().decks.length === 0) {
-              console.log("trigger")
+              console.log("new collection created")
               get().createNewCollection(userUID);
             }
             get().calculateCollectionValue(userUID);
@@ -173,6 +173,7 @@ const useCollectionStore = create(
       },
 
       updateCardOnUserDeck: (request) => {
+        //gets a an iCard object
         const find = get().currentDeck.findIndex(
           (card) => request.id == card.id
         );
