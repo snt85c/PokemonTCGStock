@@ -7,17 +7,32 @@ import { useNavigate } from "react-router-dom";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
 
-export default function Menu() {
-  const navigate = useNavigate();
+export default function Menu(props:{ setTranslate: React.Dispatch<React.SetStateAction<number>>}) {
+  // const navigate = useNavigate();
   const [active, setActive] = useState<
     "home" | "search" | "collection" | "profile" | ""
   >("");
   return (
-    <div className="fixed flex justify-evenly items-center bottom-0 h-[10%] w-full text-white z-50 pb-2 duration-300 btm-nav">
-      <button
+    <div
+      className="
+      fixed
+      flex
+      justify-evenly
+      items-center
+      bottom-0
+      h-[10%]
+      w-full
+      text-white
+      z-50 
+      pb-2 
+      duration-300 
+      btm-nav"
+    >
+      <a
+      href="#home"
         onClick={() => {
           setActive("home");
-          navigate("/");
+          // navigate("/");
           // addDoc(collection(db, "cardsDB"), {
           //   name: "test " + new Date().getMinutes().toLocaleString(), date: new Date()
           // });
@@ -25,34 +40,37 @@ export default function Menu() {
         className={`${active === "home" ? "active" : ""} `}
       >
         <MenuHome {...{ setActive }} />
-      </button>
-      <button
+      </a>
+      <a
+      href="#search"
         onClick={() => {
           setActive("search");
-          navigate("/search");
+          // navigate("/search");
         }}
         className={`${active === "search" ? "active" : ""} `}
       >
         <MenuSearch {...{ setActive }} />
-      </button>
-      <button
+      </a>
+      <a
+      href="#collection"
         onClick={() => {
           setActive("collection");
-          navigate("/collection");
+          // navigate("/collection");
         }}
         className={`${active === "collection" ? "active" : ""} `}
       >
         <MenuCollection {...{ setActive }} />
-      </button>
-      <button
+      </a>
+      <a
+      href="#profile"
         onClick={() => {
           setActive("profile");
-          navigate("/profile");
+          // navigate("/profile");
         }}
         className={`${active === "profile" ? "active" : ""} `}
       >
         <MenuProfile {...{ setActive }} />
-      </button>
+      </a>
     </div>
   );
 }

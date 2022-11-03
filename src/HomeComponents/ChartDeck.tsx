@@ -1,7 +1,8 @@
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
-import { iCard } from "../Interfaces";
+import useCollectionStore from "../CollectionComponent/useCollectionStore";
+import { iCard, iCollectionStore } from "../Interfaces";
 import { db } from "../ProfileComponents/Firebase";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 import { useUserAuth } from "../ProfileComponents/userAuth";
@@ -21,6 +22,13 @@ export default function ChartDeck(props: { deckId: string }) {
   const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const rate = useProfileStore((state: iState) => state.conversionRate);
   // const [isReady,setIsReady] = useState(false)
+  const userDeckValue = useCollectionStore(
+    (state: iCollectionStore) => state.collectionValue
+  );
+
+  const userDeckInfo = useCollectionStore(
+    (state: iCollectionStore) => state.currentDeckInfo
+  );
   const isReady = useRef(false);
   const [chart, setChart] = useState([
     {
@@ -50,6 +58,7 @@ export default function ChartDeck(props: { deckId: string }) {
   };
 
   useEffect(() => {
+    // console.log(userDeck, userDeckInfo)
     async function ttt() {
       const queryRef = collection(
         db,
@@ -109,22 +118,30 @@ export default function ChartDeck(props: { deckId: string }) {
         let currentDeck: iData = { value: 0, date: new Date() };
         queryCurrentSnapshot.forEach((item) => {
           let temp: iCard = item.data() as iCard;
-          currentDeck = {
-            ...currentDeck,
-            value: currentDeck.value + cardValue(temp) * rate,
-          };
+          if(props.deckId === userDeckInfo.id){
+            currentDeck = {
+              ...currentDeck,
+              value: userDeckValue * rate,
+            }; 
+          }else{
+            currentDeck = {
+              ...currentDeck,
+              value: currentDeck.value + cardValue(temp) * rate,
+            };
+
+          }
+
         });
         chartdata.data.push(currentDeck);
         setChart([chartdata]);
       }
     }
     ttt();
-  }, [rate]);
+  }, [userDeckValue, userDeckInfo]);
 
-  // useEffect(() => {
-  //   console.log(chart[0].data, isReady)
-
-  // }, [chart, rate]);
+  useEffect(() => {
+    console.log(userDeckValue)
+  }, [userDeckValue]);
   
   if (chart[0].data.length > 2 && rate > 0) {
     isReady.current = true;

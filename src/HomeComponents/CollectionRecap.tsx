@@ -27,5 +27,5 @@ export default function CollectionRecap() {
     })();
   }, [user]);
 
-  return <div className="w-full">{result}</div>;
+  return <div className="select-none">{result}</div>;
 }

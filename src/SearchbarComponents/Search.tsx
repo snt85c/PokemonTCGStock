@@ -10,11 +10,11 @@ export default function Search() {
     (state: iSearchStore) => state.resultJSXArray
   );
   useSearchStore.persist.clearStorage(); //CLEAR STORAGE
-
+ 
   return (
-    <div className="flex flex-col h-screen  bg-slate-500 dark:bg-slate-900 duration-300">
+    <div id="search" className="flex snap-center flex-col h-screen min-w-[100%] bg-white dark:bg-slate-900 duration-300">
       <Darkmode />
-      <div className="flex  justify-center items-center p-5 pt-10 pb-0 bg-slate-500 dark:bg-slate-900 dark:text-white duration-300">
+      <div className="flex justify-center items-center p-5 pt-10 pb-0 bg-white dark:bg-slate-900 dark:text-white duration-300">
         <SearchFunction />
       </div>
       {/* <div className="flex justify-center items-center bg-slate-500  dark:bg-slate-900 dark:text-white duration-300">

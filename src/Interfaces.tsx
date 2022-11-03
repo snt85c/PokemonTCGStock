@@ -38,6 +38,7 @@ export interface iCollectionStore {
     name: string;
     creationDate: Timestamp;
     note: string;
+    value:number
   };
   userUID: string;
   

@@ -8,7 +8,7 @@ import Profile from "./ProfileComponents/Profile";
 import Menu from "./MenuComponents/Menu";
 import NoPage from "./NoPage";
 import { setDoc, doc } from "firebase/firestore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { db } from "./ProfileComponents/Firebase";
 import useCollectionStore from "./CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "./Interfaces";
@@ -23,6 +23,7 @@ function App() {
   const setUserInfo = useProfileStore((state: iState) => state.setUserInfo);
   const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const isLoading = useRef(true);
+  const [translate, setTranslate] = useState<number>(0);
 
   if (
     isDarkMode
@@ -36,10 +37,12 @@ function App() {
   useEffect(() => {
     function telegramAlert() {
       fetch(
-        `https://api.telegram.org/bot5531898247:AAG8rxOFIKmlwS6PYBVTuXdTGMqIaSpl5eE/sendMessage?chat_id=231233238&text=new visit to PokemonTGCStock: ${new Date()} `
+        `https://api.telegram.org/bot5531898247:AAG8rxOFIKmlwS6PYBVTuXdTGMqIaSpl5eE/sendMessage?chat_id=231233238&text=new visit to PokemonTGCStock: ${
+          (user.uid, new Date())
+        } `
       );
     }
-    // telegramAlert();//remove comment to activate
+    telegramAlert();//remove comment to activate
   }, []);
 
   useEffect(() => {
@@ -66,12 +69,10 @@ function App() {
       }
     }
     set().then(() => {
-      if(user){
-        setUserDeckFromFirebase(user.uid);
-        setUserInfo(user);
-        isLoading.current = false;
-      }
-    })
+      setUserDeckFromFirebase(user.uid);
+      setUserInfo(user);
+      isLoading.current = false;
+    });
   }, [user]);
 
   setTimeout(() => {
@@ -82,7 +83,7 @@ function App() {
   return (
     <>
       <Loading isLoading={isLoading} />
-      <BrowserRouter>
+      {/* <BrowserRouter>
         <Routes>
           <Route path="" element={<Home />} />
           <Route path="/" element={<Home />} />
@@ -92,7 +93,14 @@ function App() {
           <Route path="*" element={<NoPage />} />
         </Routes>
         <Menu />
-      </BrowserRouter>
+      </BrowserRouter> */}
+      <div className="flex snapTest">
+          <Home />
+          <Search />
+          <Collection />
+          <Profile />
+      </div>
+        <Menu setTranslate={setTranslate} />
     </>
   );
 }

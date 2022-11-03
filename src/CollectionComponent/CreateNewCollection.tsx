@@ -18,7 +18,7 @@ export default function CreateNewCollection() {
       data-tip="create new collection"
     >
       <button
-        className=" ml-3 flex -mb-1 justify-center items-center hover:text-gray-300 duration-300"
+        className=" ml-1 flex -mb-1 justify-center items-center text-gray-400 dark:text-white hover:text-gray-300 duration-300"
         onClick={() => {
           createNewCollection(user.uid);
         }}

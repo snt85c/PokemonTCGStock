@@ -43,7 +43,7 @@ export default function Sort(props: {
   return (
     <>
       <div className=" flex justify-between items-center">
-        <div className="flex w-full mx-2 whitespace-nowrap font-[PlayR]">sort by:{result}</div>
+        <div className="flex w-full mx-2 whitespace-nowrap font-[PlayR] text-white">sort by:{result}</div>
       </div>
     </>
   );

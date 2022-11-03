@@ -11,7 +11,7 @@ export default function MenuCollection(props: {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center  gap-1 group">
+      <div className="flex snap-center flex-col justify-center items-center  gap-1 group">
         <div
         aria-label="menu-button-collection"
           onClick={() => {

@@ -17,14 +17,14 @@ export default function Collection() {
   return (
     <>
       {user && (
-        <div className="flex flex-col h-screen sm:px-[10rem] pt-2 bg-slate-500  dark:bg-slate-900 dark:text-white duration-300 text-white">
+        <div id="collection" className="flex snap-center flex-col h-screen min-w-[100%] sm:px-[10rem] pt-2 bg-white  dark:bg-slate-900 text-black dark:text-white duration-300">
           <Darkmode />
           <CurrentCollectionInfo />
           <ListCollections />
           <Deck deck={userDeck} type="collection" />
         </div>
       )}
-      {!user && <div className="flex flex-col text-center min-h-screen bg-slate-500 text-white">you need to login first</div>}
+      {!user && <div className="flex flex-col text-center min-h-screen bg-slate-500 text-white"></div>}
     </>
   );
 }

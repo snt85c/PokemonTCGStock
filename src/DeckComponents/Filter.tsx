@@ -16,7 +16,7 @@ export default function Filter(props: {
       <div className="flex flex-row dark:text-black">
         <span
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className="flex w-2/3 justify-center items-center dark:bg-white bg-gray-200  hover:bg-gray-300  ml-3 rounded duration-300"
+          className="flex w-2/3 justify-center items-center dark:bg-white bg-gray-200  hover:bg-gray-300  ml-3 rounded duration-300 cursor-pointer"
           style={{backgroundColor:isFilterOpen?"#334155":"", color:isFilterOpen?"white":"black"}}
         >
           {isFilterOpen ? "filters" : "open filter"}
