@@ -58,7 +58,6 @@ export default function ChartDeck(props: { deckId: string }) {
   };
 
   useEffect(() => {
-    // console.log(userDeck, userDeckInfo)
     async function ttt() {
       const queryRef = collection(
         db,
@@ -73,29 +72,33 @@ export default function ChartDeck(props: { deckId: string }) {
       let date: Date = new Date();
       const querySnapshot = await getDocs(queryRef);
       if (querySnapshot.size !== 0) {
-        querySnapshot.forEach((day) => {
+        //i query all the historical instances of this collection, 
+        querySnapshot.forEach((instance) => {
           let keys: string[] = [];
-          let daydata = day.data();
+          let instanceData = instance.data();
           chartdata.label = props.deckId;
-          daydata.result.forEach((item: any) => {
+          instanceData.result.forEach((item: any) => {
+            // for each i get all the keys from the prices , 
             dayValueOfDeck = 0;
             Object.keys(item.prices).map((cardType) => {
               if (!keys.includes(cardType)) keys.push(cardType);
             });
-            daydata.result.forEach((item: any) => {
+            instanceData.result.forEach((item: any) => {
               keys.forEach((key) => {
                 if (
                   item.prices[key] &&
                   item.prices[key].market &&
                   item.quantity[key] !== 0
-                ) {
-                  dayValueOfDeck +=
+                  ) {
+                    // then for each key i sum and multiply each card for its price and quantity
+                    dayValueOfDeck +=
                     item.prices[key].market * item.quantity[key];
                   date = item.date.toDate();
                 }
               });
             });
           });
+          //i append each result into a new object containing the date of the instance and the total value
           chartdata.data.push({
             value: dayValueOfDeck * rate,
             date: date,
@@ -105,43 +108,41 @@ export default function ChartDeck(props: { deckId: string }) {
           //sort it by Date, as Firebase doesn't ensure that the data will be saved chronologically in the first place, otherwise i might get the wrong amount in the wrong place
           return Number(a.date) - Number(b.date);
         });
-        const queryRef = collection(
-          db,
-          "users",
-          user.uid,
-          "decks",
-          props.deckId,
-          "cards"
-        );
-        //to make the chart dynamic, i take the current deck as saved on firebase and i append it at the end of chartdata(i dont need to sort in this case)
-        const queryCurrentSnapshot = await getDocs(queryRef);
+        // const queryRef = collection(
+        //   db,
+        //   "users",
+        //   user.uid,
+        //   "decks",
+        //   props.deckId,
+        //   "cards"
+        // );
+        //to make the chart dynamic, i take the current deck as saved on firebase and i append it
+        // at the end of chartdata(i dont need to sort in this case)
+        // const queryCurrentSnapshot = await getDocs(queryRef);
         let currentDeck: iData = { value: 0, date: new Date() };
-        queryCurrentSnapshot.forEach((item) => {
-          let temp: iCard = item.data() as iCard;
+        // queryCurrentSnapshot.forEach((item) => {
+          // let temp: iCard = item.data() as iCard;
           if(props.deckId === userDeckInfo.id){
             currentDeck = {
               ...currentDeck,
               value: userDeckValue * rate,
             }; 
-          }else{
-            currentDeck = {
-              ...currentDeck,
-              value: currentDeck.value + cardValue(temp) * rate,
-            };
-
+            chartdata.data.push(currentDeck);
           }
+          // else{
+          //   currentDeck = {
+          //     ...currentDeck,
+          //     value: currentDeck.value + cardValue(temp) * rate,
+          //   };
 
-        });
-        chartdata.data.push(currentDeck);
+          // }
+
+        // });
         setChart([chartdata]);
       }
     }
     ttt();
   }, [userDeckValue, userDeckInfo]);
-
-  useEffect(() => {
-    console.log(userDeckValue)
-  }, [userDeckValue]);
   
   if (chart[0].data.length > 2 && rate > 0) {
     isReady.current = true;
