@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "../Interfaces";
@@ -18,17 +19,16 @@ export default function DeckCard(props: { card: coll }) {
   const { user } = useUserAuth();
   const sym = useProfileStore((state: iState) => state.conversionSym);
   const rate = useProfileStore((state: iState) => state.conversionRate);
-
   const totalCollectionsValue = useCollectionStore(
     (state: iCollectionStore) => state.totalCollectionsValue
   );
   const setUserDeckFromFirebase = useCollectionStore(
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
-  // const navigate = useNavigate();
 
   return (
     <>
+    
       <div className="flex flex-col justify-between font-[PlayR] my-3 p-3  border bg-gray-200 border-white dark:border-gray-500 dark:bg-slate-600 rounded-xl w-full  duration-300 shadow-lg">
         <div className="flex justify-between">
           <div className="leading-none">
@@ -37,7 +37,6 @@ export default function DeckCard(props: { card: coll }) {
               className="text-lg leading-none font-[PlayB] cursor-pointer"
               onClick={() => {
                 setUserDeckFromFirebase(user.uid, props.card.id);
-                // navigate("/collection");
               }}
             >
               {props.card.name
@@ -62,8 +61,8 @@ export default function DeckCard(props: { card: coll }) {
             </div>
           </div>}
         </div>
-        <div className="h-[5rem] p-3 relative md:h-[10rem]">
-          <ChartDeck deckId={props.card.id} />
+        <div className="h-[5rem] p-3 mx-2 relative md:h-[10rem]">
+          <ChartDeck deckId={props.card.id}/>
         </div>
         <div className="text-xs mt-2">
           created on:{props.card.creationDate.toDate().toDateString()}

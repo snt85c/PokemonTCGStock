@@ -17,7 +17,9 @@ interface iData {
   date: Date;
 }
 
-export default function ChartDeck(props: { deckId: string }) {
+export default function ChartDeck(props: {
+  deckId: string;
+}) {
   const { user } = useUserAuth();
   const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const rate = useProfileStore((state: iState) => state.conversionRate);
@@ -31,9 +33,7 @@ export default function ChartDeck(props: { deckId: string }) {
   const [chart, setChart] = useState([
     {
       label: "",
-      data: [
-        { value: 0, date: new Date() },
-      ],
+      data: [{ value: 0, date: new Date() }],
     },
   ]);
 
@@ -91,7 +91,7 @@ export default function ChartDeck(props: { deckId: string }) {
            */
           return Number(a.date) - Number(b.date);
         });
-        if (props.deckId === userDeckInfo.id) {
+        if (userDeckInfo && props.deckId === userDeckInfo.id) {
           /**
            *to make the chart dynamic, i take the current deck as saved on zustand and i append it
            *at the end of chartdata(i dont need to sort in this case, as it's clearly going
@@ -105,12 +105,13 @@ export default function ChartDeck(props: { deckId: string }) {
         setChart([chartdata]);
       }
     }
+    if (chart[0].data.length > 2 && rate > 0) {
+      setTimeout(() => {
+        isReady.current = true;
+      }, 2000);
+    }
     ttt();
   }, [userDeckValue, userDeckInfo]);
-
-  if (chart[0].data.length > 2 && rate > 0) {
-    isReady.current = true;
-  }
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
@@ -137,8 +138,9 @@ export default function ChartDeck(props: { deckId: string }) {
 
   return (
     <>
-      {isReady.current ? (
+      {isReady ? (
         <Chart
+          style={{ display: isReady ? "flex" : "none" }}
           options={{
             data: chart,
             primaryAxis,
