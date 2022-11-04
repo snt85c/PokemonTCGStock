@@ -14,6 +14,21 @@ export default function SearchFunction() {
   );
 
   useEffect(() => {
+    const listener = (event: { key: string; preventDefault: () => void }) => {
+      //detects if the user is pressing the enter key to start a search
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if(searchRequest !== "")
+        setSearchTrigger(true)
+      }
+    };
+    document.addEventListener("keydown", listener);
+    return () => {
+      document.removeEventListener("keydown", listener);
+    };
+  });
+
+  useEffect(() => {
     if (searchTrigger && searchRequest !== "") {
     try {
         const url = `https://api.pokemontcg.io/v2/cards?q=name:"${searchRequest}"`;

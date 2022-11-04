@@ -2,18 +2,20 @@ import { IoMdAddCircle, IoMdRemoveCircle } from "react-icons/io";
 import { useUserAuth } from "../ProfileComponents/userAuth";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CardModifyAmount from "./CardModifyAmount/CardModifyAmount";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
 import CardValue from "./CardValue";
 import CardShowSearchValue from "./CardModifyAmount/CardShowSearchValue";
+import CardView from "./CardView";
 
 export default function Card(props: { data: iCard; type: string }) {
   const { user } = useUserAuth();
 
   const [card, setCard] = useState<iCard>(props.data);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isCardView, setIsCardView] = useState(false);
 
   const currentDeckInfo = useCollectionStore(
     (state: iCollectionStore) => state.currentDeckInfo
@@ -146,8 +148,10 @@ export default function Card(props: { data: iCard; type: string }) {
     <>
       {
         <div
-          className="m-2 p-2 relative flex flex-row justify-between text-white  rounded-xl gap-2 bg-gradient-to-l from-slate-900 to-slate-700"
-          onClick={() => console.log(props.data)}
+          className="m-2  p-2 relative flex flex-row justify-between text-white  rounded-xl gap-2 bg-gradient-to-l from-slate-900 to-slate-700"
+          onClick={() => {
+            console.log(props.data);
+          }}
           style={{ display: isLoaded ? "flex" : "none" }}
         >
           {props.type === "collection" && (
@@ -167,6 +171,10 @@ export default function Card(props: { data: iCard; type: string }) {
             <img
               onLoad={() => {
                 setIsLoaded(true);
+              }}
+              onClick={() => {
+                // console.log(props.data);
+                setIsCardView(true);
               }}
               src={props.data.images && props.data.images.small}
               height={props.type == "search" ? 40 : 50}
@@ -250,6 +258,7 @@ export default function Card(props: { data: iCard; type: string }) {
           )}
         </div>
       }
+      {isCardView && <CardView card={props.data} setIsCardView = {setIsCardView}/>}
     </>
   );
 }

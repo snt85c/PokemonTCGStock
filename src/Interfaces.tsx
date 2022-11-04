@@ -70,7 +70,7 @@ export interface iCard {
   tcgplayer: {
     prices: any;
   };
-  images: { small: string };
+  images: { small: string, large:string };
   set: {
     name: string;
     series: string;

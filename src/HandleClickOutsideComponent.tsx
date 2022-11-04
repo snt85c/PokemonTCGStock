@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-export function HandleClickOutsideComponent(
+export default function HandleClickOutsideComponent(
     setShowOther: React.Dispatch<React.SetStateAction<boolean>>
   ) {
     const ref = useRef<HTMLDivElement>(null);

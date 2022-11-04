@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { HandleClickOutsideComponent } from "../HandleClickOutsideComponent";
+import HandleClickOutsideComponent from "../HandleClickOutsideComponent";
 import Dropdown from "./Dropdown";
 
 export default function Filter(props: {
