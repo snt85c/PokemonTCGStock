@@ -27,7 +27,7 @@ export default function CollectionDelete() {
   }
   useEffect(() => {
     getCollections();
-  }, []);
+  }, [user]);
 
   return (
     <div className="leading-1">
