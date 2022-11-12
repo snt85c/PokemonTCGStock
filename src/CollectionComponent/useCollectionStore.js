@@ -12,7 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
-
+import calculateCardValue from "../utils/calculateCardValue";
 const useCollectionStore = create(
   devtools(
     persist((set, get) => ({
@@ -53,7 +53,8 @@ const useCollectionStore = create(
               );
               const colSnap = await getDocs(collectionRef);
               colSnap.forEach((item) => {
-                tempArray.push(item.data());
+                 // i calculate the value of each card                 
+                tempArray.push(calculateCardValue(item.data()));
               });
               const docRef = doc(
                 db,
@@ -89,7 +90,7 @@ const useCollectionStore = create(
           }
           fetch().then(() => {
             if (get().decks.length === 0) {
-              console.log("new collection created")
+              console.log("new collection created");
               get().createNewCollection(userUID);
             }
             get().calculateCollectionValue(userUID);
@@ -97,6 +98,8 @@ const useCollectionStore = create(
           //then we calculate the value of the deck
         }
       },
+
+      
 
       createNewCollection: async (userUID) => {
         if (userUID) {
@@ -108,13 +111,7 @@ const useCollectionStore = create(
               newDeckId = "deck1";
             }
 
-            const collectionRef = doc(
-              db,
-              "users",
-              userUID,
-              "decks",
-              newDeckId
-            );
+            const collectionRef = doc(db, "users", userUID, "decks", newDeckId);
             await setDoc(
               collectionRef,
               {
@@ -214,6 +211,7 @@ const useCollectionStore = create(
         get().calculateCollectionValue();
       },
 
+     
       calculateCollectionValue: (userUID) => {
         //get the pre-calculated value of all the cards and sum it
         let value = get()
@@ -231,6 +229,7 @@ const useCollectionStore = create(
           { merge: true }
         );
       },
+   
 
       calculateUserDecksTotalValue: async () => {
         let result = 0;
@@ -270,13 +269,16 @@ const useCollectionStore = create(
                 )
               );
             });
-            await updateDoc(doc(db, "users", get().userUID, "decks", "deck1"),{name:"", note:""});
+            await updateDoc(doc(db, "users", get().userUID, "decks", "deck1"), {
+              name: "",
+              note: "",
+            });
             get().setUserDeckFromFirebase(get().userUID, "deck1");
             return;
           default:
             let anyOtherDeckTemp = await getDocs(
               collection(db, "users", get().userUID, "decks", id, "cards")
-            )
+            );
             anyOtherDeckTemp.forEach((item) => {
               deleteDoc(
                 doc(db, "users", get().userUID, "decks", id, "cards", item.id)

@@ -1,6 +1,7 @@
 import Axios from "axios";
 import { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { userInfo } from "os";
 import create from "zustand";
 import { db } from "./Firebase";
 
@@ -27,7 +28,10 @@ const useProfileStore = create<iState>((set, get) => ({
         userInfo: result,
         darkmode: result && result.user.darkmode,
       }));
-      get().setConversionRate(result && result.user.conversionRate, result && result.user.currency);
+      get().setConversionRate(
+        result && result.user.conversionRate,
+        result && result.user.currency
+      );
     }
   },
 
@@ -35,23 +39,27 @@ const useProfileStore = create<iState>((set, get) => ({
     set(() => ({
       darkmode: !get().darkmode,
     }));
-    await setDoc(
-      doc(db, "users", get().userInfo.user.uid),
-      { user: { darkmode: get().darkmode } },
-      {
-        merge: true,
-      }
-    );
+    if (get().userInfo) {
+      await setDoc(
+        doc(db, "users", get().userInfo.user.uid),
+        { user: { darkmode: get().darkmode } },
+        {
+          merge: true,
+        }
+      );
+    }
   },
 
   setConversionRate: async (rate, sym) => {
     set(() => ({
-      conversionRate: rate? rate:1,
+      conversionRate: rate ? rate : 1,
       conversionSym: sym ? sym : "usd",
     }));
     await setDoc(
       doc(db, "users", get().userInfo.user.uid),
-      { user: { currency: sym ? sym : "usd" , conversionRate:rate? rate:1} },
+      {
+        user: { currency: sym ? sym : "usd", conversionRate: rate ? rate : 1 },
+      },
       {
         merge: true,
       }

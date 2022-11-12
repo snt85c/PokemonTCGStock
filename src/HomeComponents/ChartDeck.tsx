@@ -1,5 +1,5 @@
 import { collection, getDocs } from "firebase/firestore";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
@@ -29,7 +29,7 @@ export default function ChartDeck(props: {
   const userDeckInfo = useCollectionStore(
     (state: iCollectionStore) => state.currentDeckInfo
   );
-  const isReady = useRef(false);
+  const [isReady, setIsReady] = useState(false)
   const [chart, setChart] = useState([
     {
       label: "",
@@ -106,12 +106,12 @@ export default function ChartDeck(props: {
       }
     }
     if (chart[0].data.length > 2 && rate > 0) {
-      setTimeout(() => {
-        isReady.current = true;
-      }, 2000);
+        setIsReady(true)
     }
     ttt();
-  }, [userDeckValue, userDeckInfo]);
+  }, [userDeckValue, userDeckInfo, rate]);
+
+
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
@@ -132,9 +132,15 @@ export default function ChartDeck(props: {
   );
   type MyDatum = { value: number; date: Date };
 
-  // const data = chart; DO NOT REMOVE
-  // useMemo(() => chart, []);
-  ///the value used to be memoized, but if i do then i can't update the values when i fetch them
+  /**
+   * 
+   // const data = chart; DO NOT REMOVE
+   // useMemo(() => chart, []);
+   *
+   * the value used to be memoized, but if i do then i can't update the values when i fetch them,
+   * this seems like a big deal on the documentation but it won't work here, so i'm leaving it as a
+   * reminder of what could be wrong
+   */
 
   return (
     <>

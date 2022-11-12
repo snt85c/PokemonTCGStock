@@ -29,7 +29,7 @@ export default function DeckCard(props: { card: coll }) {
   return (
     <>
     
-      <div className="flex flex-col justify-between font-[PlayR] my-3 p-3  border bg-gray-200 border-white dark:border-gray-500 dark:bg-slate-600 rounded-xl w-full  duration-300 shadow-lg">
+      <div className="flex flex-col justify-between font-[PlayR] my-3 p-3  border bg-gray-200 border-white dark:border-gray-500 dark:bg-slate-600 rounded-xl min-w-full  duration-300 shadow-lg">
         <div className="flex justify-between">
           <div className="leading-none">
             <a

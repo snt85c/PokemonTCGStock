@@ -3,8 +3,11 @@ import { iCollectionStore } from "../Interfaces";
 import Darkmode from "../ProfileComponents/Darkmode";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 import CollectionRecap from "./CollectionRecap";
+import { useUserAuth } from "../ProfileComponents/userAuth";
+import SigninPage from "./SigninPage";
 
 export default function Home() {
+  const { user, googleSignIn, logout } = useUserAuth();
   let totalDecksValue = useCollectionStore(
     (state: iCollectionStore) => state.totalCollectionsValue
   );
@@ -31,14 +34,20 @@ export default function Home() {
               </span>
             </div>
           ) : (
-            <div className="flex justify-center items-center m-3  dark:bg-gray-500 bg-gray-200 rounded-3xl py-1 px-6">
+            <div
+              className="flex justify-center items-center m-3  dark:bg-gray-500 bg-gray-200 rounded-3xl py-1 px-6"
+              style={{ display: user ? "flex" : "none" }}
+            >
               no data
             </div>
           )}
         </div>
-        <div className="flex flex-col overflow-scroll px-1 pb-10">
+        <div className="flex flex-col overflow-scroll px-1 pb-10 w-full">
           <CollectionRecap />
         </div>
+          {!user && (
+            <SigninPage />
+          )}
       </div>
     </>
   );

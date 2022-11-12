@@ -6,6 +6,7 @@ import useProfileStore, { iState } from "./useProfileStore";
 import Darkmode from "./Darkmode";
 import CollectionDelete from "./CollectionDelete";
 import ContactUs from "./ContactUs";
+import GoogleButton from "react-google-button";
 
 export default function Profile() {
   const { user, googleSignIn, logout } = useUserAuth();
@@ -34,14 +35,11 @@ export default function Profile() {
 
   function Login() {
     return (
-      <button
-        className="btn btn-outline btn-sm bg-gray-200 text-gray-600 dark:bg-transparent w-full"
+      <GoogleButton
         onClick={() => {
           googleSignIn();
         }}
-      >
-        Login
-      </button>
+      />
     );
   }
 
@@ -51,7 +49,6 @@ export default function Profile() {
         className="btn btn-outline btn-sm bg-gray-200 text-gray-600 dark:bg-transparent w-full"
         onClick={() => {
           logout();
-          window.location.reload();
         }}
       >
         Logout
@@ -91,7 +88,10 @@ export default function Profile() {
             placeholder="set currency"
           />
           <CollectionDelete />
+          <div className="mt-20">
+
           <ContactUs />
+          </div>
         </div>
       </section>
     </>

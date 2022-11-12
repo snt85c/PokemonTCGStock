@@ -14,6 +14,8 @@ import useCollectionStore from "./CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "./Interfaces";
 import useProfileStore, { iState } from "./ProfileComponents/useProfileStore";
 import "./index.css";
+import ScreenSizeWarning from "./ScreenSizeWarning";
+import SigninPage from "./HomeComponents/SigninPage";
 
 function App() {
   const { user } = useUserAuth();
@@ -25,10 +27,7 @@ function App() {
   const isLoading = useRef(true);
   const [translate, setTranslate] = useState<number>(0);
 
-  if (
-    isDarkMode
-    // || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  ) {
+  if (isDarkMode) {
     document.documentElement.classList.add("dark");
   } else {
     document.documentElement.classList.remove("dark");
@@ -38,11 +37,11 @@ function App() {
     function telegramAlert() {
       fetch(
         `https://api.telegram.org/bot5531898247:AAG8rxOFIKmlwS6PYBVTuXdTGMqIaSpl5eE/sendMessage?chat_id=231233238&text=new visit to PokemonTGCStock: ${
-          (user.uid, new Date())
+          (user ? user.uid : "unknown", new Date())
         } `
       );
     }
-    telegramAlert();//remove comment to activate
+    telegramAlert(); //remove comment to activate
   }, []);
 
   useEffect(() => {
@@ -69,8 +68,10 @@ function App() {
       }
     }
     set().then(() => {
-      setUserDeckFromFirebase(user.uid);
-      setUserInfo(user);
+      if (user) {
+        setUserDeckFromFirebase(user.uid);
+        setUserInfo(user);
+      }
       isLoading.current = false;
     });
   }, [user]);
@@ -83,24 +84,24 @@ function App() {
   return (
     <>
       <Loading isLoading={isLoading} />
-      {/* <BrowserRouter>
-        <Routes>
-          <Route path="" element={<Home />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="*" element={<NoPage />} />
-        </Routes>
-        <Menu />
-      </BrowserRouter> */}
-      <div className="flex snapTest">
-          <Home />
-          <Search />
-          <Collection />
-          <Profile />
-      </div>
-        <Menu setTranslate={setTranslate} />
+      {user ? (
+        <>
+          <div className="flex sm:hidden">
+            <div className="flex snapclass">
+              <Home />
+              <Search />
+              <Collection />
+              <Profile />
+            </div>
+            <Menu setTranslate={setTranslate} />{" "}
+          </div>
+          <div className="hidden sm:flex">
+            <ScreenSizeWarning />
+          </div>
+        </>
+      ) : (
+        <SigninPage />
+      )}
     </>
   );
 }
