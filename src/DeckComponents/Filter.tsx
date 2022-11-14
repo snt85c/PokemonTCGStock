@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import HandleClickOutsideComponent from "../HandleClickOutsideComponent";
 import { iFilter } from "../Interfaces";
@@ -6,7 +6,8 @@ import Dropdown from "./Dropdown";
 
 export default function Filter(props: {
   cardFilter: iFilter;
-  handleClick: (option: string, restore?: string[]) => void;
+  handleClickFilter: (option: string, restore?: string[]) => void;
+  type:string
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -23,12 +24,12 @@ export default function Filter(props: {
             color: isFilterOpen ? "white" : "black",
           }}
         >
-          {isFilterOpen ? "filters" : "open filter"}
+          {isFilterOpen ? "Filter by" : "open filter"}
         </span>
         <button
           className="flex w-1/4 justify-center items-center bg-white mx-3 rounded hover:bg-gray-300 duration-300 "
           onClick={() => {
-            props.handleClick("clear", []);
+            props.handleClickFilter("clear", []);
             setIsFilterOpen(false);
           }}
         >
@@ -45,27 +46,11 @@ export default function Filter(props: {
           {Object.keys(props.cardFilter).map((key) => {
             if (key !== "releaseDate") {
               return (
-                // <button
-                //   key={uuidv4()}
-                //   className="flex w-full justify-center items-center bg-white hover:bg-gray-300 mx-1 px-2 whitespace-nowrap rounded duration-300"
-                //   style={
-                //     {
-                //       // backgroundColor: props.sort === item ? "#334155" : "",
-                //       // color: props.sort === item ? "white" : "black",
-                //     }
-                //   }
-                //   onClick={() => {
-                //     props.handleClick(key);
-                //     setIsFilterOpen(false);
-                //   }}
-                // >
-                //   {key}
-                // </button>
                 <div key={uuidv4()} className="flex flex-col">
                   <Dropdown
                     keys={key}
                     cardFilter={props.cardFilter}
-                    handleClick={props.handleClick}
+                    handleClick={props.handleClickFilter}
                     setIsFilterOpen={setIsFilterOpen}
                   />
                 </div>

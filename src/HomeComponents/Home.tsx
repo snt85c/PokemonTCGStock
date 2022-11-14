@@ -21,9 +21,9 @@ export default function Home() {
         id="home"
         className="snap-center flex flex-col justify-start  sm:px-[10rem] items-center p-5 min-w-[100%] h-screen bg-white dark:bg-slate-900 text-black dark:text-white duration-300 mb-2"
       >
-        <h1 className=" font-bold text-xl text-black dark:text-white font-[Phonk] select-none">
+        {/* <h1 className=" font-bold text-xl text-black dark:text-white font-[Phonk] select-none">
           my collections
-        </h1>
+        </h1> */}
         <div className="flex flex-col">
           {totalDecksValue > 0 ? (
             <div className="flex justify-center items-center m-3  dark:bg-gray-500 bg-gray-200 rounded-3xl py-1 px-6 select-none">

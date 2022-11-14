@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCollectionStore } from "../Interfaces";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
@@ -26,8 +26,6 @@ export default function DeckCard(props: { card: coll }) {
   );
   const [isReady, setIsReady] = useState(false);
   let deckId = props.card && props.card.id;
-
-  useEffect(()=>{console.log(isReady)},[isReady])
 
   return (
     <>
