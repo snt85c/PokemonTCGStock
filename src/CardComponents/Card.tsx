@@ -154,18 +154,18 @@ export default function Card(props: { data: iCard; type: string }) {
           }}
           style={{ display: isLoaded ? "flex" : "none" }}
         >
-          {props.type === "collection" && (
+          {/* {props.type === "collection" && ( */}
             <img
               className="absolute h-8 bottom-2 left-2 z-30"
               src={props.data.set.images.symbol}
             />
-          )}
-          {props.type === "collection" && (
+           {/* )} */}
+          {/* {props.type === "collection" && ( */}
             <img
               className="absolute  max-w-[4rem] max-h-[3rem] bottom-2 right-2 z-30"
               src={props.data.set.images.logo}
             />
-          )}
+           {/* )} */}
 
           <div className="flex gap-2 relative w-full">
             <img
@@ -177,8 +177,10 @@ export default function Card(props: { data: iCard; type: string }) {
                 setIsCardView(true);
               }}
               src={props.data.images && props.data.images.small}
-              height={props.type == "search" ? 40 : 50}
-              width={props.type == "search" ? 80 : 120}
+              height={50}
+              // {props.type == "search" ? 40 : 50}
+              width={120}
+              // {props.type == "search" ? 80 : 120}
             />
 
             <div className="flex flex-row justify-between w-full">

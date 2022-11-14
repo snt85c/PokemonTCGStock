@@ -19,6 +19,8 @@ interface iData {
 
 export default function ChartDeck(props: {
   deckId: string;
+  isReady: boolean;
+  setIsReady: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { user } = useUserAuth();
   const isDarkMode = useProfileStore((state: iState) => state.darkmode);
@@ -29,7 +31,7 @@ export default function ChartDeck(props: {
   const userDeckInfo = useCollectionStore(
     (state: iCollectionStore) => state.currentDeckInfo
   );
-  const [isReady, setIsReady] = useState(false)
+  // const [isReady, setIsReady] = useState(false)
   const [chart, setChart] = useState([
     {
       label: "",
@@ -106,12 +108,10 @@ export default function ChartDeck(props: {
       }
     }
     if (chart[0].data.length > 2 && rate > 0) {
-        setIsReady(true)
+      props.setIsReady(true);
     }
     ttt();
   }, [userDeckValue, userDeckInfo, rate]);
-
-
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
@@ -144,29 +144,31 @@ export default function ChartDeck(props: {
 
   return (
     <>
-      {isReady ? (
-        <Chart
-          style={{ display: isReady ? "flex" : "none" }}
-          options={{
-            data: chart,
-            primaryAxis,
-            secondaryAxes,
-            dark: isDarkMode,
-            tooltip: false,
-          }}
-        />
-      ) : (
-        <div className="flex flex-col justify-center items-center h-full">
-          <div>
-            <div className="flex justify-center items-center text-amber-500 font-bold  leading-none">
-              no data
-            </div>
-            <div className="flex justify-center items-center text-[0.6rem] leading-none">
-              no historical data available
-            </div>
-          </div>
-        </div>
-      )}
+      <Chart
+        style={{ display: props.isReady ? "flex" : "none" }}
+        options={{
+          data: chart,
+          primaryAxis,
+          secondaryAxes,
+          dark: isDarkMode,
+          tooltip: false,
+        }}
+      />
+
+      {/* 
+//removed by request not to show NO DATA, better not to show the chart at all
+      // : (
+      //   <div className="flex flex-col justify-center items-center h-full">
+      //     <div>
+      //       <div className="flex justify-center items-center text-amber-500 font-bold  leading-none">
+      //         no data
+      //       </div>
+      //       <div className="flex justify-center items-center text-[0.6rem] leading-none">
+      //         no historical data available
+      //       </div>
+      //     </div>
+      //   </div>
+      // )} */}
     </>
   );
 }
