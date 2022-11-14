@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import Sort from "./Sort";
 import Filter from "./Filter";
+import countCards from "../utils/countCards";
+import calculateCardValueAsNumber from "../utils/calculateCardValueAsNumber";
 
 export default function Deck(props: { deck: iCard[]; type: string }) {
   const [filter, setFilter] = useState<string[]>([]);
@@ -46,7 +48,7 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
 
   let result: JSX.Element[] = props.deck
     .filter((card) => {
-      //first, we filter the array for each path were a filter option might be (if not present we return the card, this way we return less card each time )
+      //first, we comb the array for each path where a filter option might be (if not present we return the card, this way we return less card each time )
       if (
         !filter.includes(card.rarity) &&
         !filter.includes(card.set.name) &&
@@ -59,6 +61,8 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
     .map((card: iCard) => {
       try {
         //then, we scrape the object passed for different path which we save on the cardFilter object, was done manually because im still not sure if anything needs to be added, also, some are arrays some are not
+        card.totalCardsAmount = countCards(card)
+        card.adjustedValue = calculateCardValueAsNumber(card)
         if (!cardFilter.rarity.includes(card.rarity)) {
           cardFilter = {
             ...cardFilter,
@@ -109,6 +113,10 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
           return a.set.series.localeCompare(b.set.series);
         case "release date":
           return a.set.releaseDate.localeCompare(b.set.releaseDate);
+        case "amount":
+          return a.totalCardsAmount - b.totalCardsAmount;
+          case "value":
+          return a.adjustedValue - b.adjustedValue;
         default:
           return a.number - b.number;
       }
@@ -123,7 +131,7 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
 
   return (
     <>
-      {result.length >0 && (
+      { (
         <div className="rounded-xl bg-gray-300 m-2 p-2 dark:bg-slate-500 border border-white shadow-lg">
           <Sort
             {...{ sort, setSort, isSortingAscending, setIsSortingAscending }}

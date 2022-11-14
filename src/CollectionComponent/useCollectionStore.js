@@ -12,7 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../ProfileComponents/Firebase";
-import calculateCardValue from "../utils/calculateCardValue";
+import calculateCardValueAsObject from "../utils/calculateCardValueAsObject";
 const useCollectionStore = create(
   devtools(
     persist((set, get) => ({
@@ -54,7 +54,7 @@ const useCollectionStore = create(
               const colSnap = await getDocs(collectionRef);
               colSnap.forEach((item) => {
                  // i calculate the value of each card                 
-                tempArray.push(calculateCardValue(item.data()));
+                tempArray.push(calculateCardValueAsObject(item.data()));
               });
               const docRef = doc(
                 db,

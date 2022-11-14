@@ -23,7 +23,7 @@ export default function ListCollections() {
       return (
         <div
           key={uuidv4()}
-          className="tooltip tooltip-bottom"
+          className="tooltip tooltip-top "
           data-tip={"switch to " + deck}
         >
           <button

@@ -61,6 +61,7 @@ export interface iCollectionStore {
   
 export interface iCard {
   adjustedValue:number
+  totalCardsAmount:number,
   name: string;
   id: number;
   cardmarket: {
