@@ -64,6 +64,8 @@ export interface iCard {
   totalCardsAmount:number,
   name: string;
   id: number;
+  supertype:string,
+  nationalPokedexNumbers:number[]
   cardmarket: {
     prices: {
       avg1: number;

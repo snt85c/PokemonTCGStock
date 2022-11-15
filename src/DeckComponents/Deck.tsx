@@ -195,7 +195,7 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
                   </div>
                   <div>
                     {result.length > 0 ? (
-                      <>"Results:"{result.length}</>
+                      <>Results :{result.length}</>
                     ) : (
                       "no cards found:"
                     )}
