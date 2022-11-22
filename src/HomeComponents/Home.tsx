@@ -19,7 +19,7 @@ export default function Home() {
       <Darkmode />
       <div
         id="home"
-        className="snap-center flex flex-col justify-start  sm:px-[10rem] items-center p-5 min-w-[100%] h-screen bg-white dark:bg-slate-900 text-black dark:text-white duration-300 mb-2"
+        className="snap-center flex flex-col justify-start  sm:px-[10rem] items-center p-5 min-w-[100%] h-screen bg-white dark:bg-slate-900 text-black dark:text-white duration-300"
       >
         {/* <h1 className=" font-bold text-xl text-black dark:text-white font-[Phonk] select-none">
           my collections

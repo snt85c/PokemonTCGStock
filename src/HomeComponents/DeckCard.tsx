@@ -63,7 +63,8 @@ export default function DeckCard(props: { card: coll }) {
             </div>
           )}
         </div>
-        <div className="h-[5rem] p-3 mx-2 relative md:h-[10rem]" style={{display:isReady?"flex":"none"}}>
+        <div className="h-[5rem] p-3 mx-2 relative md:h-[10rem]" 
+        style={{display:isReady?"flex":"none"}}>
           <ChartDeck {...{ deckId, isReady, setIsReady }} />
         </div>
         <div className="text-xs mt-2">

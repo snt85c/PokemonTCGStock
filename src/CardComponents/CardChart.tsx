@@ -1,9 +1,6 @@
-import { TIMEOUT } from "dns";
-import { isGcsTfliteModelOptions } from "firebase-admin/lib/machine-learning/machine-learning-api-client";
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
-import { AiOutlineConsoleSql } from "react-icons/ai";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../Interfaces";
 import { db } from "../ProfileComponents/Firebase";
@@ -38,9 +35,7 @@ export default function CardChart(props: { card: iCard }) {
   const [chart, setChart] = useState([
     {
       label: "test",
-      data: [
-        { value: 0, date: new Date() },
-      ],
+      data: [{ value: 0, date: new Date() }],
     },
   ]);
 

@@ -5,7 +5,7 @@ import MenuProfile from "./MenuProfile";
 import { useState } from "react";
 import { useUserAuth } from "../ProfileComponents/userAuth";
 
-export default function Menu(props:{ setTranslate: React.Dispatch<React.SetStateAction<number>>}) {
+export default function Menu() {
   const [active, setActive] = useState<
     "home" | "search" | "collection" | "profile" | ""
   >("");

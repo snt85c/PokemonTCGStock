@@ -35,7 +35,7 @@ export default function SearchFunction() {
         fetch(url, {
           method: "GET",
           headers: {
-            "X-Auth-Token": "3b7be5e5-54b3-4668-9831-c6f5616d9168",
+            "X-Auth-Token": "f62ff961-6c90-4151-991f-25985d01113d",
           },
         })
           .then((resp) => resp.json())
