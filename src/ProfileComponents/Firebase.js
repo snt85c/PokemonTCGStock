@@ -7,12 +7,13 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAwUdqeI2UXssqhGhzMxs3wUQ6eZe4r-D0",
-  authDomain: "pokemontcgstock.firebaseapp.com",
-  projectId: "pokemontcgstock",
-  storageBucket: "pokemontcgstock.appspot.com",
-  messagingSenderId: "249446388726",
-  appId: "1:249446388726:web:c899d21e6885d7edba2dd7"
+  apiKey: "AIzaSyDBSkqw1FEZfnhO-9vlyKpkRy_pDn-uUks",
+  authDomain: "tcg-stock-app.firebaseapp.com",
+  projectId: "tcg-stock-app",
+  storageBucket: "tcg-stock-app.appspot.com",
+  messagingSenderId: "202041862043",
+  appId: "1:202041862043:web:87d3e52e0e054f33c7a33e",
+  measurementId: "G-7ZKFGPTVVM",
 };
 
 // Initialize Firebase

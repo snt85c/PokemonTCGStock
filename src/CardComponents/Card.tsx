@@ -9,6 +9,7 @@ import { db } from "../ProfileComponents/Firebase";
 import CardValue from "./CardValue";
 import CardShowSearchValue from "./CardModifyAmount/CardShowSearchValue";
 import CardView from "./CardView";
+import AddCard from "./AddCard";
 
 export default function Card(props: { data: iCard; type: string }) {
   const { user } = useUserAuth();
@@ -16,6 +17,8 @@ export default function Card(props: { data: iCard; type: string }) {
   const [card, setCard] = useState<iCard>(props.data);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isCardView, setIsCardView] = useState(false);
+  const [isAddOnCollection, setisAddOnCollection] = useState(false);
+
 
   const currentDeckInfo = useCollectionStore(
     (state: iCollectionStore) => state.currentDeckInfo
@@ -46,13 +49,6 @@ export default function Card(props: { data: iCard; type: string }) {
     (state: iCollectionStore) => state.updateCardOnUserDeck
   );
 
-  const findInCollection = useCollectionStore(
-    (state: iCollectionStore) => state.findInCollection
-  );
-
-  const [isInCollection, setIsInCollection] = useState<boolean>(
-    findInCollection(props.data)
-  );
 
   const addOnCollection = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -232,14 +228,12 @@ export default function Card(props: { data: iCard; type: string }) {
           {props.type === "search" ? (
             <button
               aria-label="card-add-button"
-              style={{
-                display: isInCollection ? "none" : "flex",
-              }}
               className=" text-slate-500 hover:text-white duration-300 absolute right-2 top-1/2 -translate-y-1/2
               "
               onClick={(e) => {
-                addOnCollection(e);
-                setIsInCollection(true);
+                // addOnCollection(e);
+                setisAddOnCollection(true)
+
               }}
             >
               <IoMdAddCircle size={50} />
@@ -256,6 +250,7 @@ export default function Card(props: { data: iCard; type: string }) {
         </div>
       }
       {isCardView && <CardView card={props.data} setIsCardView = {setIsCardView}/>}
+      {isAddOnCollection && <AddCard {...{card:props.data,setisAddOnCollection}}/>}
     </>
   );
 }

@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { iCard } from "../Interfaces";
-import "../card.css";
 import HandleClickOutsideComponent from "../HandleClickOutsideComponent";
 import { AiFillCloseCircle } from "react-icons/ai";
-import back from "../back.png";
 import CardChart from "./CardChart";
 import calculateCardValueAsNumber from "../utils/calculateCardValueAsNumber";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 import returnPricesKeys from "../utils/returnPricesKeys";
 import calculateCardValueByKey from "../utils/calculateCardValueByKey";
 import { uuidv4 } from "@firebase/util";
+import "../card.css";
 
 export default function CardView(props: {
   card: iCard;

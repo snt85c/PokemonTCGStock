@@ -77,46 +77,50 @@ function App() {
     isLoading.current = false;
   }, 4000);
 
-  /*
+  const APIKEY = "f62ff961-6c90-4151-991f-25985d01113d";
+
   useEffect(() => {
-    function fetchAllCards() {
-      const APIKEY = "f62ff961-6c90-4151-991f-25985d01113d";
-      let totalPages: number = 1;
-      try {
-        const url = "https://api.pokemontcg.io/v2/cards?page=1&pageSize=1";
-        fetch(url, {
-          mode: "cors",
-          redirect: "follow",
-          headers: { "X-Api-Key": APIKEY, Connections: "keep-alive" },
-        })
-          .then((resp) => resp.json())
-          .then((data) => {
-            totalPages = Math.ceil(data.totalCount / 250);
-            for (let i = 1; i <= totalPages; i++) {
-              fetch(`https://api.pokemontcg.io/v2/cards?page=${i}`, {
-                method: "GET",
-                redirect: "follow",
-                headers: {
-                  "X-Api-Key": APIKEY,
-                  "Content-Type": "application/json",
-                  Connections: "keep-alive",
-                },
-              })
-                .then((response) => response.json())
-                .then((result) => console.log(i, result))
-                .catch((error) => console.log("error", error));
-            }
+    async function fetchAllCards() {
+      let allCards:any[] = [];
+
+      let currentPage = 1;
+
+      while(true) {
+        console.log(currentPage)
+        const url = `https://api.pokemontcg.io/v2/cards?page=${currentPage}`;
+        try {
+          const response = await fetch(url, {
+            mode: "cors",
+            headers: {
+              "X-Api-Key": APIKEY,
+              "Content-Type": "application/json",
+              "Connections": "keep-alive",
+            },
           });
-      } catch (e) {
-        console.log(e);
+
+          const data = await response.json();
+
+          allCards.push.apply(allCards, data.data);
+
+          if (allCards.length >= data.totalCount) {
+            break;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+
+        currentPage += 1;
       }
+      console.log(allCards)
+      return allCards
     }
-    fetchAllCards();
+    // fetchAllCards();
   }, []);
-*/
+
+
   return (
     <>
-      <Loading isLoading={isLoading} />
+       <Loading isLoading={isLoading} />
       {user ? (
         <>
           <div className="flex sm:hidden">
@@ -134,7 +138,7 @@ function App() {
         </>
       ) : (
         <SigninPage />
-      )}
+      )} 
     </>
   );
 }
