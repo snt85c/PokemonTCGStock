@@ -86,7 +86,6 @@ function App() {
       let currentPage = 1;
 
       while(true) {
-        console.log(currentPage)
         const url = `https://api.pokemontcg.io/v2/cards?page=${currentPage}`;
         try {
           const response = await fetch(url, {

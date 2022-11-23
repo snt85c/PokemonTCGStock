@@ -8,11 +8,17 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDBSkqw1FEZfnhO-9vlyKpkRy_pDn-uUks",
+
   authDomain: "tcg-stock-app.firebaseapp.com",
+
   projectId: "tcg-stock-app",
+
   storageBucket: "tcg-stock-app.appspot.com",
+
   messagingSenderId: "202041862043",
+
   appId: "1:202041862043:web:87d3e52e0e054f33c7a33e",
+
   measurementId: "G-7ZKFGPTVVM",
 };
 

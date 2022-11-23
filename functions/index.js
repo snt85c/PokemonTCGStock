@@ -2,42 +2,46 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 const fetch = require("node-fetch");
-const https = require("https");
-
 const db = admin.firestore();
+const APIKEY = "f62ff961-6c90-4151-991f-25985d01113d";
+
 exports.scheduledFunction = functions.pubsub
-    .schedule("0 */8 * * *")
+  .schedule("0 */3 * * *")
+  .onRun((context) => {
+    const date = new Date();
+    (async () => {
+      let allCards = [];
 
-// "* * * * *" every minute
-// "*/5 * * * *" every 5 minutes
-// "0 */8 * * *" every 8 hours
-// "0 0 * * *" once a day (midnight)
+      let currentPage = 1;
+      while (true) {
+        const url = `https://api.pokemontcg.io/v2/cards?page=${currentPage}`;
+        try {
+          const response = await fetch(url, {
+            mode: "cors",
+            headers: {
+              "X-Api-Key": APIKEY,
+              "Content-Type": "application/json",
+              Connections: "keep-alive",
+            },
+          });
 
-/* eslint-disable max-len */
+          const data = await response.json();
 
-    .onRun((context) => {
-      const agent = new https.Agent({
-        keepAlive: false, // true
-      });
+          allCards.push.apply(allCards, data.data);
 
-      try {
-        const url = "https://api.pokemontcg.io/v2/cards";
-        fetch(url, {
-          method: "GET",
-          headers: {
-            "Connection": "keepalive", // keepalive
-            "X-Auth-Token": "3b7be5e5-54b3-4668-9831-c6f5616d9168",
-          },
-          agent,
-        })
-            .then((resp) => resp.json())
-            .then((data) => {
-              data.data.map((card) => {});
-            });
-      } catch (e) {
-        console.log(e);
+          if (allCards.length >= data.totalCount) {
+            break;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+
+        currentPage += 1;
       }
-    });
+      return allCards;
+    })();
+    db.collection("cardsDB").doc(date.toString()).set({date, allCards});
+  });
 
 // const functions = require("firebase-functions");
 // const admin = require("firebase-admin");

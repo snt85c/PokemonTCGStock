@@ -231,9 +231,7 @@ export default function Card(props: { data: iCard; type: string }) {
               className=" text-slate-500 hover:text-white duration-300 absolute right-2 top-1/2 -translate-y-1/2
               "
               onClick={(e) => {
-                // addOnCollection(e);
-                setisAddOnCollection(true)
-
+                  setisAddOnCollection(true)
               }}
             >
               <IoMdAddCircle size={50} />
