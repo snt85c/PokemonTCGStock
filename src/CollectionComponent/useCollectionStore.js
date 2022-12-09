@@ -53,7 +53,7 @@ const useCollectionStore = create(
               );
               const colSnap = await getDocs(collectionRef);
               colSnap.forEach((item) => {
-                 // i calculate the value of each card                 
+                // i calculate the value of each card
                 tempArray.push(calculateCardValueAsObject(item.data()));
               });
               const docRef = doc(
@@ -99,8 +99,6 @@ const useCollectionStore = create(
         }
       },
 
-      
-
       createNewCollection: async (userUID) => {
         if (userUID) {
           if (/*get().currentDeckInfo && */ get().decks) {
@@ -145,28 +143,30 @@ const useCollectionStore = create(
       addToUserDeck: async (request, user, deck) => {
         const found = get().findInCollection(request);
         //we check if we have that card, if not we set the current deck with the new card
-        if (!found) {
-          set((state) => ({
-            currentDeck: [...state.currentDeck, request],
-          }));
-          try {
-            //we set it on firebase
-            const docRef = doc(
-              db,
-              "users",
-              user,
-              "decks",
-              deck ? deck : "deck1",
-              "cards",
-              request.id
-            );
+        // if (!found) {
+        set((state) => ({
+          currentDeck: [...state.currentDeck, request],
+        }));
+        try {
+          //we set it on firebase
 
-            await setDoc(docRef, request);
-            console.log("Document written with ID: ", request.id);
-          } catch (e) {
-            console.error("Error adding document: ", e);
-          }
+          const docRef = doc(
+            db,
+            "users",
+            user,
+            "decks",
+            deck ? deck : "deck1",
+            "cards",
+            request.userDeckInfo.id
+          );
+
+          await setDoc(docRef, request);
+          get().calculateCollectionValue(get().userUID);
+          console.log("Document written with ID: ", request.id);
+        } catch (e) {
+          console.error("Error adding document: ", e);
         }
+        // }
       },
 
       updateCardOnUserDeck: (request) => {
@@ -185,33 +185,32 @@ const useCollectionStore = create(
         }
       },
 
-      removeFromUserDeck: (request, userUid) => {
+      removeFromUserDeck: (request, userUID) => {
         //remove on firebase, then filter the currentDeck for that card and return a new array without it
         try {
           deleteDoc(
             doc(
               db,
               "users",
-              userUid,
+              userUID,
               "decks",
               get().currentDeckInfo.id,
               "cards",
-              request.id
+              request.userDeckInfo.id
             )
           );
-          console.log("Document removed with ID: ", request.id.toString());
+          console.log("Document removed with ID: ", request.userDeckInfo.id);
         } catch (e) {
           console.error("Error removing document: ", e);
         }
         set((state) => ({
           currentDeck: state.currentDeck.filter((item) => {
-            return item.id !== request.id;
+            return item.userDeckInfo.id !== request.userDeckInfo.id;
           }),
         }));
-        get().calculateCollectionValue();
+        get().calculateCollectionValue(userUID);
       },
 
-     
       calculateCollectionValue: (userUID) => {
         //get the pre-calculated value of all the cards and sum it
         let value = get()
@@ -224,12 +223,11 @@ const useCollectionStore = create(
         setDoc(
           doc(db, "users", userUID, "decks", get().currentDeckInfo.id),
           {
-            value: value,
+            value,
           },
           { merge: true }
         );
       },
-   
 
       calculateUserDecksTotalValue: async () => {
         let result = 0;

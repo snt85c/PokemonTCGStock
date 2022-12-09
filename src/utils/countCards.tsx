@@ -7,7 +7,7 @@ export default function countCards(card:iCard){
         if (!keys.includes(cardType)) keys.push(cardType);
       });
       keys.forEach((key)=>{
-        value +=  card.userDeckInfo.quantity[key]
+        value +=  card.userDeckInfo.quantity
       })
     return value
   }

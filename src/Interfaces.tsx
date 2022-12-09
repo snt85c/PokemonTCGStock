@@ -1,8 +1,6 @@
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 
-
-
 export interface iCardStore {
   card: iCard;
   cardValue: number;
@@ -28,44 +26,43 @@ export interface iCardStore {
   ) => Promise<boolean>;
 }
 
-
 export interface iCollectionStore {
   currentDeck: iCard[];
   decks: [];
-  totalCollectionsValue:number,
+  totalCollectionsValue: number;
   collectionValue: number;
   currentDeckInfo: {
     id: string;
     name: string;
     creationDate: Timestamp;
     note: string;
-    value:number
+    value: number;
   };
   userUID: string;
-  
-  setCurrentDeckInfo: ( request: string, type: string) => void;
+
+  setCurrentDeckInfo: (request: string, type: string) => void;
   createNewCollection: (user: User) => void;
   setUserDeckFromFirebase: (user: User, deck?: string) => void;
   addToUserDeck: (
     request: iCard | iCard[],
     userUid: string,
     deck?: string
-    ) => void;
-    updateCardOnUserDeck: (request: iCard) => void;
-    removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
-    findInCollection: (request: iCard) => boolean;
-    calculateCollectionValue: (request:string) => number;
-    calculateUserDecksTotalValue: () => Promise<number>;
-    deleteCollection: (id:string) => void
-  }
-  
+  ) => void;
+  updateCardOnUserDeck: (request: iCard) => void;
+  removeFromUserDeck: (request: iCard | iCard[], userUid: string) => void;
+  findInCollection: (request: iCard) => boolean;
+  calculateCollectionValue: (request: string) => number;
+  calculateUserDecksTotalValue: () => Promise<number>;
+  deleteCollection: (id: string) => void;
+}
+
 export interface iCard {
-  adjustedValue:number
-  totalCardsAmount:number,
+  adjustedValue: number;
+  totalCardsAmount: number;
   name: string;
-  id: number;
-  supertype:string,
-  nationalPokedexNumbers:number[]
+  id: string;
+  supertype: string;
+  nationalPokedexNumbers: number[];
   cardmarket: {
     prices: {
       avg1: number;
@@ -74,7 +71,7 @@ export interface iCard {
   tcgplayer: {
     prices: any;
   };
-  images: { small: string, large:string };
+  images: { small: string; large: string };
   set: {
     name: string;
     series: string;
@@ -88,11 +85,11 @@ export interface iCard {
   subtypes?: string[];
   rarity: string;
   userDeckInfo: {
+    id:string,
     value: number;
-    quantity: {
-      [key: string]: number;
-    };
+    quantity: number;
     dateAdded: Date;
+    type:string
   };
   types?: string[];
 }

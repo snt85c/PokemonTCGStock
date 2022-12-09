@@ -7,7 +7,7 @@ export default function calculateCardValueAsNumber(card:iCard){
         if (!keys.includes(cardType)) keys.push(cardType);
       });
       keys.forEach((key)=>{
-        value += card.tcgplayer.prices[key].market * card.userDeckInfo.quantity[key]
+        value += card.tcgplayer.prices[key].market * card.userDeckInfo.quantity
       })
     return value
   }

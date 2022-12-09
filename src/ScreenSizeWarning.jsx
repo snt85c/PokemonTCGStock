@@ -1,7 +1,7 @@
-import mockup from "./mockup.jpg";
-import logo from "./TCGStock_Logo_3000x3000.png";
-import googlestore from "./google-play-badge.png";
-import applestore from "./Download_on_the_Mac_App_Store_Badge_US-UK_RGB_blk_092917.svg";
+import mockup from "./img/mockup.jpg";
+import logo from "./img/TCGStock_Logo_3000x3000.png";
+import googlestore from "./img/google-play-badge.png";
+import applestore from "./img/Download_on_the_Mac_App_Store_Badge_US-UK_RGB_blk_092917.svg";
 export default function ScreenSizeWarning() {
   return (
     <>

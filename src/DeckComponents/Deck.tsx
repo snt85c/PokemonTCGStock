@@ -7,7 +7,11 @@ import Filter from "./Filter";
 import countCards from "../utils/countCards";
 import calculateCardValueAsNumber from "../utils/calculateCardValueAsNumber";
 
-export default function Deck(props: { deck: iCard[]; type: string }) {
+export default function Deck(props: {
+  deck: iCard[];
+  type: string;
+  id?: string;
+}) {
   const [filter, setFilter] = useState<string[]>([]);
   const [sort, setSort] = useState<string>("name");
   const [isSortingAscending, setIsSortingAscending] = useState(true);
@@ -20,6 +24,9 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
     releaseDate: [],
     types: [],
   };
+
+  let cardList: string[] = [];
+  let cardListGroups: string[] = [];
 
   const handleClickFilter = (option: string, restore?: string[]) => {
     //we pass the option we want to filter and an array of options in case we want to reset for that configuration
@@ -54,6 +61,21 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
   }
 
   let result: JSX.Element[] = props.deck
+    .filter((card: iCard) => {
+      if (props.type === "collection") {
+        //we remove duplicates from view
+        if (!cardList.includes(card.id)) {
+          cardList.push(card.id);
+          return card;
+        } else {
+          cardListGroups.push(card.id);
+        }
+      } else if (props.type === "group") {
+        return card.id === props.id;
+      }else{
+        return card
+      }
+    })
     .filter((card) => {
       //first, we comb the array for each path where a filter option might be (if not present we return the card, this way we return less card each time )
       if (
@@ -151,7 +173,19 @@ export default function Deck(props: { deck: iCard[]; type: string }) {
     })
     //finally, we return the item from an object of type iCard to an array of JSX.Elements
     .map((card: iCard) => {
-      return <Card key={uuidv4()} type={props.type} data={card} />;
+      if (props.type === "collection") {
+        if (cardListGroups.includes(card.id)) {
+          return <Card key={uuidv4()} type={"group"} data={card} />;
+        } else {
+          return <Card key={uuidv4()} type={props.type} data={card} />;
+        }
+      } else if (props.type === "group"){
+        return <Card key={uuidv4()} type={"collection"} subType={true} data={card} />;
+      }else if (props.type === "search"){
+        return <Card key={uuidv4()} type={"search"} data={card} />;
+      } else{
+        return <Card key={uuidv4()} type={props.type}  subType={true} data={card} />;
+      }
     });
 
   //also also, if triggered, it uno-reverse the order of the cards

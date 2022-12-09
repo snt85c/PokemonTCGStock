@@ -14,6 +14,9 @@ import useProfileStore, { iState } from "./ProfileComponents/useProfileStore";
 import "./index.css";
 import ScreenSizeWarning from "./ScreenSizeWarning";
 import SigninPage from "./HomeComponents/SigninPage";
+import Alert from "./utils/Alert";
+import pokemon from "pokemontcgsdk";
+import telegramAlert from "./utils/TelegramAlert";
 
 function App() {
   const { user } = useUserAuth();
@@ -29,16 +32,10 @@ function App() {
   } else {
     document.documentElement.classList.remove("dark");
   }
-  // useEffect(() => {
-  //   function telegramAlert() {
-  //     fetch(
-  //       `https://api.telegram.org/bot5531898247:AAG8rxOFIKmlwS6PYBVTuXdTGMqIaSpl5eE/sendMessage?chat_id=231233238&text=new visit to PokemonTGCStock: ${
-  //         (user ? user.uid : "unknown", new Date())
-  //       } `
-  //     );
-  //   }
-  //   telegramAlert(); //remove comment to activate
-  // }, []);
+
+  const APIKEY = "f62ff961-6c90-4151-991f-25985d01113d";
+
+  pokemon.configure({ apiKey: APIKEY });
 
   useEffect(() => {
     isLoading.current = true;
@@ -65,9 +62,11 @@ function App() {
     }
     set().then(() => {
       if (user) {
-        setUserDeckFromFirebase(user.uid);
-        setUserInfo(user);
+        setUserDeckFromFirebase(user.uid); // on collection state
+        setUserInfo(user); // on profile state
+        telegramAlert(user); //comment this function to activate/deactivate
       }
+      
       isLoading.current = false;
     });
   }, [user]);
@@ -77,49 +76,11 @@ function App() {
     isLoading.current = false;
   }, 4000);
 
-  const APIKEY = "f62ff961-6c90-4151-991f-25985d01113d";
-
-  useEffect(() => {
-    async function fetchAllCards() {
-      let allCards:any[] = [];
-
-      let currentPage = 1;
-
-      while(true) {
-        const url = `https://api.pokemontcg.io/v2/cards?page=${currentPage}`;
-        try {
-          const response = await fetch(url, {
-            mode: "cors",
-            headers: {
-              "X-Api-Key": APIKEY,
-              "Content-Type": "application/json",
-              "Connections": "keep-alive",
-            },
-          });
-
-          const data = await response.json();
-
-          allCards.push.apply(allCards, data.data);
-
-          if (allCards.length >= data.totalCount) {
-            break;
-          }
-        } catch (err) {
-          console.log(err);
-        }
-
-        currentPage += 1;
-      }
-      console.log(allCards)
-      return allCards
-    }
-    // fetchAllCards();
-  }, []);
-
 
   return (
     <>
-       <Loading isLoading={isLoading} />
+      <Loading isLoading={isLoading} />
+      <Alert />
       {user ? (
         <>
           <div className="flex sm:hidden">
@@ -137,7 +98,7 @@ function App() {
         </>
       ) : (
         <SigninPage />
-      )} 
+      )}
     </>
   );
 }

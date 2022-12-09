@@ -77,9 +77,9 @@ export default function CardView(props: {
           </h3>
           <div className="my-2">{values}</div>
           <div className="min-h-[10rem] m-5 mx-7 bg-gray-200 dark:bg-gray-700 p-1 px-3 rounded-xl">
-            {calculateCardValueAsNumber(props.card) && (
+            {/* {calculateCardValueAsNumber(props.card) && (
               <CardChart {...{ card: props.card }} />
-            )}
+            )} */}
           </div>
         </div>
       </div>

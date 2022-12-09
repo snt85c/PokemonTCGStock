@@ -1,7 +1,5 @@
-import Axios from "axios";
 import { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { userInfo } from "os";
 import create from "zustand";
 import { db } from "./Firebase";
 
