@@ -1,24 +1,49 @@
 import HandleClickOutsideComponent from "../HandleClickOutsideComponent";
 import { AiFillCloseCircle } from "react-icons/ai";
 import returnPricesKeys from "../utils/returnPricesKeys";
-import { iCard } from "../Interfaces";
+import { iCard, iCollectionStore } from "../Interfaces";
 import { uuidv4 } from "@firebase/util";
 import useAlertStore, { iAlert } from "../utils/useAlertStore";
+import useCollectionStore from "../CollectionComponent/useCollectionStore";
+import { useUserAuth } from "../ProfileComponents/userAuth";
 
 export default function AddCard(props: {
   card: iCard;
   setisAddOnCollection: React.Dispatch<React.SetStateAction<boolean>>;
-  addOnCollection: (card: iCard, type: string) => Promise<void>;
 }) {
   const { ref } = HandleClickOutsideComponent(props.setisAddOnCollection);
   const setAlert = useAlertStore((store: iAlert) => store.setAlert);
+  const addToUserDeck = useCollectionStore(
+    (state: iCollectionStore) => state.addToUserDeck
+  );
+  const { user } = useUserAuth();
+  const currentDeckInfo = useCollectionStore(
+    (state: iCollectionStore) => state.currentDeckInfo
+  );
+  const addOnCollection = async (card: iCard, type: string) => {
+    const id = uuidv4();
+    const newData = {
+      ...card,
+      userDeckInfo: {
+        id,
+        quantity: 1,
+        type,
+        dateAdded: new Date(),
+        value: props.card.tcgplayer.prices[type].market,
+      },
+    };
+    if (user) {
+      console.log("add to collection");
+      addToUserDeck(newData, user.uid, currentDeckInfo.id);
+    }
+  };
   const keys = returnPricesKeys(props.card).map((type) => {
     return (
       <div
         className="cursor-pointer"
         key={uuidv4()}
         onClick={() => {
-          props.addOnCollection(props.card, type);
+          addOnCollection(props.card, type);
           setAlert(
             ` adds: ${props.card.name} type: ${
               type.substring(0, 1).toUpperCase() + type.substring(1)

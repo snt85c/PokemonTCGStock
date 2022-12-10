@@ -12,7 +12,7 @@ export default function Alert() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={` absolute top-10 left-5 w-[90%] alert ${type} shadow-lg z-50  `}
+          className={` absolute top-10 left-5 w-[90%] alert ${type} shadow-lg z-[9999]  `}
         >
           <div>
             <svg

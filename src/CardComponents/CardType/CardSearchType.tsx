@@ -1,45 +1,14 @@
 import { useState } from "react";
-import { IoMdAddCircle, IoMdRemoveCircle } from "react-icons/io";
-import useCollectionStore from "../../CollectionComponent/useCollectionStore";
-import { iCard, iCollectionStore } from "../../Interfaces";
-import { useUserAuth } from "../../ProfileComponents/userAuth";
-import useAlertStore, { iAlert } from "../../utils/useAlertStore";
+import { IoMdAddCircle } from "react-icons/io";
+import { iCard } from "../../Interfaces";
 import AddCard from "../AddCard";
 import CardShowSearchValue from "../CardModifyAmount/CardShowSearchValue";
-import CardValue from "../CardValue";
 import CardView from "../CardView";
-import { uuidv4 } from "@firebase/util";
 export default function CardSearchType(props: { data: iCard; card: iCard }) {
-  const { user } = useUserAuth();
   const [isLoaded, setIsLoaded] = useState(false);
   const [isCardView, setIsCardView] = useState(false);
   const [isAddOnCollection, setisAddOnCollection] = useState(false);
 
-  const addToUserDeck = useCollectionStore(
-    (state: iCollectionStore) => state.addToUserDeck
-  );
-
-  const currentDeckInfo = useCollectionStore(
-    (state: iCollectionStore) => state.currentDeckInfo
-  );
-
-  const addOnCollection = async (card: iCard, type: string) => {
-    const id = uuidv4();
-    const newData = {
-      ...card,
-      userDeckInfo: {
-        id,
-        quantity: 1,
-        type,
-        dateAdded: new Date(),
-        value: props.data.tcgplayer.prices[type].market,
-      },
-    };
-    if (user) {
-      console.log("add to collection");
-      addToUserDeck(newData, user.uid, currentDeckInfo.id);
-    }
-  };
   return (
     <>
       {
@@ -129,7 +98,7 @@ export default function CardSearchType(props: { data: iCard; card: iCard }) {
       )}
       {isAddOnCollection && (
         <AddCard
-          {...{ card: props.data, setisAddOnCollection, addOnCollection }}
+          {...{ card: props.data, setisAddOnCollection}}
         />
       )}
     </>
