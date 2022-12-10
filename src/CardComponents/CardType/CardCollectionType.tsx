@@ -4,7 +4,6 @@ import useCollectionStore from "../../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../../Interfaces";
 import { useUserAuth } from "../../ProfileComponents/userAuth";
 import useAlertStore, { iAlert } from "../../utils/useAlertStore";
-import CardShowSearchValue from "../CardModifyAmount/CardShowSearchValue";
 import CardValue from "../CardValue";
 import CardView from "../CardView";
 

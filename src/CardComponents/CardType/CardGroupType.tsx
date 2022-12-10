@@ -1,12 +1,22 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CgStack } from "react-icons/cg";
 import GroupView from "../GroupView";
-import { iCard } from "../../Interfaces";
+import { iCard, iCollectionStore } from "../../Interfaces";
 import CardValue from "../CardValue";
-import CardView from "../CardView";
+import useCollectionStore from "../../CollectionComponent/useCollectionStore";
+import Card from "../Card";
 export default function CardGroupType(props: { data: iCard; card: iCard }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isGroupView, setIsGroupView] = useState(false);
+
+  const userDeck = useCollectionStore(
+    (state: iCollectionStore) => state.currentDeck
+  );
+
+  let counter = 0;
+  userDeck.map((card) => {
+    if (card.id === props.card.id) counter++;
+  });
   return (
     <>
       {
@@ -89,6 +99,7 @@ export default function CardGroupType(props: { data: iCard; card: iCard }) {
             className=" text-slate-500 hover:text-white duration-300 absolute right-2 top-1/2 -translate-y-1/2"
           >
             <CgStack size={35} />
+            <div className="">{counter}</div>
           </button>
 
           <span className="absolute bottom-0 text-[0.40rem] left-1/2 -translate-x-1/2">
@@ -97,7 +108,10 @@ export default function CardGroupType(props: { data: iCard; card: iCard }) {
         </div>
       }
       {isGroupView && (
-        <GroupView {...{setIsGroupView, cardID:props.card.id}}/>
+        <GroupView {...{ 
+          isGroupView,
+          setIsGroupView,
+           cardID: props.card.id }} />
       )}
     </>
   );

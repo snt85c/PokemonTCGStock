@@ -31,16 +31,29 @@ export default function CardValue(props: {
           </>
         </div>
         <div className="text-[0.7rem] leading-none italic text-start">
-          <span className="font-bold">
-            {((props.value / collectionValue) * 100).toFixed(1)}%
-          </span>{" "}
-          of collection
+          {props.type !== "group" ? (
+            <span className="font-bold">
+              {((props.value / collectionValue) * 100).toFixed(1)}% of
+              collection
+            </span>
+          ) : (
+            <span className="font-bold">
+              {((groupvalue / collectionValue) * 100).toFixed(1)}% of collection
+            </span>
+          )}
         </div>
         <div className="text-[0.7rem] leading-none italic text-start">
-          <span className="font-bold">
-            {((props.value / totalCollectionsValue) * 100).toFixed(1)}
-          </span>
-          % of total
+          {props.type !== "group" ? (
+            <span className="font-bold">
+              {((props.value / totalCollectionsValue) * 100).toFixed(1)} % of
+              total
+            </span>
+          ) : (
+            <span className="font-bold">
+              {((groupvalue / totalCollectionsValue) * 100).toFixed(1)} % of
+              total
+            </span>
+          )}
         </div>
       </div>
     </>

@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
 import Deck from "../DeckComponents/Deck";
@@ -10,20 +11,19 @@ export default function GroupView(props: {
   cardID: string;
 }) {
 
+
   const userDeck = useCollectionStore(
     (state: iCollectionStore) => state.currentDeck
   );
 
   const { ref } = HandleClickOutsideComponent(props.setIsGroupView);
-
-
   return (
     <AnimatePresence>
       <motion.div
       ref= {ref}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        // initial={{ opacity: 0 }}
+        // animate={{ opacity: 1 }}
+        // exit={{ opacity: 0 }}
         className="absolute top-0 left-0 w-full h-full bg-white z-50"
       >
         <AiFillCloseCircle
