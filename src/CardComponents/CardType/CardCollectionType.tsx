@@ -1,14 +1,13 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { IoMdRemoveCircle } from "react-icons/io";
 import useCollectionStore from "../../CollectionComponent/useCollectionStore";
 import { iCard, iCollectionStore } from "../../Interfaces";
 import { useUserAuth } from "../../ProfileComponents/userAuth";
 import useAlertStore, { iAlert } from "../../utils/useAlertStore";
 import CardValue from "../CardValue";
-import CardView from "../CardView";
+import CardView from "../CardView/CardView";
 
 export default function CardCollectionType(props: {
-  data: iCard;
   card: iCard;
   subType?: boolean;
 }) {
@@ -23,11 +22,11 @@ export default function CardCollectionType(props: {
 
   const removeFromCollection = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    data: iCard
+    card: iCard
   ) => {
     e.preventDefault();
     if (user) {
-      removeFromUserDeck(data, user.uid);
+      removeFromUserDeck(card, user.uid);
     }
   };
 
@@ -37,17 +36,17 @@ export default function CardCollectionType(props: {
         <div
           className="m-2  p-2 relative flex flex-row justify-between text-white  rounded-xl gap-2 bg-gradient-to-l from-slate-900 to-slate-700"
           onClick={() => {
-            console.log(props.data);
+            console.log(props.card);
           }}
           style={{ display: isLoaded ? "flex" : "none" }}
         >
           <img
             className="absolute h-8 bottom-2 left-2 z-30"
-            src={props.data.set.images.symbol}
+            src={props.card.set.images.symbol}
           />
           <img
             className="absolute  max-w-[4rem] max-h-[3rem] bottom-2 right-2 z-30"
-            src={props.data.set.images.logo}
+            src={props.card.set.images.logo}
           />
 
           <div className="flex gap-2 relative w-full">
@@ -58,7 +57,7 @@ export default function CardCollectionType(props: {
               onClick={() => {
                 setIsCardView(true);
               }}
-              src={props.data.images && props.data.images.small}
+              src={props.card.images && props.card.images.small}
               height={50}
               width={120}
             />
@@ -68,9 +67,9 @@ export default function CardCollectionType(props: {
                 <div
                   className={`text-[1.3rem] font-extrabold flex flex-col items-start font-[PlayB] leading-none`}
                 >
-                  <span className="pr-2">{props.data.name}</span>
+                  <span className="pr-2">{props.card.name}</span>
                   <span className="text-gray-400 text-[0.8rem]">
-                    {props.data.id}
+                    {props.card.id}
                   </span>
                 </div>
                 <div className="min-w-[1/2]">
@@ -83,19 +82,19 @@ export default function CardCollectionType(props: {
                   <div className="flex gap-2">
                     series:{" "}
                     <span className="font-bold">
-                      {props.data.set && props.data.set.series}
+                      {props.card.set && props.card.set.series}
                     </span>
                   </div>
                   <div className="flex gap-2">
                     rarity:{" "}
                     <span className="font-bold">
-                      {props.data.rarity ? props.data.rarity : "n/a"}
+                      {props.card.rarity ? props.card.rarity : "n/a"}
                     </span>
                   </div>
                   <div className="flex gap-2">
                     set:{" "}
                     <span className="font-bold">
-                      {props.data.set && props.data.set.name}
+                      {props.card.set && props.card.set.name}
                     </span>
                   </div>
                 </div>
@@ -106,9 +105,9 @@ export default function CardCollectionType(props: {
 
           <button
             aria-label="remove-button"
-            className=" text-slate-500 hover:text-white duration-300 absolute right-2 top-1/2 -translate-y-1/2"
+            className=" text-slate-500 hover:text-white duration-300 absolute right-0 top-1/2 -translate-y-1/2"
             onClick={(e) => {
-              removeFromCollection(e, props.data);
+              removeFromCollection(e, props.card);
               setAlert(
                 ` removed: ${props.card.name} type: ${
                   props.card.userDeckInfo.type.substring(0, 1).toUpperCase() +
@@ -127,7 +126,7 @@ export default function CardCollectionType(props: {
         </div>
       }
       {isCardView && (
-        <CardView card={props.data} setIsCardView={setIsCardView} />
+        <CardView card={props.card} setIsCardView={setIsCardView} />
       )}
     </>
   );

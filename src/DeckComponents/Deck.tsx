@@ -180,11 +180,11 @@ export default function Deck(props: {
           return <Card key={uuidv4()} type={props.type} data={card} />;
         }
       } else if (props.type === "group"){
-        return <Card key={uuidv4()} type={"collection"} subType={true} data={card} />;
+        return <Card key={uuidv4()} type={"collection"} data={card} />;
       }else if (props.type === "search"){
         return <Card key={uuidv4()} type={"search"} data={card} />;
       } else{
-        return <Card key={uuidv4()} type={props.type}  subType={true} data={card} />;
+        return <Card key={uuidv4()} type={props.type}   data={card} />;
       }
     });
 
