@@ -8,7 +8,7 @@ const apiKey = "f62ff961-6c90-4151-991f-25985d01113d";
 pokemon.configure({apiKey});
 
 exports.scheduledFunction = functions
-  .runWith({timeoutSeconds: 540, memory: "1GB"})
+  .runWith({timeoutSeconds: 540, memory: "2GB"})
   .pubsub.schedule("0 */8 * * *")
   //every 15min "*/15 * * * *"
   //every 30min "*/30 * * * *"
@@ -29,11 +29,11 @@ exports.scheduledFunction = functions
       }
     }
 
-    // Fetch cards in small batches
     const fetchCards = () => {
+      // Fetch cards in small batches, if i fetch all at once i might incour in exit:timeout
       let page = 1;
       let cards = [];
-      return pokemon.card.all({page: page, pageSize: 250}).then((response) => {
+      return pokemon.card.all({page: page, pageSize: 550}).then((response) => {
         cards = cards.concat(response);
         if (response.nextPage) {
           page++;
@@ -49,28 +49,44 @@ exports.scheduledFunction = functions
         console.log(cards.length, " total elements");
         // Get current date
         const date = new Date();
-
-        // Create collection with an object before setting data, otherwise the collection cannot be accessed (somethign somethign firebase won't allow an empty collection, a document has to be set inbetween)
-        const promises = [];
+        const BATCH_SIZE = 50;
         let iteration = await getCardsDBSize();
+        // Create collection with a dummy object before setting data, otherwise the collection cannot be accessed (Adding collection and documents to an empty document rule)
         db.collection("cardsDB").doc(iteration).set({date, iteration});
-
+        let batch = db.batch();
         if (cards.length > 0) {
           cards.forEach(
-            (card) => {
+            (card, index) => {
               if (card) {
                 const data = {
                   ...card,
                   fetchedAt: date,
                 };
-                promises.push(
-                  db
-                    .collection("cardsDB")
-                    .doc(iteration)
-                    .collection("cards")
-                    .doc(card.id)
-                    .set(data)
-                );
+                //once again create collection with a dummy object before setting data, otherwise the collection cannot be accessed (Adding collection and documents to an empty document rule)
+                db.collection("cardsDB")
+                  .doc(iteration)
+                  .collection("sets")
+                  .doc(card.set.id)
+                  .set({set: card.set.name, date, iteration});
+
+                const docRef = db
+                  .collection("cardsDB")
+                  .doc(iteration)
+                  .collection("sets")
+                  .doc(card.set.id)
+                  .collection("cards")
+                  .doc(card.id);
+
+                //i cluster the data in batches
+                batch.create(docRef, {
+                  ...data,
+                  id: card.id,
+                });
+                if (index % BATCH_SIZE === BATCH_SIZE - 1) {
+                  //i commmit the batch when i reach the BATCH_SIZE to save time on the execution otherwise i reach DEADLINE_EXCEED or exit:timeout
+                  batch.commit();
+                  batch = db.batch();
+                }
               }
             },
             () => {
@@ -78,8 +94,8 @@ exports.scheduledFunction = functions
               functions.logger.log("No cards to save!");
             }
           );
+          await batch.commit();
         }
-        return Promise.all(promises);
       })
       .then(() => {
         console.log("Successfully saved cards to Firestore!");

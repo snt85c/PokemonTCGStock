@@ -11,7 +11,7 @@ import CardValue from "../CardValue";
 import CardViewButtons from "./CardViewButtons";
 import EditView from "../EditView";
 import { db } from "../../ProfileComponents/Firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, connectFirestoreEmulator, getDocs, query, where } from "firebase/firestore";
 
 export default function CardView(props: {
   card: iCard;
@@ -42,13 +42,28 @@ export default function CardView(props: {
     console.log(cardId);
     // Get a reference to the "cardDB" collection
     const queryRef = collection(db, "cardsDB");
-    
     const querySnapshot = await getDocs(queryRef);
-    console.log(querySnapshot)
-    console.log(querySnapshot.size)
-    querySnapshot.forEach((doc) => {
-      console.log(doc, " => ", doc.data());
-    });
+    const qLength = querySnapshot.size;
+    console.time()
+    for (let i = 0; i < qLength; i++) {
+      const queryRef = query(
+        collection(db, "cardsDB", i.toString(), "cards"),
+        where("id", "==", cardId)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      querySnapshot.forEach((query) => {
+        returnPricesKeys(query.data() as iCard).forEach((key) => {
+          console.log(
+            (query.data().tcgplayer.prices[key].market * rate).toFixed(2),
+            "=>",
+            key,
+            "on ",
+            query.data().fetchedAt.toDate()
+          );
+        });
+      });
+    }
+    console.timeEnd()
 
     // Execute the query and get the results
   }
