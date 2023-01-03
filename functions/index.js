@@ -9,7 +9,7 @@ pokemon.configure({apiKey});
 
 exports.scheduledFunction = functions
   .runWith({timeoutSeconds: 540, memory: "2GB"})
-  .pubsub.schedule("0 */8 * * *")
+  .pubsub.schedule("0 0 * * *")
   //every 15min "*/15 * * * *"
   //every 30min "*/30 * * * *"
   // every hour "0 * * * *"
@@ -105,4 +105,58 @@ exports.scheduledFunction = functions
         console.error(error);
         throw error;
       });
+  });
+
+exports.sumCardPrices = functions.pubsub
+  .schedule("0 0 * * *")
+  .onRun(async () => {
+    const date = new Date();
+    const usersSnapshot = await db.collection("users").get();
+    const users = usersSnapshot.docs;
+
+    // Iterate through all users
+    for (const user of users) {
+      const decksSnapshot = await user.ref.collection("decks").get();
+      const decks = decksSnapshot.docs;
+      const snapshot = await user.ref.collection("historicalValue").get();
+      let size = snapshot.size ? snapshot.size.toString() : "0";
+
+      // Iterate through all decks for the user
+      for (const deck of decks) {
+        user.ref
+          .collection("historicalValue")
+          .doc(size)
+          .set({lastUpdate: date, iteration: size});
+        const cardsSnapshot = await deck.ref.collection("cards").get();
+        const cards = cardsSnapshot.docs;
+
+        let totalPrice = 0;
+        // Iterate through all cards in the deck
+        for (const card of cards) {
+          const data = card.data();
+          // Find the key for the prices (e.g. "holofoil", "normal")
+          const pricekeys = Object.keys(data.tcgplayer.prices);
+          for (const pricekey of pricekeys) {
+            totalPrice += data.tcgplayer.prices[pricekey].market;
+          }
+        }
+
+        //set a doc inside historicalValue collection with a doc
+        user.ref
+          .collection("historicalValue")
+          .doc(size)
+          .set({lastUpdate: date, iteration: size});
+        // set the rest of the data inside that collection
+        user.ref
+          .collection("historicalValue")
+          .doc(size)
+          .collection(deck.id)
+          .doc("value")
+          .set({
+            totalPrice: totalPrice.toFixed(2),
+            date,
+            iteration: size,
+          });
+      }
+    }
   });

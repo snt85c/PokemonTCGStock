@@ -14,12 +14,6 @@ export default function CurrentCollectionInfo() {
     (state: iCollectionStore) => state.currentDeckInfo
   );
 
-  const value = useCollectionStore(
-    (state: iCollectionStore) => state.collectionValue
-  );
-  const rate = useProfileStore((state: iState) => state.conversionRate);
-  const sym = useProfileStore((state: iState) => state.conversionSym);
-
   return (
     <>
       {currentDeckInfo && (

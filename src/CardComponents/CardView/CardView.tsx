@@ -11,7 +11,8 @@ import CardValue from "../CardValue";
 import CardViewButtons from "./CardViewButtons";
 import EditView from "../EditView";
 import { db } from "../../ProfileComponents/Firebase";
-import { collection, connectFirestoreEmulator, getDocs, query, where } from "firebase/firestore";
+import { collection,  getDocs, query, where } from "firebase/firestore";
+import SingleCardChart from "./SingleCardChart";
 
 export default function CardView(props: {
   card: iCard;
@@ -47,7 +48,7 @@ export default function CardView(props: {
     console.time()
     for (let i = 0; i < qLength; i++) {
       const queryRef = query(
-        collection(db, "cardsDB", i.toString(), "cards"),
+        collection(db, "cardsDB", i.toString(), "sets", props.card.set.id,"cards"),
         where("id", "==", cardId)
       );
       const querySnapshot = await getDocs(queryRef);
@@ -82,7 +83,7 @@ export default function CardView(props: {
             onLoad={() => {
               setIsLoaded(true);
             }}
-            onClick={() => getCardsById(props.card.id)}
+            onClick={() => console.log(props.card)}
             src={props.card.images && props.card.images.large}
           />
           <CardViewButtons
@@ -114,7 +115,7 @@ export default function CardView(props: {
             {props.card.number}/{props.card.nationalPokedexNumbers[0]}
           </h3>
           <div className="my-2">{values}</div>
-          <div className="min-h-[10rem] m-5 mx-7 bg-gray-200 dark:bg-gray-700 p-1 px-3 rounded-xl"></div>
+          <SingleCardChart {...{card:props.card}}/>
         </div>
       </div>
     </>

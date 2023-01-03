@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
@@ -19,10 +19,9 @@ interface iData {
 
 export default function ChartDeck(props: {
   deckId: string;
-  isReady: boolean;
-  setIsReady: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { user } = useUserAuth();
+  const [isReady, setIsReady] = useState(false);
   const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const rate = useProfileStore((state: iState) => state.conversionRate);
   const userDeckValue = useCollectionStore(
@@ -41,51 +40,33 @@ export default function ChartDeck(props: {
 
   useEffect(() => {
     async function ttt() {
-      const queryRef = collection(
-        db,
-        "users",
-        user.uid,
-        "decks",
-        props.deckId,
-        "cardDB"
-      );
+      const queryRef = collection(db, "users", user.uid, "historicalValue");
       let chartdata: iChart = { label: "", data: [] };
-      let dayValueOfDeck = 0;
-      let date: Date = new Date();
       const querySnapshot = await getDocs(queryRef);
-      if (querySnapshot.size !== 0) {
-        //i query all the historical instances of this collection,
-        querySnapshot.forEach((instance) => {
-          let keys: string[] = [];
-          let instanceData = instance.data();
-          chartdata.label = props.deckId;
-          instanceData.result.forEach((item: any) => {
-            // for each i get all the keys from the prices ,
-            dayValueOfDeck = 0;
-            Object.keys(item.prices).map((cardType) => {
-              if (!keys.includes(cardType)) keys.push(cardType);
-            });
-            instanceData.result.forEach((item: any) => {
-              keys.forEach((key) => {
-                if (
-                  item.prices[key] &&
-                  item.prices[key].market &&
-                  item.quantity[key] !== 0
-                ) {
-                  // then for each key i sum and multiply each card for its price and quantity
-                  dayValueOfDeck +=
-                    item.prices[key].market * item.quantity[key];
-                  date = item.date.toDate();
-                }
-              });
-            });
-          });
-          //i append each result into a new object containing the date of the instance and the total value
+      let size = querySnapshot.size;
+      const docs = querySnapshot.docs;
+      if (size !== 0) {
+        for (let docum in docs) {
+          const queryRef = doc(
+            db,
+            "users",
+            user.uid,
+            "historicalValue",
+            docum,
+            props.deckId,
+            "value"
+          );
+          const querySnapshot = await getDoc(queryRef);
+          let current = querySnapshot.data();
           chartdata.data.push({
-            value: dayValueOfDeck * rate,
-            date: date,
+            value: current ? current.totalPrice * rate: 0,
+            date: current ? current.date.toDate() : 0,
           });
-        });
+          if ( chartdata.data.length === size) {
+            setIsReady(true);
+          }
+        }
+
         chartdata.data.sort((a, b) => {
           /**
            *sort it by Date, as Firebase doesn't ensure that the data will be saved chronologically
@@ -99,17 +80,17 @@ export default function ChartDeck(props: {
            *at the end of chartdata(i dont need to sort in this case, as it's clearly going
            *to be pushed at the end)
            */
-          chartdata.data.push({
-            date: new Date(),
-            value: userDeckValue * rate,
-          });
+          // chartdata.data.push({
+          //   date: new Date(),
+          //   value: userDeckValue * rate,
+          // });
         }
         setChart([chartdata]);
       }
     }
-    if (chart[0].data.length > 2 && rate > 0) {
-      props.setIsReady(true);
-    }
+    // if ( chart.length > 0) {
+    //   props.setIsReady(true);
+    // }
     ttt();
   }, [userDeckValue, userDeckInfo, rate]);
 
@@ -119,7 +100,7 @@ export default function ChartDeck(props: {
     }),
     []
   );
-
+  
   const secondaryAxes = useMemo(
     (): AxisOptions<MyDatum>[] => [
       {
@@ -129,9 +110,12 @@ export default function ChartDeck(props: {
       },
     ],
     []
-  );
-  type MyDatum = { value: number; date: Date };
-
+    );
+    type MyDatum = { value: number; date: Date };
+    
+    useEffect(() => {
+      console.log(chart);
+    }, [chart]);
   /**
    * 
    // const data = chart; DO NOT REMOVE
@@ -144,31 +128,29 @@ export default function ChartDeck(props: {
 
   return (
     <>
-      <Chart
-        style={{ display: props.isReady ? "flex" : "none" }}
-        options={{
-          data: chart,
-          primaryAxis,
-          secondaryAxes,
-          dark: isDarkMode,
-          tooltip: false,
-        }}
-      />
-
-      {/* 
-//removed by request not to show NO DATA, better not to show the chart at all
-      // : (
-      //   <div className="flex flex-col justify-center items-center h-full">
-      //     <div>
-      //       <div className="flex justify-center items-center text-amber-500 font-bold  leading-none">
-      //         no data
-      //       </div>
-      //       <div className="flex justify-center items-center text-[0.6rem] leading-none">
-      //         no historical data available
-      //       </div>
-      //     </div>
-      //   </div>
-      // )} */}
+      {isReady? (
+        <Chart
+          // style={{ display: props.isReady ? "flex" : "none" }}
+          options={{
+            data: chart,
+            primaryAxis,
+            secondaryAxes,
+            dark: isDarkMode,
+            tooltip: false,
+          }}
+        />
+      ) : (
+        <div className="flex flex-col justify-center items-center h-full">
+          <div>
+            <div className="flex justify-center items-center text-amber-500 font-bold  leading-none animate-pulse">
+              Loading
+            </div>
+            <div className="flex justify-center items-center text-[0.6rem] leading-none">
+              the app is fetching historical prices
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

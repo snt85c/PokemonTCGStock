@@ -18,14 +18,19 @@ export default function DeckCard(props: { card: coll }) {
   const { user } = useUserAuth();
   const sym = useProfileStore((state: iState) => state.conversionSym);
   const rate = useProfileStore((state: iState) => state.conversionRate);
+
   const totalCollectionsValue = useCollectionStore(
     (state: iCollectionStore) => state.totalCollectionsValue
   );
   const setUserDeckFromFirebase = useCollectionStore(
     (state: iCollectionStore) => state.setUserDeckFromFirebase
   );
-  const [isReady, setIsReady] = useState(false);
-  let deckId = props.card && props.card.id;
+  const value = useCollectionStore(
+    (state: iCollectionStore) => state.collectionValue
+  );
+
+  const currentDeckInfo= useCollectionStore((state:iCollectionStore) => state.currentDeckInfo)
+  console.log(props.card)
 
   return (
     <>
@@ -52,8 +57,8 @@ export default function DeckCard(props: { card: coll }) {
             <div className="min-w-[1/2]">
               <div className="text-lg leading-none whitespace-nowrap">
                 <span className="font-[PlayB]">
-                  {(props.card.value * rate).toFixed(2)}
-                  {" " + sym.toUpperCase()}
+                  {(props.card.id !== currentDeckInfo.id?props.card.value * rate:value).toFixed(2)}
+                  {" " + sym.toUpperCase() }
                 </span>
               </div>
               <div className="italic leading-none whitespace-nowrap">
@@ -63,9 +68,9 @@ export default function DeckCard(props: { card: coll }) {
             </div>
           )}
         </div>
-        <div className="h-[5rem] p-3 mx-2 relative md:h-[10rem]" 
-        style={{display:isReady?"flex":"none"}}>
-          <ChartDeck {...{ deckId, isReady, setIsReady }} />
+        <div className="h-[9rem] p-3 mx-2 relative md:h-[10rem]" 
+        >
+          <ChartDeck {...{ deckId:props.card.id }} />
         </div>
         <div className="text-xs mt-2">
           created on:{props.card.creationDate.toDate().toDateString()}

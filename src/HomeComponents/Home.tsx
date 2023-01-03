@@ -40,7 +40,7 @@ export default function Home() {
           )}
         </div>
         <div className="flex flex-col overflow-scroll px-1 pb-10 w-full">
-          {/* <CollectionRecap /> */}
+          <CollectionRecap />
         </div>
           {!user && (
             <SigninPage />

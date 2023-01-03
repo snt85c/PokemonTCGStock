@@ -1,7 +1,7 @@
 import { iCard } from "../Interfaces";
-import CardCollectionType from "./CardType/CardCollectionType";
 import CardSearchType from "./CardType/CardSearchType";
 import CardGroupType from "./CardType/CardGroupType";
+import CardCollectionType from "./CardType/CardCollectionType";
 
 export default function Card(props: { data: iCard; type: string }) {
 

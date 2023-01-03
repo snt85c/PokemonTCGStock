@@ -74,6 +74,7 @@ export interface iCard {
   images: { small: string; large: string };
   set: {
     name: string;
+    id:string,
     series: string;
     releaseDate: string;
     images: {
