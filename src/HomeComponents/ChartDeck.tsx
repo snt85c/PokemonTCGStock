@@ -80,10 +80,10 @@ export default function ChartDeck(props: {
            *at the end of chartdata(i dont need to sort in this case, as it's clearly going
            *to be pushed at the end)
            */
-          // chartdata.data.push({
-          //   date: new Date(),
-          //   value: userDeckValue * rate,
-          // });
+          chartdata.data.push({
+            date: new Date(),
+            value: userDeckValue * rate,
+          });
         }
         setChart([chartdata]);
       }

@@ -135,10 +135,12 @@ exports.sumCardPrices = functions.pubsub
         for (const card of cards) {
           const data = card.data();
           // Find the key for the prices (e.g. "holofoil", "normal")
-          const pricekeys = Object.keys(data.tcgplayer.prices);
-          for (const pricekey of pricekeys) {
-            totalPrice += data.tcgplayer.prices[pricekey].market;
-          }
+          // const pricekeys = Object.keys(data.tcgplayer.prices);
+          // for (const pricekey of pricekeys) {
+          //   totalPrice += data.tcgplayer.prices[pricekey].market;
+          // }
+
+          totalPrice += data.tcgplayer.prices[data.userDeckInfo.type].market;
         }
 
         //set a doc inside historicalValue collection with a doc
