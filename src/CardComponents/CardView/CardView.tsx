@@ -77,9 +77,9 @@ export default function CardView(props: {
         className="flex flex-col  items-center absolute top-0 left-0 min-h-screen  z-40 bg-white dark:bg-slate-900  text-black dark:text-white p-3"
         style={{ display: isLoaded ? "flex" : "none" }}
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between cards">
           <img
-            className={`w-2/3 h-2/3 mt-2  border-4 border-r-gray-400 duration-300 rounded-xl `}
+            className={`w-2/3 h-2/3 mt-2  border-4 border-r-gray-400 duration-300 rounded-xl`}
             onLoad={() => {
               setIsLoaded(true);
             }}

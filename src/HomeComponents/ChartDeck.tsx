@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { AxisOptions, Chart } from "react-charts";
 import useCollectionStore from "../CollectionComponent/useCollectionStore";
-import { iCard, iCollectionStore } from "../Interfaces";
+import { iCollectionStore } from "../Interfaces";
 import { db } from "../ProfileComponents/Firebase";
 import useProfileStore, { iState } from "../ProfileComponents/useProfileStore";
 import { useUserAuth } from "../ProfileComponents/userAuth";
@@ -17,11 +17,10 @@ interface iData {
   date: Date;
 }
 
-export default function ChartDeck(props: {
-  deckId: string;
-}) {
+export default function ChartDeck(props: { deckId: string }) {
   const { user } = useUserAuth();
   const [isReady, setIsReady] = useState(false);
+
   const isDarkMode = useProfileStore((state: iState) => state.darkmode);
   const rate = useProfileStore((state: iState) => state.conversionRate);
   const userDeckValue = useCollectionStore(
@@ -59,10 +58,10 @@ export default function ChartDeck(props: {
           const querySnapshot = await getDoc(queryRef);
           let current = querySnapshot.data();
           chartdata.data.push({
-            value: current ? current.totalPrice * rate: 0,
+            value: current ? current.totalPrice * rate : 0,
             date: current ? current.date.toDate() : 0,
           });
-          if ( chartdata.data.length === size) {
+          if (chartdata.data.length === size) {
             setIsReady(true);
           }
         }
@@ -88,11 +87,9 @@ export default function ChartDeck(props: {
         setChart([chartdata]);
       }
     }
-    // if ( chart.length > 0) {
-    //   props.setIsReady(true);
-    // }
     ttt();
   }, [userDeckValue, userDeckInfo, rate]);
+
 
   const primaryAxis = useMemo(
     (): AxisOptions<MyDatum> => ({
@@ -100,22 +97,19 @@ export default function ChartDeck(props: {
     }),
     []
   );
-  
+
   const secondaryAxes = useMemo(
     (): AxisOptions<MyDatum>[] => [
       {
         getValue: (datum) => datum.value,
         elementType: "line", //line, area, bar,bubble
-        shouldNice: true,
+        shouldNice:true
       },
     ],
     []
-    );
-    type MyDatum = { value: number; date: Date };
-    
-    useEffect(() => {
-      console.log(chart);
-    }, [chart]);
+  );
+  type MyDatum = { value: number; date: Date };
+
   /**
    * 
    // const data = chart; DO NOT REMOVE
@@ -128,9 +122,8 @@ export default function ChartDeck(props: {
 
   return (
     <>
-      {isReady? (
+      {isReady ? (
         <Chart
-          // style={{ display: props.isReady ? "flex" : "none" }}
           options={{
             data: chart,
             primaryAxis,

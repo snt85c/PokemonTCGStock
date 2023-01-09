@@ -7,19 +7,19 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDBSkqw1FEZfnhO-9vlyKpkRy_pDn-uUks",
+  apiKey: process.env.REACT_APP_API_KEY,
 
-  authDomain: "tcg-stock-app.firebaseapp.com",
+  authDomain: process.env.REACT_APP_authDomain,
 
-  projectId: "tcg-stock-app",
+  projectId: process.env.REACT_APP_projectId,
 
-  storageBucket: "tcg-stock-app.appspot.com",
+  storageBucket: process.env.REACT_APP_storageBucket,
 
-  messagingSenderId: "202041862043",
+  messagingSenderId: process.env.REACT_APP_messagingSenderId,
 
-  appId: "1:202041862043:web:87d3e52e0e054f33c7a33e",
+  appId: process.env.REACT_APP_appId,
 
-  measurementId: "G-7ZKFGPTVVM",
+  measurementId: process.env.REACT_APP_measurementId,
 };
 
 // Initialize Firebase
