@@ -12,6 +12,8 @@ export default function SearchFunction() {
   const setResultJSXArray = useDeckStore(
     (state: iSearchStore) => state.setResultJSXArray
   );
+  const APIKEY = process.env.REACT_APP_POKEMON_TCG_API;
+
 
   useEffect(() => {
     const listener = (event: { key: string; preventDefault: () => void }) => {
@@ -35,7 +37,7 @@ export default function SearchFunction() {
         fetch(url, {
           method: "GET",
           headers: {
-            "X-Auth-Token": "f62ff961-6c90-4151-991f-25985d01113d",
+            "X-Auth-Token": APIKEY?APIKEY:"",
           },
         })
           .then((resp) => resp.json())

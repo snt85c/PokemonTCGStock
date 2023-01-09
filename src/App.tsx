@@ -33,7 +33,7 @@ function App() {
     document.documentElement.classList.remove("dark");
   }
 
-  const APIKEY = "f62ff961-6c90-4151-991f-25985d01113d";
+  const APIKEY = process.env.REACT_APP_POKEMON_TCG_API;
 
   pokemon.configure({ apiKey: APIKEY });
 

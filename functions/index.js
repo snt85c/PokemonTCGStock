@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 const pokemon = require("pokemontcgsdk");
 const db = admin.firestore();
-const apiKey = "f62ff961-6c90-4151-991f-25985d01113d";
+const apiKey = REACT_APP_POKEMON_TCG_API;
 
 pokemon.configure({apiKey});
 
